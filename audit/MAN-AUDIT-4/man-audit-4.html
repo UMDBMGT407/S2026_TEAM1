@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./vars.css">
+  <link rel="stylesheet" href="../CSS/style-man4.css">
+
+  <style>
+    a,
+    button,
+    input,
+    select,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border: none;
+      text-decoration: none;
+      background: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    menu, ol, ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <title>Activity Log</title>
+</head>
+<body>
+  <div class="manager-fifth-page-activity-log">
+    <div class="rectangle-5"></div>
+    <div class="activity-log-title">Activity Log</div>
+
+    <img class="rectangle-1" src="rectangle-10.svg" alt="" />
+    <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo" />
+
+    <div class="sidebar-nav">
+      <button class="nav-btn">Full Inventory View</button>
+      <button class="nav-btn"
+        onclick="window.location.href='../MAN-AUDIT-1/man-audit-1.html'">
+        Inventory Reconciliation
+      </button>
+      <button class="nav-btn active">Activity Log</button>
+      <button class="nav-btn">Dashboards &amp; Analytics</button>
+      <button class="nav-btn">Predictive Reports</button>
+      <button class="nav-btn">Manage Users</button>
+      <button class="nav-btn two-line">Purchase Order<br>Management</button>
+    </div>
+
+    <a href="../LOGIN/index.html" class="logout-btn">Logout</a>
+
+    <div class="table-card">
+      <div class="table-header">
+        <div>Timestamp</div>
+        <div>User</div>
+        <div>Role</div>
+        <div>Ingredient</div>
+        <div>Action</div>
+        <div>Qty Change</div>
+      </div>
+
+      <div class="table-body">
+        <div class="table-row" data-page="1">
+          <div class="timestamp-col">03/02/2026, 02:15pm</div>
+          <div class="user-col">John D.</div>
+          <div class="role-col">Employee</div>
+          <div class="ingredient-col">Tapioca Pearls</div>
+          <div class="action-col">Add</div>
+          <div class="qty-col">+3</div>
+        </div>
+
+        <div class="table-row" data-page="1">
+          <div class="timestamp-col">03/02/2026, 02:15pm</div>
+          <div class="user-col">Evelyn A.</div>
+          <div class="role-col">Manager</div>
+          <div class="ingredient-col">Mango Syrup</div>
+          <div class="action-col">Sub</div>
+          <div class="qty-col">-5</div>
+        </div>
+
+        <div class="table-row" data-page="1">
+          <div class="timestamp-col">03/05/2026, 08:20pm</div>
+          <div class="user-col">Sohpia M.</div>
+          <div class="role-col">Shift Lead</div>
+          <div class="ingredient-col">Large Cups</div>
+          <div class="action-col">Correct</div>
+          <div class="qty-col">+20</div>
+        </div>
+
+        <div class="table-row" data-page="1">
+          <div class="timestamp-col">02/05/2026, 03:20pm</div>
+          <div class="user-col">Joanna M.</div>
+          <div class="role-col">Employee</div>
+          <div class="ingredient-col">Chia Seeds</div>
+          <div class="action-col">Add</div>
+          <div class="qty-col">+2</div>
+        </div>
+
+        <div class="table-row" data-page="1">
+          <div class="timestamp-col">04/10/2026, 12:20pm</div>
+          <div class="user-col">Sohpia M.</div>
+          <div class="role-col">Shift Lead</div>
+          <div class="ingredient-col">Hot Med Cups</div>
+          <div class="action-col">Add</div>
+          <div class="qty-col">+10</div>
+        </div>
+
+        <div class="table-row" data-page="1">
+          <div class="timestamp-col">02/05/2026, 07:20pm</div>
+          <div class="user-col">Lesly M.</div>
+          <div class="role-col">Employee</div>
+          <div class="ingredient-col">Milk Powder</div>
+          <div class="action-col">Sub</div>
+          <div class="qty-col">-6</div>
+        </div>
+
+        <div class="table-row" data-page="2">
+          <div class="timestamp-col">04/12/2026, 09:10am</div>
+          <div class="user-col">Ariana T.</div>
+          <div class="role-col">Employee</div>
+          <div class="ingredient-col">Brown Sugar</div>
+          <div class="action-col">Add</div>
+          <div class="qty-col">+4</div>
+        </div>
+
+        <div class="table-row" data-page="2">
+          <div class="timestamp-col">04/12/2026, 11:40am</div>
+          <div class="user-col">Kevin R.</div>
+          <div class="role-col">Manager</div>
+          <div class="ingredient-col">Strawberry Syrup</div>
+          <div class="action-col">Sub</div>
+          <div class="qty-col">-2</div>
+        </div>
+
+        <div class="table-row" data-page="2">
+          <div class="timestamp-col">04/13/2026, 02:05pm</div>
+          <div class="user-col">Mia S.</div>
+          <div class="role-col">Shift Lead</div>
+          <div class="ingredient-col">Medium Cups</div>
+          <div class="action-col">Correct</div>
+          <div class="qty-col">+8</div>
+        </div>
+
+        <div class="table-row" data-page="2">
+          <div class="timestamp-col">04/13/2026, 04:22pm</div>
+          <div class="user-col">Leo P.</div>
+          <div class="role-col">Employee</div>
+          <div class="ingredient-col">Matcha Powder</div>
+          <div class="action-col">Add</div>
+          <div class="qty-col">+1</div>
+        </div>
+
+        <div class="table-row" data-page="2">
+          <div class="timestamp-col">04/14/2026, 08:55am</div>
+          <div class="user-col">Nina K.</div>
+          <div class="role-col">Employee</div>
+          <div class="ingredient-col">Ice Bags</div>
+          <div class="action-col">Sub</div>
+          <div class="qty-col">-7</div>
+        </div>
+
+        <div class="table-row" data-page="2">
+          <div class="timestamp-col">04/14/2026, 01:00pm</div>
+          <div class="user-col">Chris L.</div>
+          <div class="role-col">Shift Lead</div>
+          <div class="ingredient-col">Whole Milk</div>
+          <div class="action-col">Add</div>
+          <div class="qty-col">+5</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pagination-wrap">
+      <div class="pagination">
+        <button class="page-btn active" data-page-btn="1">1</button>
+        <button class="page-btn" data-page-btn="2">2</button>
+        <button class="page-btn" data-page-btn="3">3</button>
+        <button class="page-btn" data-page-btn="4">4</button>
+        <button class="page-btn" data-page-btn="5">5</button>
+        <button class="page-btn" data-page-btn="6">6</button>
+      </div>
+      <button class="next-btn" id="nextBtn">Next &gt;</button>
+    </div>
+  </div>
+
+  <script>
+    const pageButtons = document.querySelectorAll(".page-btn");
+    const rows = document.querySelectorAll(".table-row");
+    const nextBtn = document.getElementById("nextBtn");
+    const totalPages = pageButtons.length;
+    let currentPage = 1;
+
+    function showPage(pageNumber) {
+      currentPage = pageNumber;
+
+      rows.forEach((row) => {
+        const rowPage = Number(row.getAttribute("data-page"));
+        row.style.display = rowPage === pageNumber ? "grid" : "none";
+      });
+
+      pageButtons.forEach((btn) => {
+        const btnPage = Number(btn.getAttribute("data-page-btn"));
+        btn.classList.toggle("active", btnPage === pageNumber);
+      });
+
+      if (currentPage === totalPages) {
+        nextBtn.disabled = true;
+        nextBtn.classList.add("disabled");
+      } else {
+        nextBtn.disabled = false;
+        nextBtn.classList.remove("disabled");
+      }
+    }
+
+    pageButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const selectedPage = Number(btn.getAttribute("data-page-btn"));
+        showPage(selectedPage);
+      });
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        showPage(currentPage + 1);
+      }
+    });
+
+    showPage(1);
+  </script>
+</body>
+</html>

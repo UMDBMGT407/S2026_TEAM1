@@ -1,0 +1,371 @@
+:root {
+  --design-width: 1440;
+  --design-height: 1024;
+  --scale: min(
+    calc(100vw / (var(--design-width) * 1px)),
+    calc(100vh / (var(--design-height) * 1px))
+  );
+}
+
+.shift-lead-fourth-1-2-page-audit-physical-count,
+.shift-lead-fourth-1-2-page-audit-physical-count * {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: #f0e6dd;
+  font-family: "Inria Serif", serif;
+}
+
+.shift-lead-fourth-1-2-page-audit-physical-count {
+  background: #f0e6dd;
+  border: 1px solid #000000;
+  width: 1440px;
+  height: 1024px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--scale));
+  transform-origin: center center;
+}
+
+/* SIDEBAR */
+.rectangle-1 {
+  width: 270px;
+  height: 1024px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  object-fit: fill;
+}
+
+.kft-logo {
+  width: 270px;
+  height: 108px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  object-fit: cover;
+}
+
+/* NAVBAR */
+.sidebar-nav {
+  position: absolute;
+  left: 14px;
+  top: 170px;
+  width: 242px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.nav-btn {
+  width: 242px;
+  min-height: 62px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 38px;
+  background: transparent;
+  color: #f0e6dd;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.15;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+  display: flex;
+  align-items: center;
+}
+
+.nav-btn.active,
+.nav-btn:hover {
+  background: #f0e6dd;
+  color: #964f4c;
+}
+
+.nav-btn:focus-visible {
+  outline: 2px solid #e9d9cc;
+  outline-offset: 2px;
+}
+
+/* LOGOUT */
+.logout-btn {
+  position: absolute;
+  left: 88px;
+  top: 951px;
+  width: 95px;
+  height: 52px;
+  border: none;
+  border-radius: 28px;
+  background: #e9d9cc;
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.logout-btn:hover {
+  filter: brightness(0.98);
+}
+
+/* HEADER */
+.rectangle-5 {
+  background: #e9d9cc;
+  border-radius: 36px;
+  width: 1240px;
+  height: 112px;
+  position: absolute;
+  left: 152px;
+  top: 21px;
+}
+
+.inventory-audit-physical-count {
+  color: #000000;
+  text-align: center;
+  font-family: "Inria Serif", serif;
+  font-size: 34px;
+  font-weight: 700;
+  position: absolute;
+  left: 152px;
+  top: 62px;
+  width: 1240px;
+}
+
+/* FILTER */
+.category-filter {
+  position: absolute;
+  left: 307px;
+  top: 320px;
+  width: 413px;
+  height: 66px;
+  padding: 0 56px 0 16px;
+  background: #ffffff;
+  border: 1px solid #964f4c;
+  border-radius: 20px;
+  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.15);
+
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  outline: none;
+  line-height: 66px;
+
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path fill='%23964f4c' d='M7 10l5 5l5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 28px;
+}
+
+.category-filter:hover {
+  filter: brightness(0.99);
+}
+
+.category-filter:focus {
+  border-color: #964f4c;
+}
+
+/* TABLE CARD */
+.main-rectangle {
+  width: 1055px;
+  height: 371px;
+  position: absolute;
+  left: 315px;
+  top: 433px;
+  object-fit: fill;
+}
+
+.line-8 {
+  position: absolute;
+  left: 315px;
+  top: 519px;
+  width: 1055px;
+  height: 2px;
+  background: #964f4c;
+}
+
+/* TABLE HEADER */
+.frame-9 {
+  background: #964f4c;
+  border-radius: 20px 20px 0 0;
+  border: 1px solid #000000;
+  width: 1055px;
+  height: 86px;
+  position: absolute;
+  left: 315px;
+  top: 433px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 70px 0 34px;
+}
+
+.ingredient,
+.system-qty,
+.physical-count,
+.difference {
+  color: #ffffff;
+  text-align: center;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+/* TABLE BODY */
+.frame-15 {
+  display: flex;
+  flex-direction: row;
+  gap: 147px;
+  align-items: flex-start;
+  position: absolute;
+  left: 339px;
+  top: 544px;
+}
+
+.frame-14 {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 215px;
+}
+
+.frame-14 div,
+.frame-13 div,
+.frame-152 div {
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.tapioca-pearls,
+.black-tea,
+.mango-syrup,
+.large-cups {
+  text-align: center;
+}
+
+.frame-13 {
+  display: flex;
+  flex-direction: column;
+  gap: 31px;
+  width: 39px;
+  align-items: center;
+}
+
+.frame-11 {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  width: 126px;
+  transform: translateY(-20px);
+}
+
+.count-input {
+  width: 126px;
+  height: 55px;
+  border: 1px solid #964f4c;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #000000;
+  font-family: "Inria Serif", serif;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  padding: 0;
+  outline: none;
+}
+
+.count-input:focus {
+  border-color: #7f3f3c;
+  box-shadow: 0 0 0 2px rgba(150, 79, 76, 0.15);
+}
+
+.frame-152 {
+  display: flex;
+  flex-direction: column;
+  gap: 31px;
+  width: 39px;
+  align-items: center;
+}
+
+._33,
+._2,
+._1 {
+  color: #964f4c !important;
+}
+
+/* ACTION BUTTONS */
+.frame-actions {
+  position: absolute;
+  left: 762px;
+  top: 847px;
+  width: 600px;
+  height: 63px;
+}
+
+.save-btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 272px;
+  height: 63px;
+  border-radius: 18px;
+  border: 1.5px solid #b36a66;
+  background: #e9d9cc;
+  color: #000000;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit-btn {
+  position: absolute;
+  left: 328px;
+  top: 0;
+  width: 272px;
+  height: 63px;
+  border: none;
+  border-radius: 18px;
+  background: #9d5651;
+  color: #e9d9cc;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit-btn:hover {
+  background: #874946;
+}
+
+.save-btn:hover {
+  filter: brightness(0.98);
+}
