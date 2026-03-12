@@ -1,0 +1,184 @@
+:root {
+  --design-width: 1440;
+  --design-height: 1024;
+  --scale: min(
+    calc(100vw / (var(--design-width) * 1px)),
+    calc(100vh / (var(--design-height) * 1px))
+  );
+}
+
+.login-page,
+.login-page * {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: #f0e6dd;
+  font-family: "Inria Serif", serif;
+}
+
+.login-page {
+  border: 1px solid #000000;
+  width: 1440px;
+  height: 1024px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--scale));
+  transform-origin: center center;
+}
+
+/* TOP TITLE BOX */
+.frame-1 {
+  background: #ffffff;
+  border: 1px solid #000000;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 1119px;
+  position: absolute;
+  left: 160px;
+  top: 125px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.welcome-to-kung-fu-tea-silver-spring-inventory-management-system {
+  color: #000000;
+  text-align: center;
+  font-family: "Inria Serif", serif;
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 1.15;
+  position: relative;
+  width: 964px;
+  min-height: 114px;
+}
+
+/* BOTTOM IMAGE */
+.kft-quality-image-1 {
+  border-radius: 138px;
+  width: 725px;
+  height: 188px;
+  position: absolute;
+  left: 327px;
+  top: 890px;
+  object-fit: cover;
+  aspect-ratio: 725/188;
+}
+
+/* LOGIN CARD */
+.rectangle-1 {
+  border-radius: 0px;
+  width: 509px;
+  height: 502px;
+  position: absolute;
+  left: 447px;
+  top: 340px;
+  overflow: visible;
+}
+
+.login-user {
+  color: #ffffff;
+  text-align: center;
+  font-family: "Inria Serif", serif;
+  font-size: 40px;
+  font-weight: 400;
+  position: absolute;
+  left: 496px;
+  top: 363px;
+  width: 413px;
+  height: 73px;
+}
+
+/* FORM */
+.login-form {
+  position: absolute;
+  left: 467px;
+  top: 425px;
+  width: 462px;
+  height: 270px;
+}
+
+.login-input {
+  width: 459px;
+  height: 63px;
+  background: #d9d9d9;
+  color: #000000;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  font-weight: 400;
+  padding: 0 18px;
+  outline: none;
+  display: block;
+}
+
+.login-input::placeholder {
+  color: #000000;
+  opacity: 1;
+}
+
+.login-input:focus {
+  outline: 2px solid #e9d9cc;
+  outline-offset: 0;
+}
+
+.id-input {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.password-input {
+  position: absolute;
+  left: 0;
+  top: 106px;
+}
+
+.login-btn {
+  background: #d9d9d9;
+  border-radius: 30px;
+  width: 135px;
+  height: 49px;
+  position: absolute;
+  left: 162px;
+  top: 207px;
+
+  color: #000000;
+  text-align: center;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: filter 0.18s ease, background-color 0.18s ease;
+}
+
+.login-btn:hover {
+  filter: brightness(0.96);
+}
+
+/* FOOTER TEXT */
+.new-member-contact-your-manager-to-set-up-an-account {
+  color: #ffffff;
+  text-align: center;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 490px;
+  top: 757px;
+  width: 423px;
+}
+
