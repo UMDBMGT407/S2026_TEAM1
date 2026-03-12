@@ -96,13 +96,15 @@
       const userId = document.getElementById("userId").value.trim();
       const password = document.getElementById("userPassword").value.trim();
 
-      if (userId === "MANAGER" && password === "manager") {
-        window.location.href = "../MAN-AUDIT-1/man-audit-1.html";
-      } else if (userId === "SHIFTLEAD" && password === "shiftlead") {
-        window.location.href = "../SL-AUDIT-1/sl-audit-1.html";
-      } else {
-        alert("Invalid ID or password.");
-      }
+   if (userId === "MANAGER" && password === "manager") {
+  window.location.href = "audit/MAN-AUDIT-1/man-audit-1.html";
+} 
+else if (userId === "SHIFTLEAD" && password === "shiftlead") {
+  window.location.href = "audit/SL-AUDIT-1/sl-audit-1.html";
+} 
+else {
+  alert("Invalid ID or password.");
+}
     }
   </script>
 </body>
