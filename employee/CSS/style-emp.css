@@ -154,7 +154,7 @@ body {
   border: 1px solid #000000;
   border-radius: 20px;
   box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.18);
-  padding: 56px 76px 40px;
+  padding: 56px 70px 40px 76px;
 }
 
 .search-box {
@@ -186,6 +186,10 @@ body {
   background: transparent;
 }
 
+.search-box input::placeholder {
+  color: rgba(150, 79, 76, 0.5);
+}
+
 .table-header {
   width: 738px;
   height: 78px;
@@ -206,11 +210,28 @@ body {
 }
 
 .inventory-rows {
-  width: 738px;
+  width: 754px;
   display: flex;
   flex-direction: column;
   gap: 28px;
   padding-top: 10px;
+  max-height: 470px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.inventory-rows::-webkit-scrollbar {
+  width: 8px;
+}
+
+.inventory-rows::-webkit-scrollbar-track {
+  background: #e5dad0;
+  border-radius: 10px;
+}
+
+.inventory-rows::-webkit-scrollbar-thumb {
+  background: #964f4c;
+  border-radius: 10px;
 }
 
 .inventory-row {
@@ -222,6 +243,7 @@ body {
   font-size: 24px;
   font-weight: 700;
   text-align: center;
+  min-height: 34px;
 }
 
 .ingredient-link {
@@ -252,13 +274,16 @@ body {
 
 .popup-card {
   width: 1011px;
-  height: 621px;
+  min-height: 621px;
   background: #e9d9cc;
   border: 1px solid #000000;
   border-radius: 20px;
   box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
   position: relative;
-  padding: 45px 39px 31px;
+  padding: 32px 40px 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .close-popup {
@@ -274,14 +299,15 @@ body {
 }
 
 .popup-ingredient-bar {
-  width: 927px;
+  width: 100%;
+  max-width: 927px;
   height: 61px;
   background: #ffffff;
   border-radius: 20px;
   display: flex;
   align-items: center;
   padding: 0 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .popup-ingredient-bar span {
@@ -293,65 +319,68 @@ body {
 
 /* INFO BOX */
 .popup-info-box {
-  width: 927px;
-  height: 166px;
+  width: 100%;
+  max-width: 927px;
+  height: 150px;
   background: #ffffff;
   border-radius: 20px;
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
 .popup-info-top {
-  position: relative;
   width: 100%;
   height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
 }
 
 .popup-stock {
-  color: #964f4c;
   font-family: "Inria Serif", serif;
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 400;
-  position: absolute;
-  left: 16px;
-  top: 18px;
-}
-
-.popup-updated {
   color: #964f4c;
-  font-family: "Inria Serif", serif;
-  font-size: 32px;
-  font-weight: 400;
-  position: absolute;
-  left: 510px;
-  top: 18px;
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
 }
 
 .popup-divider {
   width: 1px;
-  height: 46px;
+  height: 42px;
   background: #964f4c;
-  position: absolute;
-  left: 470px;
-  top: 16px;
+  margin: 0 24px;
+  flex-shrink: 0;
+}
+
+.popup-updated {
+  font-family: "Inria Serif", serif;
+  font-size: 27px;
+  font-weight: 400;
+  color: #964f4c;
+  flex: 1;
+  text-align: right;
+  line-height: 1.15;
+  word-break: break-word;
 }
 
 .popup-info-box::after {
   content: "";
   position: absolute;
   left: 0;
-  top: 66px;
-  width: 927px;
+  top: 68px;
+  width: 100%;
   height: 1px;
   background: #c79f99;
 }
 
 .popup-toggle-row {
-  position: absolute;
-  left: 148px;
-  top: 84px;
+  position: relative;
   width: 620px;
   height: 60px;
+  margin: 16px auto 0;
 }
 
 .inventory-btn {
@@ -390,20 +419,20 @@ body {
 
 /* ENTRY BOX */
 .popup-entry-box {
-  width: 927px;
-  height: 110px;
+  width: 100%;
+  max-width: 927px;
+  height: 120px;
   background: #ffffff;
   border-radius: 20px;
   position: relative;
-  margin-bottom: 26px;
-  padding-top: 18px;
+  margin: 0 auto 18px;
 }
 
 .popup-entry-row {
   position: absolute;
   left: 16px;
-  top: 18px;
-  width: 860px;
+  right: 16px;
+  top: 16px;
   display: flex;
   align-items: center;
   gap: 24px;
@@ -417,7 +446,7 @@ body {
 }
 
 #popupQuantity {
-  width: 433px;
+  width: 330px;
   height: 40px;
   border-radius: 40px;
   background: #e5dad0;
@@ -432,7 +461,8 @@ body {
 .popup-time-row {
   position: absolute;
   left: 16px;
-  top: 66px;
+  right: 16px;
+  top: 68px;
   display: flex;
   align-items: center;
   gap: 28px;
@@ -448,7 +478,6 @@ body {
 
 .submit-btn {
   display: block;
-  margin: 0 auto;
   width: 180px;
   height: 48px;
   border-radius: 40px;
@@ -458,6 +487,7 @@ body {
   font-size: 28px;
   font-weight: 700;
   cursor: pointer;
+  margin-top: 8px;
 }
 
 .toast-notification {
@@ -475,6 +505,8 @@ body {
   pointer-events: none;
   transition: opacity 0.25s ease;
   z-index: 1200;
+  max-width: 700px;
+  text-align: center;
 }
 
 .toast-notification.show {
