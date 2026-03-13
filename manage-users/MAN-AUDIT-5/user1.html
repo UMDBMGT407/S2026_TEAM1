@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/vars.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <style>
+a,
+button,
+input,
+select,
+h1,
+h2,
+h3,
+h4,
+h5,
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: none;
+    text-decoration: none;
+
+    -webkit-font-smoothing: antialiased;
+}
+
+menu, ol, ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* POPUP FIX */
+/* OVERLAY */
+#popupForm{
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+background:rgba(0,0,0,0.35);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:99999;
+}
+
+/* POPUP CARD */
+.popup-box{
+background:#efe3d6;
+padding:28px;
+border-radius:18px;
+width:320px;
+box-shadow:0 12px 30px rgba(0,0,0,0.25);
+position:relative;
+font-family:sans-serif;
+}
+
+/* TITLE */
+.popup-box h4{
+color:#8b4a44;
+font-weight:600;
+margin-bottom:18px;
+}
+
+/* LABELS */
+.popup-box label{
+font-size:14px;
+color:#8b4a44;
+margin-bottom:4px;
+display:block;
+}
+
+/* INPUTS */
+.popup-box input,
+.popup-box select{
+width:100%;
+padding:10px 14px;
+border-radius:16px;
+border:none;
+background:#f6efe8;
+margin-bottom:12px;
+font-size:14px;
+}
+
+/* ADD USER BUTTON */
+.popup-box button{
+width:100%;
+background:#8b4a44;
+color:white;
+border:none;
+padding:10px;
+border-radius:16px;
+font-size:14px;
+cursor:pointer;
+}
+
+/* CLOSE BUTTON */
+#closePopup{
+position:absolute;
+top:10px;
+right:12px;
+font-size:16px;
+color:#8b4a44;
+cursor:pointer;
+}
+
+.fakeSearch{
+position:absolute;
+left:50px;
+top:8px;
+width:160px;
+height:20px;
+
+background:transparent;
+border:none;
+outline:none;
+
+font-size:16px;
+color:#8b4a44;
+font-family:sans-serif;
+}
+
+.div-span2{
+position:absolute;
+left:18px;
+top:8px;
+font-size:14px;
+color:#8b4a44;
+}
+.search-box2{
+position:relative;
+}
+</style>
+  <title>Document</title>
+</head>
+<body>
+  <div class="manager-eight-page-process-1-1-user-permissions">
+    <div class="rectangle-5"></div>
+    <div class="manage-users">Manage Users</div>
+    <img class="main-rectangle" src="../Images/main-rectangle0.svg" />
+    <img class="inner-rec" src="../Images/inner-rec0.svg" />
+    <div class="manage-users2">Manage Users</div>
+    <div class="search-box2">
+  <span class="div-span2">⌕</span>
+  <input class="fakeSearch" type="text" placeholder="Name">
+</div>
+    <div class="add-new-user-rectangle"></div>
+<div class="add-new-user" id="openPopup">+ Add New User</div>    
+<img class="lines" src="../Images/lines0.svg" />
+    <div class="rectangle-9"></div>
+    <div class="status-box">
+      <div class="frame-2">
+        <div class="name2">Name</div>
+        <div class="role">Role</div>
+        <div class="phone">Phone</div>
+        <div class="status">Status</div>
+      </div>
+    </div>
+    <div class="name-1">
+      <div class="frame-2">
+        <div class="toalima-t">Toalima T</div>
+        <div class="manager">Manager</div>
+        <div class="_333-801-2067">(333)-801-2067</div>
+        <div class="active">Active</div>
+      </div>
+    </div>
+    <div class="name-2">
+      <div class="frame-2">
+        <div class="medhar-p">Medhar P</div>
+        <div class="shift-lead">Shift Lead</div>
+        <div class="_333-801-2119">(333)-801-2119</div>
+        <div class="active">Active</div>
+      </div>
+    </div>
+    <div class="name-3">
+      <div class="frame-2">
+        <div class="yinmin-l">Yinmin L</div>
+        <div class="employee">Employee</div>
+        <div class="_333-801-2297">(333)-801-2297</div>
+        <div class="active">Active</div>
+      </div>
+    </div>
+    <div class="name-4" id="newUserRow" style="display:none;">
+  <div class="frame-2">
+    <div id="newName"></div>
+    <div id="newRole"></div>
+    <div id="newPhone"></div>
+    <div id="newStatus"></div>
+  </div>
+</div>
+<div id="popupForm">
+<div class="popup-box">
+
+<div id="closePopup">✕</div>
+
+<h4 style="margin-bottom:20px;">Add New User</h4>
+
+<label>Full Name</label>
+<input id="nameInput" placeholder="First, Last Initial">
+
+<label>Phone Number</label>
+<input id="phoneInput" placeholder="(333)-XXX-XXXX">
+
+<label>Role</label>
+<select id="roleInput">
+<option>Employee</option>
+<option>Shift Lead</option>
+<option>Manager</option>
+</select>
+
+<button id="addUser">Add User</button>
+
+</div>
+</div>
+<img class="rectangle-1" src="../Images/rectangle-10.svg" />
+<img class="kft-logo" src="../Images/kft-logo0.png" />    <div class="rectangle-8"></div>
+    <div class="logout">Logout</div>
+    <div class="rectangle-6"></div>
+    <div class="navigation-bar">
+      <div class="full-inventory-view">Full Inventory View</div>
+      <div class="inventory-reconciliation">Inventory Reconciliation</div>
+      <div class="activity-log">Activity Log</div>
+      <div class="dashboards-analytics">Dashboards &amp; Analytics</div>
+      <div class="predictive-reports">Predictive Reports</div>
+      <div class="manage-users3">Manage Users</div>
+      <div class="purchase-order-management">Purchase Order Management</div>
+    </div>
+  </div>
+ <script>
+
+let popup=document.getElementById("popupForm");
+
+let openBtn=document.getElementById("openPopup");
+let closeBtn=document.getElementById("closePopup");
+
+openBtn.onclick=function(){
+popup.style.display="flex";
+}
+
+closeBtn.onclick=function(){
+popup.style.display="none";
+}
+
+document.getElementById("addUser").onclick=function(){
+
+let name=document.getElementById("nameInput").value;
+let phone=document.getElementById("phoneInput").value;
+let role=document.getElementById("roleInput").value;
+
+if(name=="" || phone==""){
+alert("Please enter name and phone");
+return;
+}
+
+document.getElementById("newName").innerText=name;
+document.getElementById("newRole").innerText=role;
+document.getElementById("newPhone").innerText=phone;
+document.getElementById("newStatus").innerText="Active";
+document.getElementById("newUserRow").style.display="block";
+
+popup.style.display="none";
+
+}
+
+</script> 
+</body>
+</html>
