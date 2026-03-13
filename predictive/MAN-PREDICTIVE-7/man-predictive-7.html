@@ -6,49 +6,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./vars.css">
   <link rel="stylesheet" href="../CSS/style-man7.css">
-  
-  
+
   <style>
-   a,
-   button,
-   input,
-   select,
-   h1,
-   h2,
-   h3,
-   h4,
-   h5,
-   * {
-       box-sizing: border-box;
-       margin: 0;
-       padding: 0;
-       border: none;
-       text-decoration: none;
-       background: none;
-   
-       -webkit-font-smoothing: antialiased;
-   }
-   
-   menu, ol, ul {
-       list-style-type: none;
-       margin: 0;
-       padding: 0;
-   }
-   </style>
-  <title>Document</title>
+    a,
+    button,
+    input,
+    select,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border: none;
+      text-decoration: none;
+      background: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    menu, ol, ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <title>Predictive Reports</title>
 </head>
 <body>
   <div class="manager-seventh-page-predictive-reports">
-    <img class="frame-16" src="frame-160.svg" />
+    <img class="frame-16" src="frame-160.svg" alt="" />
+
     <div class="frame-10">
       <select class="category-select" aria-label="Filter by category">
         <option value="all" selected>Category: All</option>
       </select>
       <span class="dropdown-arrow" aria-hidden="true">▼</span>
     </div>
+
     <div class="frame-32">
-      <img class="main-rectangle" src="main-rectangle0.svg" />
+      <img class="main-rectangle" src="main-rectangle0.svg" alt="" />
       <div class="line-10"></div>
+
       <div class="frame-24">
         <div class="frame-14">
           <div class="tapioca-pearls">Tapioca Pearls</div>
@@ -56,18 +57,21 @@
           <div class="mango-syrup">Mango Syrup</div>
           <div class="large-cups">Large cups</div>
         </div>
+
         <div class="frame-13">
           <div class="_10">10</div>
           <div class="_6">6</div>
           <div class="_5">5</div>
           <div class="_20">20</div>
         </div>
+
         <div class="frame-11">
           <div class="_3">1:00pm 3/3</div>
           <div class="_10-00-am-3-7">10:00am 3/7</div>
           <div class="_12-30-pm-3-8">12:30pm 3/8</div>
           <div class="_2-00-pm-3-14">2:00pm 3/14</div>
         </div>
+
         <div class="frame-12">
           <div class="critical">Critical</div>
           <div class="low">Low</div>
@@ -75,20 +79,26 @@
           <div class="in-stock">In Stock</div>
         </div>
       </div>
+
       <div class="frame-25">
         <div class="ingredient">Ingredient</div>
         <div class="system-qty">System Qty</div>
         <div class="out-by-date">Out By Date</div>
         <div class="status">Status</div>
       </div>
-      <img class="frame-23" src="frame-230.svg" />
+
+      <img class="frame-23" src="frame-230.svg" alt="" />
     </div>
+
     <div class="frame-34">
       <div class="rectangle-5"></div>
     </div>
-    <div class="predictive-reports">Predictive Reports</div>
+
+    <div class="predictive-reports-title">Predictive Reports</div>
+
     <div class="frame-33">
-      <img class="main-rectangle2" src="main-rectangle1.svg" />
+      <img class="main-rectangle2" src="main-rectangle1.svg" alt="" />
+
       <div class="frame-22">
         <div class="product-tapioca-pearls">
           <span>
@@ -96,66 +106,109 @@
             <span class="product-tapioca-pearls-span2">Tapioca Pearls</span>
           </span>
         </div>
+
         <div class="quantity-64">
           <span>
             <span class="quantity-64-span">Quantity:</span>
             <span class="quantity-64-span2">64</span>
           </span>
         </div>
+
         <div class="order-date-3-3-2026-9-00-am">
           <span>
             <span class="order-date-3-3-2026-9-00-am-span">Order Date:</span>
             <span class="order-date-3-3-2026-9-00-am-span2">3/3/2026 9:00AM</span>
           </span>
         </div>
+
         <div class="est-receipt-3-7-2026-10-30-am">
           <span>
             <span class="est-receipt-3-7-2026-10-30-am-span">Est. Receipt:</span>
-            <span class="est-receipt-3-7-2026-10-30-am-span2">
-              3/7/2026 10:30AM
-            </span>
+            <span class="est-receipt-3-7-2026-10-30-am-span2">3/7/2026 10:30AM</span>
           </span>
         </div>
       </div>
+
       <button class="frame-35 action-btn" type="button">Create Order</button>
       <div class="recommended-order">Recommended Order</div>
-      <img class="line-9" src="line-90.svg" />
+      <img class="line-9" src="line-90.svg" alt="" />
     </div>
+
     <button class="frame-36 action-btn" id="add-recipe-btn" type="button">Add Recipe</button>
     <button class="frame-37 action-btn" id="upload-data-btn" type="button">Upload Data</button>
+
     <input
       id="upload-data-input"
       type="file"
       accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       hidden
     />
-    <img class="kpi-dashboard-1" src="kpi-dashboard-10.png" />
-    <img class="rectangle-1" src="rectangle-10.svg" />
-    <img class="kft-logo" src="kft-logo0.png" />
-    <a href="/S2026_TEAM1/index.html" class="logout">Logout</a>
-    <div class="rectangle-6"></div>
-    <div class="navigation-bar">
-      <button class="nav-btn full-inventory-view" type="button">Full Inventory View</button>
-      <button class="nav-btn inventory-reconciliation" type="button">Inventory Reconciliation</button>
-      <button class="nav-btn activity-log" type="button">Activity Log</button>
-      <button class="nav-btn dashboards-analytics" type="button">Dashboards &amp; Analytics</button>
-      <button class="nav-btn predictive-reports2 active" type="button">Predictive Reports</button>
-      <button class="nav-btn manage-users" type="button">Manage Users</button>
-      <button class="nav-btn purchase-order-management two-line" type="button">Purchase Order Management</button>
+
+    <img class="kpi-dashboard-1" src="kpi-dashboard-10.png" alt="" />
+
+    <!-- SIDEBAR -->
+    <img class="rectangle-1" src="rectangle-10.svg" alt="" />
+    <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo" />
+
+    <div class="sidebar-nav">
+      <button class="nav-btn" type="button">
+        Full Inventory View
+      </button>
+
+      <button
+        class="nav-btn"
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-1/man-audit-1.html'">
+        Inventory Reconciliation
+      </button>
+
+      <button
+        class="nav-btn"
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-4/man-audit-4.html'">
+        Activity Log
+      </button>
+
+      <button class="nav-btn" type="button">
+        Dashboards &amp; Analytics
+      </button>
+
+      <button class="nav-btn active" type="button">
+        Predictive Reports
+      </button>
+
+      <button
+        class="nav-btn"
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/manage-users/MAN-AUDIT-5/user1.html'">
+        Manage Users
+      </button>
+
+      <button class="nav-btn two-line" type="button">
+        Purchase Order<br>Management
+      </button>
     </div>
+
+    <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
+
+    <!-- RECIPE MODAL -->
     <div class="recipe-modal-overlay hidden" id="recipe-modal-overlay" aria-hidden="true">
       <div class="recipe-popup" role="dialog" aria-modal="true" aria-labelledby="recipe-modal-title">
         <img class="recipe-popup-main-rectangle" src="main-rectangle2.svg" alt="" />
         <img class="recipe-popup-inner-rec" src="inner-rec0.svg" alt="" />
+
         <div class="recipe-popup-products">
           <div class="recipe-popup-products-title">Products:</div>
+
           <div class="recipe-popup-rows" id="recipe-popup-rows">
             <div class="recipe-popup-row">
               <button class="recipe-popup-remove" type="button" aria-label="Remove product">X</button>
+
               <div class="recipe-popup-qty-wrap">
                 <div class="recipe-popup-qty-bg"></div>
                 <input class="recipe-popup-qty-input" type="number" value="64" min="0" aria-label="Quantity for product 1" />
               </div>
+
               <div class="recipe-popup-name-wrap">
                 <div class="recipe-popup-name-bg"></div>
                 <select class="recipe-popup-name-select" aria-label="Product selection 1">
@@ -166,12 +219,15 @@
                 <div class="recipe-popup-name-caret">▼</div>
               </div>
             </div>
+
             <div class="recipe-popup-row">
               <button class="recipe-popup-remove" type="button" aria-label="Remove product">X</button>
+
               <div class="recipe-popup-qty-wrap">
                 <div class="recipe-popup-qty-bg"></div>
                 <input class="recipe-popup-qty-input" type="number" min="0" placeholder="Quantity" aria-label="Quantity for product 2" />
               </div>
+
               <div class="recipe-popup-name-wrap">
                 <div class="recipe-popup-name-bg"></div>
                 <select class="recipe-popup-name-select" aria-label="Product selection 2">
@@ -182,12 +238,15 @@
                 <div class="recipe-popup-name-caret">▼</div>
               </div>
             </div>
+
             <div class="recipe-popup-row">
               <button class="recipe-popup-remove" type="button" aria-label="Remove product">X</button>
+
               <div class="recipe-popup-qty-wrap">
                 <div class="recipe-popup-qty-bg"></div>
                 <input class="recipe-popup-qty-input" type="number" value="64" min="0" aria-label="Quantity for product 3" />
               </div>
+
               <div class="recipe-popup-name-wrap">
                 <div class="recipe-popup-name-bg"></div>
                 <select class="recipe-popup-name-select" aria-label="Product selection 3">
@@ -197,25 +256,28 @@
                 <div class="recipe-popup-name-caret">▼</div>
               </div>
             </div>
+
             <button class="recipe-popup-add-product-wrap" id="recipe-popup-add-product" type="button">
               <div class="recipe-popup-add-product-bg"></div>
               <div class="recipe-popup-add-product-text">Add Product</div>
             </button>
           </div>
         </div>
+
         <div class="recipe-popup-header">
           <div class="recipe-popup-title" id="recipe-modal-title">Add or Modify Recipe</div>
           <button
             class="recipe-popup-close"
             id="recipe-modal-close"
             type="button"
-            aria-label="Close add recipe popup"
-          >
+            aria-label="Close add recipe popup">
             X
           </button>
         </div>
+
         <div class="recipe-popup-drink-label">Drink:</div>
         <div class="recipe-popup-drink-bg"></div>
+
         <input
           class="recipe-popup-drink-input"
           id="recipe-popup-drink-input"
@@ -224,23 +286,24 @@
           aria-label="Drink selection"
           autocomplete="off"
         />
+
         <button
           class="recipe-popup-drink-trigger"
           id="recipe-popup-drink-trigger"
           type="button"
-          aria-label="Show drink suggestions"
-        >
+          aria-label="Show drink suggestions">
           ▼
         </button>
+
         <div class="recipe-popup-drink-menu hidden" id="recipe-popup-drink-menu">
           <button
             class="recipe-popup-drink-option"
             type="button"
-            data-value="Winter Melon Milk Tea"
-          >
+            data-value="Winter Melon Milk Tea">
             Winter Melon Milk Tea
           </button>
         </div>
+
         <button class="recipe-popup-update-wrap" type="button">
           <div class="recipe-popup-update-bg"></div>
           <div class="recipe-popup-update-text">Update Recipe</div>
@@ -248,174 +311,172 @@
       </div>
     </div>
   </div>
-  
+
   <script>
-  const addRecipeBtn = document.getElementById('add-recipe-btn');
-  const recipeModalOverlay = document.getElementById('recipe-modal-overlay');
-  const recipeModalClose = document.getElementById('recipe-modal-close');
-  const uploadDataBtn = document.getElementById('upload-data-btn');
-  const uploadDataInput = document.getElementById('upload-data-input');
-  const recipePopupSelects = document.querySelectorAll('.recipe-popup-name-select');
-  const recipePopupRows = document.getElementById('recipe-popup-rows');
-  const recipePopupAddProduct = document.getElementById('recipe-popup-add-product');
-  const recipePopupDrinkInput = document.getElementById('recipe-popup-drink-input');
-  const recipePopupDrinkTrigger = document.getElementById('recipe-popup-drink-trigger');
-  const recipePopupDrinkMenu = document.getElementById('recipe-popup-drink-menu');
-  const recipePopupDrinkOptions = document.querySelectorAll('.recipe-popup-drink-option');
+    const addRecipeBtn = document.getElementById('add-recipe-btn');
+    const recipeModalOverlay = document.getElementById('recipe-modal-overlay');
+    const recipeModalClose = document.getElementById('recipe-modal-close');
+    const uploadDataBtn = document.getElementById('upload-data-btn');
+    const uploadDataInput = document.getElementById('upload-data-input');
+    const recipePopupSelects = document.querySelectorAll('.recipe-popup-name-select');
+    const recipePopupRows = document.getElementById('recipe-popup-rows');
+    const recipePopupAddProduct = document.getElementById('recipe-popup-add-product');
+    const recipePopupDrinkInput = document.getElementById('recipe-popup-drink-input');
+    const recipePopupDrinkTrigger = document.getElementById('recipe-popup-drink-trigger');
+    const recipePopupDrinkMenu = document.getElementById('recipe-popup-drink-menu');
+    const recipePopupDrinkOptions = document.querySelectorAll('.recipe-popup-drink-option');
 
-  const syncRecipePopupSelectState = (selectElement) => {
-    selectElement.classList.toggle('placeholder-active', selectElement.value === '');
-  };
+    const syncRecipePopupSelectState = (selectElement) => {
+      selectElement.classList.toggle('placeholder-active', selectElement.value === '');
+    };
 
-  const setupRecipePopupSelect = (selectElement) => {
-    syncRecipePopupSelectState(selectElement);
-    selectElement.addEventListener('change', () => {
+    const setupRecipePopupSelect = (selectElement) => {
       syncRecipePopupSelectState(selectElement);
-    });
-  };
-
-  recipePopupSelects.forEach((selectElement) => {
-    setupRecipePopupSelect(selectElement);
-  });
-
-  const getRecipePopupRowCount = () =>
-    recipePopupRows ? recipePopupRows.querySelectorAll('.recipe-popup-row').length : 0;
-
-  const createRecipePopupRow = () => {
-    const rowCount = getRecipePopupRowCount() + 1;
-    const rowElement = document.createElement('div');
-    rowElement.className = 'recipe-popup-row';
-    rowElement.innerHTML = `
-      <button class="recipe-popup-remove" type="button" aria-label="Remove product">X</button>
-      <div class="recipe-popup-qty-wrap">
-        <div class="recipe-popup-qty-bg"></div>
-        <input class="recipe-popup-qty-input" type="number" min="0" placeholder="Quantity" aria-label="Quantity for product ${rowCount}" />
-      </div>
-      <div class="recipe-popup-name-wrap">
-        <div class="recipe-popup-name-bg"></div>
-        <select class="recipe-popup-name-select" aria-label="Product selection ${rowCount}">
-          <option value="" selected disabled>Product Name</option>
-          <option value="tapioca-pearls">Tapioca Pearls</option>
-          <option value="black-tea">Black Tea</option>
-        </select>
-        <div class="recipe-popup-name-caret">▼</div>
-      </div>
-    `;
-    const newSelect = rowElement.querySelector('.recipe-popup-name-select');
-    if (newSelect) {
-      setupRecipePopupSelect(newSelect);
-    }
-    return rowElement;
-  };
-
-  if (recipePopupRows && recipePopupAddProduct) {
-    recipePopupAddProduct.addEventListener('click', () => {
-      const newRow = createRecipePopupRow();
-      recipePopupRows.insertBefore(newRow, recipePopupAddProduct);
-    });
-
-    recipePopupRows.addEventListener('click', (event) => {
-      const removeButton = event.target.closest('.recipe-popup-remove');
-      if (!removeButton) {
-        return;
-      }
-
-      const rowElement = removeButton.closest('.recipe-popup-row');
-      if (rowElement) {
-        rowElement.remove();
-      }
-    });
-  }
-
-  const openRecipeDrinkMenu = () => {
-    if (!recipePopupDrinkMenu) return;
-    recipePopupDrinkMenu.classList.remove('hidden');
-  };
-
-  const closeRecipeDrinkMenu = () => {
-    if (!recipePopupDrinkMenu) return;
-    recipePopupDrinkMenu.classList.add('hidden');
-  };
-
-  if (recipePopupDrinkInput && recipePopupDrinkTrigger) {
-    recipePopupDrinkTrigger.addEventListener('click', () => {
-      recipePopupDrinkInput.focus();
-      if (recipePopupDrinkMenu.classList.contains('hidden')) {
-        openRecipeDrinkMenu();
-      } else {
-        closeRecipeDrinkMenu();
-      }
-    });
-
-    recipePopupDrinkInput.addEventListener('focus', () => {
-      openRecipeDrinkMenu();
-    });
-
-    recipePopupDrinkInput.addEventListener('input', () => {
-      const currentValue = recipePopupDrinkInput.value.trim().toLowerCase();
-      recipePopupDrinkOptions.forEach((optionElement) => {
-        const optionValue = optionElement.dataset.value.toLowerCase();
-        const isVisible = !currentValue || optionValue.includes(currentValue);
-        optionElement.classList.toggle('hidden', !isVisible);
+      selectElement.addEventListener('change', () => {
+        syncRecipePopupSelectState(selectElement);
       });
-      openRecipeDrinkMenu();
+    };
+
+    recipePopupSelects.forEach((selectElement) => {
+      setupRecipePopupSelect(selectElement);
     });
 
-    recipePopupDrinkInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
+    const getRecipePopupRowCount = () =>
+      recipePopupRows ? recipePopupRows.querySelectorAll('.recipe-popup-row').length : 0;
+
+    const createRecipePopupRow = () => {
+      const rowCount = getRecipePopupRowCount() + 1;
+      const rowElement = document.createElement('div');
+      rowElement.className = 'recipe-popup-row';
+      rowElement.innerHTML = `
+        <button class="recipe-popup-remove" type="button" aria-label="Remove product">X</button>
+        <div class="recipe-popup-qty-wrap">
+          <div class="recipe-popup-qty-bg"></div>
+          <input class="recipe-popup-qty-input" type="number" min="0" placeholder="Quantity" aria-label="Quantity for product ${rowCount}" />
+        </div>
+        <div class="recipe-popup-name-wrap">
+          <div class="recipe-popup-name-bg"></div>
+          <select class="recipe-popup-name-select" aria-label="Product selection ${rowCount}">
+            <option value="" selected disabled>Product Name</option>
+            <option value="tapioca-pearls">Tapioca Pearls</option>
+            <option value="black-tea">Black Tea</option>
+          </select>
+          <div class="recipe-popup-name-caret">▼</div>
+        </div>
+      `;
+      const newSelect = rowElement.querySelector('.recipe-popup-name-select');
+      if (newSelect) {
+        setupRecipePopupSelect(newSelect);
+      }
+      return rowElement;
+    };
+
+    if (recipePopupRows && recipePopupAddProduct) {
+      recipePopupAddProduct.addEventListener('click', () => {
+        const newRow = createRecipePopupRow();
+        recipePopupRows.insertBefore(newRow, recipePopupAddProduct);
+      });
+
+      recipePopupRows.addEventListener('click', (event) => {
+        const removeButton = event.target.closest('.recipe-popup-remove');
+        if (!removeButton) return;
+
+        const rowElement = removeButton.closest('.recipe-popup-row');
+        if (rowElement) {
+          rowElement.remove();
+        }
+      });
+    }
+
+    const openRecipeDrinkMenu = () => {
+      if (!recipePopupDrinkMenu) return;
+      recipePopupDrinkMenu.classList.remove('hidden');
+    };
+
+    const closeRecipeDrinkMenu = () => {
+      if (!recipePopupDrinkMenu) return;
+      recipePopupDrinkMenu.classList.add('hidden');
+    };
+
+    if (recipePopupDrinkInput && recipePopupDrinkTrigger) {
+      recipePopupDrinkTrigger.addEventListener('click', () => {
+        recipePopupDrinkInput.focus();
+        if (recipePopupDrinkMenu.classList.contains('hidden')) {
+          openRecipeDrinkMenu();
+        } else {
+          closeRecipeDrinkMenu();
+        }
+      });
+
+      recipePopupDrinkInput.addEventListener('focus', () => {
+        openRecipeDrinkMenu();
+      });
+
+      recipePopupDrinkInput.addEventListener('input', () => {
+        const currentValue = recipePopupDrinkInput.value.trim().toLowerCase();
+        recipePopupDrinkOptions.forEach((optionElement) => {
+          const optionValue = optionElement.dataset.value.toLowerCase();
+          const isVisible = !currentValue || optionValue.includes(currentValue);
+          optionElement.classList.toggle('hidden', !isVisible);
+        });
+        openRecipeDrinkMenu();
+      });
+
+      recipePopupDrinkInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeRecipeDrinkMenu();
+        }
+      });
+    }
+
+    recipePopupDrinkOptions.forEach((optionElement) => {
+      optionElement.addEventListener('click', () => {
+        if (recipePopupDrinkInput) {
+          recipePopupDrinkInput.value = optionElement.dataset.value;
+        }
         closeRecipeDrinkMenu();
-      }
+      });
     });
-  }
 
-  recipePopupDrinkOptions.forEach((optionElement) => {
-    optionElement.addEventListener('click', () => {
-      if (recipePopupDrinkInput) {
-        recipePopupDrinkInput.value = optionElement.dataset.value;
-      }
-      closeRecipeDrinkMenu();
-    });
-  });
+    if (addRecipeBtn && recipeModalOverlay) {
+      addRecipeBtn.addEventListener('click', () => {
+        recipeModalOverlay.classList.remove('hidden');
+        recipeModalOverlay.setAttribute('aria-hidden', 'false');
+      });
+    }
 
-  if (addRecipeBtn && recipeModalOverlay) {
-    addRecipeBtn.addEventListener('click', () => {
-      recipeModalOverlay.classList.remove('hidden');
-      recipeModalOverlay.setAttribute('aria-hidden', 'false');
-    });
-  }
-
-  if (recipeModalClose && recipeModalOverlay) {
-    recipeModalClose.addEventListener('click', () => {
-      recipeModalOverlay.classList.add('hidden');
-      recipeModalOverlay.setAttribute('aria-hidden', 'true');
-    });
-  }
-
-  if (recipeModalOverlay) {
-    recipeModalOverlay.addEventListener('click', (event) => {
-      if (event.target === recipeModalOverlay) {
+    if (recipeModalClose && recipeModalOverlay) {
+      recipeModalClose.addEventListener('click', () => {
         recipeModalOverlay.classList.add('hidden');
         recipeModalOverlay.setAttribute('aria-hidden', 'true');
+      });
+    }
+
+    if (recipeModalOverlay) {
+      recipeModalOverlay.addEventListener('click', (event) => {
+        if (event.target === recipeModalOverlay) {
+          recipeModalOverlay.classList.add('hidden');
+          recipeModalOverlay.setAttribute('aria-hidden', 'true');
+        }
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      const clickedInsideDrinkField =
+        recipePopupDrinkInput?.contains(event.target) ||
+        recipePopupDrinkTrigger?.contains(event.target) ||
+        recipePopupDrinkMenu?.contains(event.target);
+
+      if (!clickedInsideDrinkField) {
+        closeRecipeDrinkMenu();
       }
     });
-  }
 
-  document.addEventListener('click', (event) => {
-    const clickedInsideDrinkField =
-      recipePopupDrinkInput?.contains(event.target) ||
-      recipePopupDrinkTrigger?.contains(event.target) ||
-      recipePopupDrinkMenu?.contains(event.target);
-
-    if (!clickedInsideDrinkField) {
-      closeRecipeDrinkMenu();
+    if (uploadDataBtn && uploadDataInput) {
+      uploadDataBtn.addEventListener('click', () => {
+        uploadDataInput.click();
+      });
     }
-  });
-
-  if (uploadDataBtn && uploadDataInput) {
-    uploadDataBtn.addEventListener('click', () => {
-      uploadDataInput.click();
-    });
-  }
   </script>
 </body>
 </html>
