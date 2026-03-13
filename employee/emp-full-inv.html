@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="./vars.css" />
+  <link rel="stylesheet" href="./style.css" />
+
+  <style>
+    a,
+    button,
+    input,
+    select,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border: none;
+      text-decoration: none;
+      background: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    menu,
+    ol,
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <title>Full Inventory View</title>
+</head>
+<body>
+  <div class="employee-third-page">
+    <!-- Header -->
+    <div class="rectangle-5"></div>
+    <div class="page-title">Full Inventory View</div>
+
+    <!-- Sidebar -->
+    <img class="rectangle-1" src="rectangle-10.svg" alt="" />
+    <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo" />
+
+    <div class="sidebar-nav">
+      <button class="nav-btn active">Full Inventory View</button>
+
+      <button class="nav-btn"
+        onclick="window.location.href='../MAN-AUDIT-1/man-audit-1.html'">
+        Inventory Reconciliation
+      </button>
+
+      <button class="nav-btn"
+        onclick="window.location.href='../MAN-AUDIT-4/man-audit-4.html'">
+        Activity Log
+      </button>
+
+      <button class="nav-btn">
+        Dashboards &amp; Analytics
+      </button>
+
+      <button class="nav-btn"
+        onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
+        Predictive Reports
+      </button>
+
+      <button class="nav-btn"
+        onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">
+        Manage Users
+      </button>
+
+      <button class="nav-btn two-line"
+        onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
+        Purchase Order<br />Management
+      </button>
+    </div>
+
+    <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
+
+    <!-- Main inventory section -->
+    <div class="inventory-panel">
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input type="text" placeholder="Ingredient" />
+      </div>
+
+      <div class="table-header">
+        <div>Ingredient</div>
+        <div>System Qty</div>
+        <div>Last Updated</div>
+      </div>
+
+      <div class="inventory-rows">
+        <div class="inventory-row">
+          <button class="ingredient-link"
+            onclick="openPopup('Tapioca Pearls','42 Units','2 hours ago','24','02/26/2026','11:05 AM')">
+            Tapioca Pearls
+          </button>
+          <div>14</div>
+          <div>03/02/2026, 02:15pm</div>
+        </div>
+
+        <div class="inventory-row">
+          <button class="ingredient-link"
+            onclick="openPopup('Mango Syrup','18 Units','5 hours ago','10','03/01/2026','09:10 AM')">
+            Mango Syrup
+          </button>
+          <div>3</div>
+          <div>03/02/2026, 02:15pm</div>
+        </div>
+
+        <div class="inventory-row">
+          <button class="ingredient-link"
+            onclick="openPopup('Chia Seeds','20 Units','1 day ago','8','03/05/2026','08:20 PM')">
+            Chia Seeds
+          </button>
+          <div>20</div>
+          <div>03/05/2026, 08:20pm</div>
+        </div>
+
+        <div class="inventory-row">
+          <button class="ingredient-link"
+            onclick="openPopup('Large Cups','12 Units','3 days ago','15','02/05/2026','03:20 PM')">
+            Large cups
+          </button>
+          <div>12</div>
+          <div>02/05/2026, 03:20pm</div>
+        </div>
+
+        <div class="inventory-row">
+          <button class="ingredient-link"
+            onclick="openPopup('Hot Med Cups','20 Units','4 days ago','11','04/10/2026','12:20 PM')">
+            Hot med cups
+          </button>
+          <div>20</div>
+          <div>04/10/2026, 12:20pm</div>
+        </div>
+
+        <div class="inventory-row">
+          <button class="ingredient-link"
+            onclick="openPopup('Milk Powder','4 Units','6 days ago','6','02/05/2026','07:20 PM')">
+            Milk Powder
+          </button>
+          <div>4</div>
+          <div>02/05/2026, 07:20pm</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popup Overlay -->
+    <div id="inventoryPopup" class="popup-overlay">
+      <div class="popup-card">
+        <button class="close-popup" onclick="closePopup()">×</button>
+
+        <div class="popup-ingredient-bar">
+          <span id="popupIngredientName">Tapioca Pearls</span>
+          <span class="popup-arrow">⌄</span>
+        </div>
+
+        <div class="popup-info-box">
+          <div class="popup-info-top">
+            <div class="popup-stock" id="popupStock">Current Stocks: 42 Units</div>
+            <div class="popup-divider"></div>
+            <div class="popup-updated" id="popupUpdated">Last Updated: 2 hours ago</div>
+          </div>
+
+          <div class="popup-toggle-row">
+            <button class="inventory-btn active-btn">Add Inventory</button>
+            <button class="inventory-btn inactive-btn">Subtract Inventory</button>
+          </div>
+        </div>
+
+        <div class="popup-entry-box">
+          <div class="popup-entry-row">
+            <div class="popup-label">Quantity</div>
+            <input type="text" id="popupQuantity" value="24" />
+          </div>
+
+          <div class="popup-time-row">
+            <div class="popup-label">Timestamp:</div>
+            <div id="popupDate">02/26/2026</div>
+            <div id="popupTime">11:05 AM</div>
+          </div>
+        </div>
+
+        <button class="submit-btn">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openPopup(name, stock, updated, quantity, date, time) {
+      document.getElementById("popupIngredientName").innerText = name;
+      document.getElementById("popupStock").innerText = "Current Stocks: " + stock;
+      document.getElementById("popupUpdated").innerText = "Last Updated: " + updated;
+      document.getElementById("popupQuantity").value = quantity;
+      document.getElementById("popupDate").innerText = date;
+      document.getElementById("popupTime").innerText = time;
+
+      document.getElementById("inventoryPopup").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("inventoryPopup").style.display = "none";
+    }
+
+    window.onclick = function (event) {
+      const popup = document.getElementById("inventoryPopup");
+      if (event.target === popup) {
+        closePopup();
+      }
+    };
+  </script>
+</body>
+</html>

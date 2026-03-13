@@ -1,0 +1,448 @@
+:root {
+  --design-width: 1440;
+  --design-height: 1024;
+  --scale: min(
+    calc(100vw / (var(--design-width) * 1px)),
+    calc(100vh / (var(--design-height) * 1px))
+  );
+}
+
+.employee-third-page,
+.employee-third-page * {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: #f0e6dd;
+  font-family: "Inria Serif", serif;
+}
+
+.employee-third-page {
+  background: #f0e6dd;
+  border: 1px solid #000000;
+  width: 1440px;
+  height: 1024px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--scale));
+  transform-origin: center center;
+}
+
+/* SIDEBAR */
+.rectangle-1 {
+  width: 270px;
+  height: 1024px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  object-fit: fill;
+}
+
+.kft-logo {
+  width: 270px;
+  height: 108px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  object-fit: cover;
+}
+
+/* NAVBAR */
+.sidebar-nav {
+  position: absolute;
+  left: 14px;
+  top: 170px;
+  width: 242px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.nav-btn {
+  width: 242px;
+  min-height: 62px;
+  padding: 0 18px;
+  border-radius: 38px;
+  background: transparent;
+  color: #f0e6dd;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.15;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+  display: flex;
+  align-items: center;
+}
+
+.nav-btn.two-line {
+  min-height: 74px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  align-items: flex-start;
+}
+
+.nav-btn.active,
+.nav-btn:hover {
+  background: #f0e6dd;
+  color: #964f4c;
+}
+
+.nav-btn:focus-visible {
+  outline: 2px solid #e9d9cc;
+  outline-offset: 2px;
+}
+
+/* LOGOUT */
+.logout-btn {
+  position: absolute;
+  left: 88px;
+  top: 951px;
+  width: 95px;
+  height: 52px;
+  border-radius: 28px;
+  background: #e9d9cc;
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-btn:hover {
+  filter: brightness(0.98);
+}
+
+/* HEADER */
+.rectangle-5 {
+  background: #e9d9cc;
+  border-radius: 36px;
+  width: 1140px;
+  height: 112px;
+  position: absolute;
+  left: 270px;
+  top: 21px;
+}
+
+.page-title {
+  color: #000000;
+  text-align: center;
+  font-family: "Inria Serif", serif;
+  font-size: 34px;
+  font-weight: 700;
+  position: absolute;
+  left: 270px;
+  top: 62px;
+  width: 1140px;
+}
+
+/* MAIN INVENTORY PANEL */
+.inventory-panel {
+  position: absolute;
+  left: 410px;
+  top: 220px;
+  width: 891px;
+  height: 691px;
+  background: #e9d9cc;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.18);
+  padding: 56px 76px;
+}
+
+.search-box {
+  width: 360px;
+  height: 50px;
+  border-radius: 28px;
+  background: #f6ebe1;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.search-icon {
+  color: rgba(150, 79, 76, 0.55);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.search-box input {
+  width: 100%;
+  font-family: "Inria Serif", serif;
+  font-size: 24px;
+  color: #964f4c;
+  outline: none;
+  background: transparent;
+}
+
+.search-box input::placeholder {
+  color: rgba(150, 79, 76, 0.55);
+}
+
+.table-header {
+  width: 100%;
+  height: 78px;
+  background: #964f4c;
+  color: #ffffff;
+  border-radius: 0;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1fr;
+  align-items: center;
+  padding: 0 24px;
+  font-family: "Inria Serif", serif;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.inventory-rows {
+  width: 100%;
+  padding-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.inventory-row {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1fr;
+  align-items: center;
+  padding: 0 6px;
+  color: #000000;
+  font-family: "Inria Serif", serif;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.ingredient-link {
+  color: #000000;
+  font-family: "Inria Serif", serif;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: color 0.18s ease;
+}
+
+.ingredient-link:hover {
+  color: #964f4c;
+}
+
+/* POPUP */
+.popup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popup-card {
+  width: 1011px;
+  min-height: 621px;
+  background: #e9d9cc;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.18);
+  position: relative;
+  padding: 58px 38px 32px;
+}
+
+.close-popup {
+  position: absolute;
+  right: 24px;
+  top: 14px;
+  font-size: 34px;
+  line-height: 1;
+  color: #964f4c;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+}
+
+.popup-ingredient-bar {
+  width: 927px;
+  height: 61px;
+  background: #ffffff;
+  border-radius: 20px;
+  margin-bottom: 31px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+}
+
+.popup-ingredient-bar span {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.popup-arrow {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.popup-info-box {
+  width: 927px;
+  height: 166px;
+  background: #ffffff;
+  border-radius: 20px;
+  position: relative;
+  margin-bottom: 31px;
+}
+
+.popup-info-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 87px;
+  padding: 0 24px;
+  position: relative;
+}
+
+.popup-stock,
+.popup-updated {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.popup-divider {
+  width: 1px;
+  height: 60px;
+  background: #964f4c;
+  position: absolute;
+  left: 50%;
+  top: 14px;
+}
+
+.popup-info-box::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 87px;
+  width: 100%;
+  height: 1px;
+  background: #964f4c;
+}
+
+.popup-toggle-row {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-top: 24px;
+}
+
+.inventory-btn {
+  height: 53px;
+  font-family: "Inria Serif", serif;
+  font-size: 24px;
+  font-weight: 400;
+  border-radius: 40px;
+  cursor: pointer;
+}
+
+.active-btn {
+  width: 293px;
+  background: #964f4c;
+  color: #ffffff;
+  margin-right: -18px;
+  z-index: 2;
+}
+
+.inactive-btn {
+  width: 333px;
+  background: #e9d9cc;
+  color: #964f4c;
+}
+
+.popup-entry-box {
+  width: 927px;
+  height: 144px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 23px 22px;
+  margin-bottom: 33px;
+}
+
+.popup-entry-row {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  margin-bottom: 26px;
+}
+
+.popup-label {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 400;
+  min-width: 148px;
+}
+
+#popupQuantity {
+  width: 567px;
+  height: 53px;
+  border-radius: 40px;
+  background: #f0e6dd;
+  text-align: center;
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+  outline: none;
+}
+
+.popup-time-row {
+  display: flex;
+  align-items: center;
+  gap: 38px;
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.submit-btn {
+  display: block;
+  margin: 0 auto;
+  width: 213px;
+  height: 63px;
+  border-radius: 40px;
+  background: #964f4c;
+  color: #ffffff;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit-btn:hover,
+.active-btn:hover {
+  background: #874946;
+}
+
+.inactive-btn:hover {
+  filter: brightness(0.98);
+}
