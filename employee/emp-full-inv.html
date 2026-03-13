@@ -95,9 +95,20 @@
     <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
 
     <div class="inventory-panel">
-      <div class="search-box">
-        <span class="search-icon">⌕</span>
-        <input type="text" placeholder="Ingredient" />
+      <div class="inventory-topbar">
+        <div class="search-box">
+          <span class="search-icon">⌕</span>
+          <input type="text" placeholder="Ingredient" />
+        </div>
+
+        <div class="inventory-action-buttons">
+          <button type="button" class="page-action-btn solid-btn" onclick="openAddIngredientPopup()">
+            Add Ingredient
+          </button>
+          <button type="button" class="page-action-btn outline-btn" onclick="openDeleteIngredientPopup()">
+            Delete Ingredient
+          </button>
+        </div>
       </div>
 
       <div class="table-header">
@@ -106,8 +117,8 @@
         <div>Last Updated</div>
       </div>
 
-      <div class="inventory-rows">
-        <div class="inventory-row">
+      <div class="inventory-rows" id="inventoryRows">
+        <div class="inventory-row" id="row-tapioca">
           <button
             class="ingredient-link"
             type="button"
@@ -118,7 +129,7 @@
           <div id="updated-tapioca">03/02/2026, 02:15pm</div>
         </div>
 
-        <div class="inventory-row">
+        <div class="inventory-row" id="row-mango">
           <button
             class="ingredient-link"
             type="button"
@@ -129,7 +140,7 @@
           <div id="updated-mango">03/02/2026, 02:15pm</div>
         </div>
 
-        <div class="inventory-row">
+        <div class="inventory-row" id="row-chia">
           <button
             class="ingredient-link"
             type="button"
@@ -140,7 +151,7 @@
           <div id="updated-chia">03/05/2026, 08:20pm</div>
         </div>
 
-        <div class="inventory-row">
+        <div class="inventory-row" id="row-largecups">
           <button
             class="ingredient-link"
             type="button"
@@ -151,7 +162,7 @@
           <div id="updated-largecups">02/05/2026, 03:20pm</div>
         </div>
 
-        <div class="inventory-row">
+        <div class="inventory-row" id="row-hotmedcups">
           <button
             class="ingredient-link"
             type="button"
@@ -162,7 +173,7 @@
           <div id="updated-hotmedcups">04/10/2026, 12:20pm</div>
         </div>
 
-        <div class="inventory-row">
+        <div class="inventory-row" id="row-milkpowder">
           <button
             class="ingredient-link"
             type="button"
@@ -173,7 +184,7 @@
           <div id="updated-milkpowder">02/05/2026, 07:20pm</div>
         </div>
 
-        <div class="inventory-row">
+        <div class="inventory-row" id="row-brownsugar">
           <button
             class="ingredient-link"
             type="button"
@@ -184,7 +195,7 @@
           <div id="updated-brownsugar">03/01/2026, 10:10am</div>
         </div>
 
-        <div class="inventory-row">
+        <div class="inventory-row" id="row-straws">
           <button
             class="ingredient-link"
             type="button"
@@ -195,7 +206,7 @@
           <div id="updated-straws">03/03/2026, 11:45am</div>
         </div>
 
-        <div class="inventory-row">
+        <div class="inventory-row" id="row-lycheejelly">
           <button
             class="ingredient-link"
             type="button"
@@ -208,6 +219,7 @@
       </div>
     </div>
 
+    <!-- Inventory update popup -->
     <div id="inventoryPopup" class="popup-overlay">
       <div class="popup-card">
         <button class="close-popup" type="button" onclick="closePopup()">×</button>
@@ -259,6 +271,43 @@
       </div>
     </div>
 
+    <!-- Add ingredient popup -->
+    <div id="addIngredientPopup" class="popup-overlay">
+      <div class="small-popup-card">
+        <button class="close-popup" type="button" onclick="closeAddIngredientPopup()">×</button>
+        <div class="small-popup-title">Add Ingredient</div>
+
+        <div class="small-popup-form">
+          <label>Ingredient Name</label>
+          <input type="text" id="newIngredientName" placeholder="Enter ingredient name" />
+
+          <label>Starting Quantity</label>
+          <input type="number" id="newIngredientQty" placeholder="Enter quantity" min="0" />
+        </div>
+
+        <button type="button" class="submit-btn small-submit-btn" onclick="submitAddIngredient()">
+          Add
+        </button>
+      </div>
+    </div>
+
+    <!-- Delete ingredient popup -->
+    <div id="deleteIngredientPopup" class="popup-overlay">
+      <div class="small-popup-card">
+        <button class="close-popup" type="button" onclick="closeDeleteIngredientPopup()">×</button>
+        <div class="small-popup-title">Delete Ingredient</div>
+
+        <div class="small-popup-form">
+          <label>Select Ingredient</label>
+          <select id="deleteIngredientSelect"></select>
+        </div>
+
+        <button type="button" class="submit-btn small-submit-btn" onclick="submitDeleteIngredient()">
+          Delete
+        </button>
+      </div>
+    </div>
+
     <div id="toastNotification" class="toast-notification"></div>
   </div>
 
@@ -266,12 +315,9 @@
     let currentIngredientKey = "";
     let currentStock = 0;
     let currentMode = "add";
+    let ingredientCounter = 0;
 
-    function openPopup(name, stock, updated, key) {
-      currentIngredientKey = key;
-      currentStock = Number(stock);
-      currentMode = "add";
-
+    function getNowParts() {
       const now = new Date();
       const formattedDate = `${String(now.getMonth() + 1).padStart(2, "0")}/${String(now.getDate()).padStart(2, "0")}/${now.getFullYear()}`;
       const hours = now.getHours();
@@ -279,6 +325,15 @@
       const ampm = hours >= 12 ? "PM" : "AM";
       const displayHour = hours % 12 === 0 ? 12 : hours % 12;
       const formattedTime = `${displayHour}:${minutes} ${ampm}`;
+      return { formattedDate, formattedTime };
+    }
+
+    function openPopup(name, stock, updated, key) {
+      currentIngredientKey = key;
+      currentStock = Number(stock);
+      currentMode = "add";
+
+      const { formattedDate, formattedTime } = getNowParts();
 
       document.getElementById("popupIngredientName").innerText = name;
       document.getElementById("popupStock").innerText = `Current Stocks: ${currentStock} Units`;
@@ -350,6 +405,97 @@
       closePopup();
     }
 
+    function openAddIngredientPopup() {
+      document.getElementById("newIngredientName").value = "";
+      document.getElementById("newIngredientQty").value = "";
+      document.getElementById("addIngredientPopup").style.display = "flex";
+    }
+
+    function closeAddIngredientPopup() {
+      document.getElementById("addIngredientPopup").style.display = "none";
+    }
+
+    function submitAddIngredient() {
+      const name = document.getElementById("newIngredientName").value.trim();
+      const qty = Number(document.getElementById("newIngredientQty").value);
+
+      if (!name) {
+        showToast("Please enter an ingredient name.");
+        return;
+      }
+
+      if (isNaN(qty) || qty < 0) {
+        showToast("Please enter a valid starting quantity.");
+        return;
+      }
+
+      const key = "custom" + ingredientCounter++;
+      const { formattedDate, formattedTime } = getNowParts();
+      const updatedText = `${formattedDate}, ${formattedTime.toLowerCase()}`;
+
+      const row = document.createElement("div");
+      row.className = "inventory-row";
+      row.id = `row-${key}`;
+      row.innerHTML = `
+        <button
+          class="ingredient-link"
+          type="button"
+          onclick="openPopup('${name.replace(/'/g, "\\'")}', ${qty}, '${updatedText}', '${key}')">
+          ${name}
+        </button>
+        <div id="qty-${key}">${qty}</div>
+        <div id="updated-${key}">${updatedText}</div>
+      `;
+
+      document.getElementById("inventoryRows").appendChild(row);
+      updateDeleteIngredientOptions();
+      showToast(`${name} was added to inventory.`);
+      closeAddIngredientPopup();
+    }
+
+    function openDeleteIngredientPopup() {
+      updateDeleteIngredientOptions();
+      document.getElementById("deleteIngredientPopup").style.display = "flex";
+    }
+
+    function closeDeleteIngredientPopup() {
+      document.getElementById("deleteIngredientPopup").style.display = "none";
+    }
+
+    function updateDeleteIngredientOptions() {
+      const select = document.getElementById("deleteIngredientSelect");
+      select.innerHTML = "";
+
+      const rows = document.querySelectorAll(".inventory-row");
+      rows.forEach((row) => {
+        const button = row.querySelector(".ingredient-link");
+        if (button) {
+          const option = document.createElement("option");
+          option.value = row.id;
+          option.textContent = button.textContent.trim();
+          select.appendChild(option);
+        }
+      });
+    }
+
+    function submitDeleteIngredient() {
+      const select = document.getElementById("deleteIngredientSelect");
+      const rowId = select.value;
+
+      if (!rowId) {
+        showToast("Please select an ingredient to delete.");
+        return;
+      }
+
+      const row = document.getElementById(rowId);
+      const ingredientName = row.querySelector(".ingredient-link").textContent.trim();
+
+      row.remove();
+      updateDeleteIngredientOptions();
+      showToast(`${ingredientName} was deleted from inventory.`);
+      closeDeleteIngredientPopup();
+    }
+
     function showToast(message) {
       const toast = document.getElementById("toastNotification");
       toast.innerText = message;
@@ -361,9 +507,14 @@
     }
 
     window.onclick = function (event) {
-      const popup = document.getElementById("inventoryPopup");
-      if (event.target === popup) {
+      if (event.target === document.getElementById("inventoryPopup")) {
         closePopup();
+      }
+      if (event.target === document.getElementById("addIngredientPopup")) {
+        closeAddIngredientPopup();
+      }
+      if (event.target === document.getElementById("deleteIngredientPopup")) {
+        closeDeleteIngredientPopup();
       }
     };
   </script>
