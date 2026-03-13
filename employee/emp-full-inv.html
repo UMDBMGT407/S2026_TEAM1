@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link rel="stylesheet" href="./vars.css" />
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./CSS/style-emp.css" />
 
   <style>
     a,
@@ -52,13 +52,15 @@
     <div class="sidebar-nav">
       <button class="nav-btn active">Full Inventory View</button>
 
-      <button class="nav-btn"
-        onclick="window.location.href='../MAN-AUDIT-1/man-audit-1.html'">
+      <button
+        class="nav-btn"
+        onclick="window.location.href='../audit/man-audit-1.html'">
         Inventory Reconciliation
       </button>
 
-      <button class="nav-btn"
-        onclick="window.location.href='../MAN-AUDIT-4/man-audit-4.html'">
+      <button
+        class="nav-btn"
+        onclick="window.location.href='../audit/man-audit-4.html'">
         Activity Log
       </button>
 
@@ -66,25 +68,28 @@
         Dashboards &amp; Analytics
       </button>
 
-      <button class="nav-btn"
-        onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
+      <button
+        class="nav-btn"
+        onclick="window.location.href='../predictive/man-predictive-7.html'">
         Predictive Reports
       </button>
 
-      <button class="nav-btn"
-        onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">
+      <button
+        class="nav-btn"
+        onclick="window.location.href='../manage-users/user1.html'">
         Manage Users
       </button>
 
-      <button class="nav-btn two-line"
-        onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
+      <button
+        class="nav-btn two-line"
+        onclick="window.location.href='../Purchase%20Order%20Management/purchase_order_info.html'">
         Purchase Order<br />Management
       </button>
     </div>
 
-    <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
+    <a href="../index.html" class="logout-btn">Logout</a>
 
-    <!-- Main inventory section -->
+    <!-- Main inventory card -->
     <div class="inventory-panel">
       <div class="search-box">
         <span class="search-icon">⌕</span>
@@ -99,7 +104,8 @@
 
       <div class="inventory-rows">
         <div class="inventory-row">
-          <button class="ingredient-link"
+          <button
+            class="ingredient-link"
             onclick="openPopup('Tapioca Pearls','42 Units','2 hours ago','24','02/26/2026','11:05 AM')">
             Tapioca Pearls
           </button>
@@ -108,7 +114,8 @@
         </div>
 
         <div class="inventory-row">
-          <button class="ingredient-link"
+          <button
+            class="ingredient-link"
             onclick="openPopup('Mango Syrup','18 Units','5 hours ago','10','03/01/2026','09:10 AM')">
             Mango Syrup
           </button>
@@ -117,7 +124,8 @@
         </div>
 
         <div class="inventory-row">
-          <button class="ingredient-link"
+          <button
+            class="ingredient-link"
             onclick="openPopup('Chia Seeds','20 Units','1 day ago','8','03/05/2026','08:20 PM')">
             Chia Seeds
           </button>
@@ -126,7 +134,8 @@
         </div>
 
         <div class="inventory-row">
-          <button class="ingredient-link"
+          <button
+            class="ingredient-link"
             onclick="openPopup('Large Cups','12 Units','3 days ago','15','02/05/2026','03:20 PM')">
             Large cups
           </button>
@@ -135,7 +144,8 @@
         </div>
 
         <div class="inventory-row">
-          <button class="ingredient-link"
+          <button
+            class="ingredient-link"
             onclick="openPopup('Hot Med Cups','20 Units','4 days ago','11','04/10/2026','12:20 PM')">
             Hot med cups
           </button>
@@ -144,7 +154,8 @@
         </div>
 
         <div class="inventory-row">
-          <button class="ingredient-link"
+          <button
+            class="ingredient-link"
             onclick="openPopup('Milk Powder','4 Units','6 days ago','6','02/05/2026','07:20 PM')">
             Milk Powder
           </button>
@@ -154,7 +165,7 @@
       </div>
     </div>
 
-    <!-- Popup Overlay -->
+    <!-- Popup -->
     <div id="inventoryPopup" class="popup-overlay">
       <div class="popup-card">
         <button class="close-popup" onclick="closePopup()">×</button>
@@ -172,8 +183,8 @@
           </div>
 
           <div class="popup-toggle-row">
-            <button class="inventory-btn active-btn">Add Inventory</button>
-            <button class="inventory-btn inactive-btn">Subtract Inventory</button>
+            <button type="button" class="inventory-btn active-btn">Add Inventory</button>
+            <button type="button" class="inventory-btn inactive-btn">Subtract Inventory</button>
           </div>
         </div>
 
@@ -184,13 +195,13 @@
           </div>
 
           <div class="popup-time-row">
-            <div class="popup-label">Timestamp:</div>
+            <div class="popup-label timestamp-label">Timestamp:</div>
             <div id="popupDate">02/26/2026</div>
             <div id="popupTime">11:05 AM</div>
           </div>
         </div>
 
-        <button class="submit-btn">Submit</button>
+        <button type="button" class="submit-btn">Submit</button>
       </div>
     </div>
   </div>
@@ -203,7 +214,6 @@
       document.getElementById("popupQuantity").value = quantity;
       document.getElementById("popupDate").innerText = date;
       document.getElementById("popupTime").innerText = time;
-
       document.getElementById("inventoryPopup").style.display = "flex";
     }
 
