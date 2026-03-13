@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../css/vars.css">
   <link rel="stylesheet" href="../css/style.css">
@@ -132,6 +132,7 @@ top:8px;
 font-size:14px;
 color:#8b4a44;
 }
+
 .search-box2{
 position:relative;
 }
@@ -145,14 +146,18 @@ position:relative;
     <img class="main-rectangle" src="../Images/main-rectangle0.svg" />
     <img class="inner-rec" src="../Images/inner-rec0.svg" />
     <div class="manage-users2">Manage Users</div>
+
     <div class="search-box2">
-  <span class="div-span2">⌕</span>
-  <input class="fakeSearch" type="text" placeholder="Name">
-</div>
+      <span class="div-span2">⌕</span>
+      <input class="fakeSearch" type="text" placeholder="Name">
+    </div>
+
     <div class="add-new-user-rectangle"></div>
-<div class="add-new-user" id="openPopup">+ Add New User</div>    
-<img class="lines" src="../Images/lines0.svg" />
+    <div class="add-new-user" id="openPopup">+ Add New User</div>    
+
+    <img class="lines" src="../Images/lines0.svg" />
     <div class="rectangle-9"></div>
+
     <div class="status-box">
       <div class="frame-2">
         <div class="name2">Name</div>
@@ -161,6 +166,7 @@ position:relative;
         <div class="status">Status</div>
       </div>
     </div>
+
     <div class="name-1">
       <div class="frame-2">
         <div class="toalima-t">Toalima T</div>
@@ -169,6 +175,7 @@ position:relative;
         <div class="active">Active</div>
       </div>
     </div>
+
     <div class="name-2">
       <div class="frame-2">
         <div class="medhar-p">Medhar P</div>
@@ -177,6 +184,7 @@ position:relative;
         <div class="active">Active</div>
       </div>
     </div>
+
     <div class="name-3">
       <div class="frame-2">
         <div class="yinmin-l">Yinmin L</div>
@@ -185,88 +193,94 @@ position:relative;
         <div class="active">Active</div>
       </div>
     </div>
+
     <div class="name-4" id="newUserRow" style="display:none;">
-  <div class="frame-2">
-    <div id="newName"></div>
-    <div id="newRole"></div>
-    <div id="newPhone"></div>
-    <div id="newStatus"></div>
-  </div>
-</div>
-<div id="popupForm">
-<div class="popup-box">
-
-<div id="closePopup">✕</div>
-
-<h4 style="margin-bottom:20px;">Add New User</h4>
-
-<label>Full Name</label>
-<input id="nameInput" placeholder="First, Last Initial">
-
-<label>Phone Number</label>
-<input id="phoneInput" placeholder="(333)-XXX-XXXX">
-
-<label>Role</label>
-<select id="roleInput">
-<option>Employee</option>
-<option>Shift Lead</option>
-<option>Manager</option>
-</select>
-
-<button id="addUser">Add User</button>
-
-</div>
-</div>
-<img class="rectangle-1" src="../Images/rectangle-10.svg" />
-<img class="kft-logo" src="../Images/kft-logo0.png" />    <div class="rectangle-8"></div>
-    <div class="logout">Logout</div>
-    <div class="rectangle-6"></div>
-    <div class="navigation-bar">
-      <div class="full-inventory-view">Full Inventory View</div>
-      <div class="inventory-reconciliation">Inventory Reconciliation</div>
-      <div class="activity-log">Activity Log</div>
-      <div class="dashboards-analytics">Dashboards &amp; Analytics</div>
-      <div class="predictive-reports">Predictive Reports</div>
-      <div class="manage-users3">Manage Users</div>
-      <div class="purchase-order-management">Purchase Order Management</div>
+      <div class="frame-2">
+        <div id="newName"></div>
+        <div id="newRole"></div>
+        <div id="newPhone"></div>
+        <div id="newStatus"></div>
+      </div>
     </div>
+
+    <div id="popupForm">
+      <div class="popup-box">
+        <div id="closePopup">✕</div>
+
+        <h4 style="margin-bottom:20px;">Add New User</h4>
+
+        <label>Full Name</label>
+        <input id="nameInput" placeholder="First, Last Initial">
+
+        <label>Phone Number</label>
+        <input id="phoneInput" placeholder="(333)-XXX-XXXX">
+
+        <label>Role</label>
+        <select id="roleInput">
+          <option>Employee</option>
+          <option>Shift Lead</option>
+          <option>Manager</option>
+        </select>
+
+        <button id="addUser">Add User</button>
+      </div>
+    </div>
+
+    <img class="rectangle-1" src="../Images/rectangle-10.svg" />
+    <img class="kft-logo" src="../Images/kft-logo0.png" />
+
+    <div class="sidebar-nav">
+      <button class="nav-btn">Full Inventory View</button>
+      <button class="nav-btn"
+        onclick="window.location.href='../MAN-AUDIT-1/man-audit-1.html'">
+        Inventory Reconciliation
+      </button>
+      <button class="nav-btn"
+        onclick="window.location.href='../MAN-AUDIT-4/man-audit-4.html'">
+        Activity Log
+      </button>
+      <button class="nav-btn">Dashboards &amp; Analytics</button>
+      <button class="nav-btn">Predictive Reports</button>
+      <button class="nav-btn active">Manage Users</button>
+      <button class="nav-btn two-line">Purchase Order<br>Management</button>
+    </div>
+
+    <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
   </div>
- <script>
 
-let popup=document.getElementById("popupForm");
+  <script>
+    let popup = document.getElementById("popupForm");
 
-let openBtn=document.getElementById("openPopup");
-let closeBtn=document.getElementById("closePopup");
+    let openBtn = document.getElementById("openPopup");
+    let closeBtn = document.getElementById("closePopup");
 
-openBtn.onclick=function(){
-popup.style.display="flex";
-}
+    openBtn.onclick = function(){
+      popup.style.display = "flex";
+    }
 
-closeBtn.onclick=function(){
-popup.style.display="none";
-}
+    closeBtn.onclick = function(){
+      popup.style.display = "none";
+    }
 
-document.getElementById("addUser").onclick=function(){
+    document.getElementById("addUser").onclick = function(){
 
-let name=document.getElementById("nameInput").value;
-let phone=document.getElementById("phoneInput").value;
-let role=document.getElementById("roleInput").value;
+      let name = document.getElementById("nameInput").value;
+      let phone = document.getElementById("phoneInput").value;
+      let role = document.getElementById("roleInput").value;
 
-if(name=="" || phone==""){
-alert("Please enter name and phone");
-return;
-}
+      if(name == "" || phone == ""){
+        alert("Please enter name and phone");
+        return;
+      }
 
-document.getElementById("newName").innerText=name;
-document.getElementById("newRole").innerText=role;
-document.getElementById("newPhone").innerText=phone;
-document.getElementById("newStatus").innerText="Active";
-document.getElementById("newUserRow").style.display="block";
+      document.getElementById("newName").innerText = name;
+      document.getElementById("newRole").innerText = role;
+      document.getElementById("newPhone").innerText = phone;
+      document.getElementById("newStatus").innerText = "Active";
+      document.getElementById("newUserRow").style.display = "block";
 
-popup.style.display="none";
-
-}
-
-</script> 
+      popup.style.display = "none";
+    }
+  </script> 
 </body>
 </html>
