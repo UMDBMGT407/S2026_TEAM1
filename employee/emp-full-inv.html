@@ -190,23 +190,23 @@
             <div class="popup-updated" id="popupUpdated">Last Updated: 03/02/2026, 02:15pm</div>
           </div>
 
-         <div class="popup-toggle-row">
-  <button
-    type="button"
-    id="addBtn"
-    class="inventory-btn add-btn-pos selected-btn"
-    onclick="setMode('add')">
-    Add Inventory
-  </button>
+          <div class="popup-toggle-row">
+            <button
+              type="button"
+              id="addBtn"
+              class="inventory-btn add-btn-pos selected-btn"
+              onclick="setMode('add')">
+              Add Inventory
+            </button>
 
-  <button
-    type="button"
-    id="subtractBtn"
-    class="inventory-btn subtract-btn-pos unselected-btn"
-    onclick="setMode('subtract')">
-    Subtract Inventory
-  </button>
-</div>
+            <button
+              type="button"
+              id="subtractBtn"
+              class="inventory-btn subtract-btn-pos unselected-btn"
+              onclick="setMode('subtract')">
+              Subtract Inventory
+            </button>
+          </div>
         </div>
 
         <div class="popup-entry-box">
@@ -269,11 +269,11 @@
       const subtractBtn = document.getElementById("subtractBtn");
 
       if (mode === "add") {
-        addBtn.className = "inventory-btn selected-btn";
-        subtractBtn.className = "inventory-btn unselected-btn";
+        addBtn.className = "inventory-btn add-btn-pos selected-btn";
+        subtractBtn.className = "inventory-btn subtract-btn-pos unselected-btn";
       } else {
-        addBtn.className = "inventory-btn unselected-btn";
-        subtractBtn.className = "inventory-btn selected-btn";
+        addBtn.className = "inventory-btn add-btn-pos unselected-btn";
+        subtractBtn.className = "inventory-btn subtract-btn-pos selected-btn";
       }
     }
 
@@ -313,6 +313,8 @@
       const ingredientName = document.getElementById("popupIngredientName").innerText;
       const actionText = currentMode === "add" ? "added to" : "subtracted from";
       showToast(`${changeAmount} units ${actionText} ${ingredientName}. New stock: ${currentStock}.`);
+
+      closePopup();
     }
 
     function showToast(message) {
