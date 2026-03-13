@@ -243,7 +243,7 @@ body {
 .popup-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.20);
+  background: rgba(0, 0, 0, 0.2);
   display: none;
   align-items: center;
   justify-content: center;
@@ -363,39 +363,29 @@ body {
   font-size: 24px;
   font-weight: 400;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: background 0.18s ease, color 0.18s ease, z-index 0.18s ease;
+}
+
+.add-btn-pos {
+  width: 290px;
+  left: 0;
+}
+
+.subtract-btn-pos {
+  width: 310px;
+  left: 250px;
 }
 
 .selected-btn {
-  width: 290px;
-  left: 0;
   background: #964f4c;
   color: #e9d9cc;
   z-index: 2;
 }
 
 .unselected-btn {
-  width: 310px;
-  left: 250px;
   background: #e9d9cc;
   color: #964f4c;
   z-index: 1;
-}
-
-#subtractBtn.selected-btn {
-  left: 250px;
-}
-
-#subtractBtn.unselected-btn {
-  left: 0;
-}
-
-#addBtn.selected-btn {
-  left: 0;
-}
-
-#addBtn.unselected-btn {
-  left: 250px;
 }
 
 /* ENTRY BOX */
