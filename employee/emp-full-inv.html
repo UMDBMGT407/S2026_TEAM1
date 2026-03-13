@@ -50,44 +50,51 @@
     <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo" />
 
     <div class="sidebar-nav">
-      <button class="nav-btn active">Full Inventory View</button>
+      <button class="nav-btn active" type="button">
+        Full Inventory View
+      </button>
 
       <button
         class="nav-btn"
-        onclick="window.location.href='../audit/man-audit-1.html'">
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-1/man-audit-1.html'">
         Inventory Reconciliation
       </button>
 
       <button
         class="nav-btn"
-        onclick="window.location.href='../audit/man-audit-4.html'">
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-4/man-audit-4.html'">
         Activity Log
       </button>
 
-      <button class="nav-btn">
+      <button class="nav-btn" type="button">
         Dashboards &amp; Analytics
       </button>
 
       <button
         class="nav-btn"
-        onclick="window.location.href='../predictive/man-predictive-7.html'">
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
         Predictive Reports
       </button>
 
       <button
         class="nav-btn"
-        onclick="window.location.href='../manage-users/user1.html'">
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/manage-users/MAN-AUDIT-5/user1.html'">
         Manage Users
       </button>
 
       <button
         class="nav-btn two-line"
-        onclick="window.location.href='../Purchase%20Order%20Management/purchase_order_info.html'">
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
         Purchase Order<br />Management
       </button>
     </div>
 
-    <a href="../index.html" class="logout-btn">Logout</a>
+    <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
 
     <!-- Main inventory card -->
     <div class="inventory-panel">
@@ -106,6 +113,7 @@
         <div class="inventory-row">
           <button
             class="ingredient-link"
+            type="button"
             onclick="openPopup('Tapioca Pearls','42 Units','2 hours ago','24','02/26/2026','11:05 AM')">
             Tapioca Pearls
           </button>
@@ -116,6 +124,7 @@
         <div class="inventory-row">
           <button
             class="ingredient-link"
+            type="button"
             onclick="openPopup('Mango Syrup','18 Units','5 hours ago','10','03/01/2026','09:10 AM')">
             Mango Syrup
           </button>
@@ -126,6 +135,7 @@
         <div class="inventory-row">
           <button
             class="ingredient-link"
+            type="button"
             onclick="openPopup('Chia Seeds','20 Units','1 day ago','8','03/05/2026','08:20 PM')">
             Chia Seeds
           </button>
@@ -136,6 +146,7 @@
         <div class="inventory-row">
           <button
             class="ingredient-link"
+            type="button"
             onclick="openPopup('Large Cups','12 Units','3 days ago','15','02/05/2026','03:20 PM')">
             Large cups
           </button>
@@ -146,6 +157,7 @@
         <div class="inventory-row">
           <button
             class="ingredient-link"
+            type="button"
             onclick="openPopup('Hot Med Cups','20 Units','4 days ago','11','04/10/2026','12:20 PM')">
             Hot med cups
           </button>
@@ -156,6 +168,7 @@
         <div class="inventory-row">
           <button
             class="ingredient-link"
+            type="button"
             onclick="openPopup('Milk Powder','4 Units','6 days ago','6','02/05/2026','07:20 PM')">
             Milk Powder
           </button>
@@ -168,7 +181,7 @@
     <!-- Popup -->
     <div id="inventoryPopup" class="popup-overlay">
       <div class="popup-card">
-        <button class="close-popup" onclick="closePopup()">×</button>
+        <button class="close-popup" type="button" onclick="closePopup()">×</button>
 
         <div class="popup-ingredient-bar">
           <span id="popupIngredientName">Tapioca Pearls</span>
