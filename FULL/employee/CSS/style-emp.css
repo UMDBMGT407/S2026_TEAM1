@@ -162,9 +162,8 @@ body {
 .inventory-topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-bottom: 14px;
-  gap: 18px;
 }
 
 .search-box {
@@ -198,45 +197,6 @@ body {
 
 .search-box input::placeholder {
   color: rgba(150, 79, 76, 0.5);
-}
-
-.inventory-action-buttons {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-}
-
-.page-action-btn {
-  min-width: 180px;
-  height: 49px;
-  border-radius: 28px;
-  font-family: "Inria Serif", serif;
-  font-size: 22px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.18s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.solid-btn {
-  background: #964f4c;
-  color: #f0e6dd;
-}
-
-.outline-btn {
-  background: #e9d9cc;
-  color: #964f4c;
-  border: 1.5px solid #b47b76;
-}
-
-.solid-btn:hover {
-  background: #844643;
-}
-
-.outline-btn:hover {
-  filter: brightness(0.98);
 }
 
 .table-header {
@@ -336,21 +296,6 @@ body {
   justify-content: space-between;
 }
 
-.small-popup-card {
-  width: 540px;
-  min-height: 360px;
-  background: #e9d9cc;
-  border: 1px solid #000000;
-  border-radius: 20px;
-  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
-  position: relative;
-  padding: 38px 36px 34px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .close-popup {
   position: absolute;
   right: 16px;
@@ -361,46 +306,6 @@ body {
   cursor: pointer;
   font-family: Arial, sans-serif;
   background: transparent;
-}
-
-.small-popup-title {
-  color: #964f4c;
-  font-family: "Inria Serif", serif;
-  font-size: 34px;
-  font-weight: 700;
-  text-align: center;
-  margin-top: 8px;
-}
-
-.small-popup-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.small-popup-form label {
-  color: #964f4c;
-  font-family: "Inria Serif", serif;
-  font-size: 26px;
-  font-weight: 400;
-}
-
-.small-popup-form input,
-.small-popup-form select {
-  width: 100%;
-  height: 54px;
-  border-radius: 22px;
-  background: #ffffff;
-  padding: 0 18px;
-  color: #964f4c;
-  font-family: "Inria Serif", serif;
-  font-size: 24px;
-  outline: none;
-}
-
-.small-submit-btn {
-  width: 170px;
 }
 
 /* Inventory update popup */
