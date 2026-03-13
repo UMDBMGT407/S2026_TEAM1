@@ -191,13 +191,11 @@ body {
   top: 363px;
 }
 
-.frame-2 {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  position: relative;
+.frame-2{
+display:grid;
+grid-template-columns: 25% 25% 25% 25%;
+align-items:center;
+width:100%;
 }
 
 .name2,
