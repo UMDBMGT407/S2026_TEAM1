@@ -41,11 +41,9 @@
 </head>
 <body>
   <div class="employee-third-page">
-    <!-- Header -->
     <div class="rectangle-5"></div>
     <div class="page-title">Full Inventory View</div>
 
-    <!-- Sidebar -->
     <img class="rectangle-1" src="rectangle-10.svg" alt="" />
     <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo" />
 
@@ -96,7 +94,6 @@
 
     <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
 
-    <!-- Main inventory card -->
     <div class="inventory-panel">
       <div class="search-box">
         <span class="search-icon">⌕</span>
@@ -114,97 +111,108 @@
           <button
             class="ingredient-link"
             type="button"
-            onclick="openPopup('Tapioca Pearls','42 Units','2 hours ago','24','02/26/2026','11:05 AM')">
+            onclick="openPopup('Tapioca Pearls', 14, '03/02/2026, 02:15pm', 'tapioca')">
             Tapioca Pearls
           </button>
-          <div>14</div>
-          <div>03/02/2026, 02:15pm</div>
+          <div id="qty-tapioca">14</div>
+          <div id="updated-tapioca">03/02/2026, 02:15pm</div>
         </div>
 
         <div class="inventory-row">
           <button
             class="ingredient-link"
             type="button"
-            onclick="openPopup('Mango Syrup','18 Units','5 hours ago','10','03/01/2026','09:10 AM')">
+            onclick="openPopup('Mango Syrup', 3, '03/02/2026, 02:15pm', 'mango')">
             Mango Syrup
           </button>
-          <div>3</div>
-          <div>03/02/2026, 02:15pm</div>
+          <div id="qty-mango">3</div>
+          <div id="updated-mango">03/02/2026, 02:15pm</div>
         </div>
 
         <div class="inventory-row">
           <button
             class="ingredient-link"
             type="button"
-            onclick="openPopup('Chia Seeds','20 Units','1 day ago','8','03/05/2026','08:20 PM')">
+            onclick="openPopup('Chia Seeds', 20, '03/05/2026, 08:20pm', 'chia')">
             Chia Seeds
           </button>
-          <div>20</div>
-          <div>03/05/2026, 08:20pm</div>
+          <div id="qty-chia">20</div>
+          <div id="updated-chia">03/05/2026, 08:20pm</div>
         </div>
 
         <div class="inventory-row">
           <button
             class="ingredient-link"
             type="button"
-            onclick="openPopup('Large Cups','12 Units','3 days ago','15','02/05/2026','03:20 PM')">
+            onclick="openPopup('Large Cups', 12, '02/05/2026, 03:20pm', 'largecups')">
             Large cups
           </button>
-          <div>12</div>
-          <div>02/05/2026, 03:20pm</div>
+          <div id="qty-largecups">12</div>
+          <div id="updated-largecups">02/05/2026, 03:20pm</div>
         </div>
 
         <div class="inventory-row">
           <button
             class="ingredient-link"
             type="button"
-            onclick="openPopup('Hot Med Cups','20 Units','4 days ago','11','04/10/2026','12:20 PM')">
+            onclick="openPopup('Hot Med Cups', 20, '04/10/2026, 12:20pm', 'hotmedcups')">
             Hot med cups
           </button>
-          <div>20</div>
-          <div>04/10/2026, 12:20pm</div>
+          <div id="qty-hotmedcups">20</div>
+          <div id="updated-hotmedcups">04/10/2026, 12:20pm</div>
         </div>
 
         <div class="inventory-row">
           <button
             class="ingredient-link"
             type="button"
-            onclick="openPopup('Milk Powder','4 Units','6 days ago','6','02/05/2026','07:20 PM')">
+            onclick="openPopup('Milk Powder', 4, '02/05/2026, 07:20pm', 'milkpowder')">
             Milk Powder
           </button>
-          <div>4</div>
-          <div>02/05/2026, 07:20pm</div>
+          <div id="qty-milkpowder">4</div>
+          <div id="updated-milkpowder">02/05/2026, 07:20pm</div>
         </div>
       </div>
     </div>
 
-    <!-- Popup -->
     <div id="inventoryPopup" class="popup-overlay">
       <div class="popup-card">
         <button class="close-popup" type="button" onclick="closePopup()">×</button>
 
         <div class="popup-ingredient-bar">
           <span id="popupIngredientName">Tapioca Pearls</span>
-          <span class="popup-arrow">⌄</span>
         </div>
 
         <div class="popup-info-box">
           <div class="popup-info-top">
-            <div class="popup-stock" id="popupStock">Current Stocks: 42 Units</div>
+            <div class="popup-stock" id="popupStock">Current Stocks: 14 Units</div>
             <div class="popup-divider"></div>
-            <div class="popup-updated" id="popupUpdated">Last Updated: 2 hours ago</div>
+            <div class="popup-updated" id="popupUpdated">Last Updated: 03/02/2026, 02:15pm</div>
           </div>
 
           <div class="popup-toggle-row">
-            <button type="button" class="inventory-btn active-btn">Add Inventory</button>
-            <button type="button" class="inventory-btn inactive-btn">Subtract Inventory</button>
+            <button
+              type="button"
+              id="addBtn"
+              class="inventory-btn selected-btn"
+              onclick="setMode('add')">
+              Add Inventory
+            </button>
+
+            <button
+              type="button"
+              id="subtractBtn"
+              class="inventory-btn unselected-btn"
+              onclick="setMode('subtract')">
+              Subtract Inventory
+            </button>
           </div>
         </div>
 
         <div class="popup-entry-box">
           <div class="popup-entry-row">
             <div class="popup-label">Quantity</div>
-            <input type="text" id="popupQuantity" value="24" />
+            <input type="number" id="popupQuantity" value="1" min="1" />
           </div>
 
           <div class="popup-time-row">
@@ -214,24 +222,107 @@
           </div>
         </div>
 
-        <button type="button" class="submit-btn">Submit</button>
+        <button type="button" class="submit-btn" onclick="submitInventoryUpdate()">Submit</button>
       </div>
     </div>
+
+    <div id="toastNotification" class="toast-notification"></div>
   </div>
 
   <script>
-    function openPopup(name, stock, updated, quantity, date, time) {
+    let currentIngredientKey = "";
+    let currentStock = 0;
+    let currentMode = "add";
+
+    function openPopup(name, stock, updated, key) {
+      currentIngredientKey = key;
+      currentStock = Number(stock);
+      currentMode = "add";
+
+      const now = new Date();
+      const formattedDate = `${String(now.getMonth() + 1).padStart(2, "0")}/${String(now.getDate()).padStart(2, "0")}/${now.getFullYear()}`;
+      const hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const ampm = hours >= 12 ? "PM" : "AM";
+      const displayHour = hours % 12 === 0 ? 12 : hours % 12;
+      const formattedTime = `${displayHour}:${minutes} ${ampm}`;
+
       document.getElementById("popupIngredientName").innerText = name;
-      document.getElementById("popupStock").innerText = "Current Stocks: " + stock;
-      document.getElementById("popupUpdated").innerText = "Last Updated: " + updated;
-      document.getElementById("popupQuantity").value = quantity;
-      document.getElementById("popupDate").innerText = date;
-      document.getElementById("popupTime").innerText = time;
+      document.getElementById("popupStock").innerText = `Current Stocks: ${currentStock} Units`;
+      document.getElementById("popupUpdated").innerText = `Last Updated: ${updated}`;
+      document.getElementById("popupQuantity").value = 1;
+      document.getElementById("popupDate").innerText = formattedDate;
+      document.getElementById("popupTime").innerText = formattedTime;
+
+      setMode("add");
       document.getElementById("inventoryPopup").style.display = "flex";
     }
 
     function closePopup() {
       document.getElementById("inventoryPopup").style.display = "none";
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+
+      const addBtn = document.getElementById("addBtn");
+      const subtractBtn = document.getElementById("subtractBtn");
+
+      if (mode === "add") {
+        addBtn.className = "inventory-btn selected-btn";
+        subtractBtn.className = "inventory-btn unselected-btn";
+      } else {
+        addBtn.className = "inventory-btn unselected-btn";
+        subtractBtn.className = "inventory-btn selected-btn";
+      }
+    }
+
+    function submitInventoryUpdate() {
+      const qtyInput = document.getElementById("popupQuantity");
+      const changeAmount = Number(qtyInput.value);
+
+      if (!changeAmount || changeAmount <= 0) {
+        showToast("Please enter a valid quantity.");
+        return;
+      }
+
+      let newStock = currentStock;
+
+      if (currentMode === "add") {
+        newStock = currentStock + changeAmount;
+      } else {
+        newStock = currentStock - changeAmount;
+
+        if (newStock < 0) {
+          showToast("Not enough inventory to subtract that amount.");
+          return;
+        }
+      }
+
+      currentStock = newStock;
+
+      const popupDate = document.getElementById("popupDate").innerText;
+      const popupTime = document.getElementById("popupTime").innerText;
+      const updatedText = `${popupDate}, ${popupTime.toLowerCase()}`;
+
+      document.getElementById("popupStock").innerText = `Current Stocks: ${currentStock} Units`;
+      document.getElementById(`qty-${currentIngredientKey}`).innerText = currentStock;
+      document.getElementById(`updated-${currentIngredientKey}`).innerText = updatedText;
+      document.getElementById("popupUpdated").innerText = `Last Updated: ${updatedText}`;
+
+      const ingredientName = document.getElementById("popupIngredientName").innerText;
+      const actionText = currentMode === "add" ? "added to" : "subtracted from";
+      showToast(`${changeAmount} units ${actionText} ${ingredientName}. New stock: ${currentStock}.`);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toastNotification");
+      toast.innerText = message;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2500);
     }
 
     window.onclick = function (event) {
