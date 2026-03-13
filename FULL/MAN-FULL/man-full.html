@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="./vars.css" />
+  <link rel="stylesheet" href="./CSS/style-emp.css" />
+
+  <style>
+    a,
+    button,
+    input,
+    select,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border: none;
+      text-decoration: none;
+      background: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    menu,
+    ol,
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <title>Full Inventory View</title>
+</head>
+<body>
+  <div class="employee-third-page">
+    <div class="rectangle-5"></div>
+    <div class="page-title">Full Inventory View</div>
+
+    <img class="rectangle-1" src="rectangle-10.svg" alt="" />
+    <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo" />
+
+    <div class="sidebar-nav">
+      <button class="nav-btn active" type="button">
+        Full Inventory View
+      </button>
+
+      <button
+        class="nav-btn"
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-1/man-audit-1.html'">
+        Inventory Reconciliation
+      </button>
+
+      <button
+        class="nav-btn"
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-4/man-audit-4.html'">
+        Activity Log
+      </button>
+
+      <button class="nav-btn" type="button">
+        Dashboards &amp; Analytics
+      </button>
+
+      <button
+        class="nav-btn"
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
+        Predictive Reports
+      </button>
+
+      <button
+        class="nav-btn"
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/manage-users/MAN-AUDIT-5/user1.html'">
+        Manage Users
+      </button>
+
+      <button
+        class="nav-btn two-line"
+        type="button"
+        onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
+        Purchase Order<br />Management
+      </button>
+    </div>
+
+    <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
+
+    <div class="inventory-panel">
+      <div class="inventory-topbar">
+        <div class="search-box">
+          <span class="search-icon">⌕</span>
+          <input type="text" placeholder="Ingredient" />
+        </div>
+
+        <div class="inventory-action-buttons">
+          <button type="button" class="page-action-btn solid-btn" onclick="openAddIngredientPopup()">
+            Add Ingredient
+          </button>
+          <button type="button" class="page-action-btn outline-btn" onclick="openDeleteIngredientPopup()">
+            Delete Ingredient
+          </button>
+        </div>
+      </div>
+
+      <div class="table-header">
+        <div>Ingredient</div>
+        <div>System Qty</div>
+        <div>Last Updated</div>
+      </div>
+
+      <div class="inventory-rows" id="inventoryRows">
+        <div class="inventory-row" id="row-tapioca">
+          <button
+            class="ingredient-link"
+            type="button"
+            onclick="openPopup('Tapioca Pearls', 14, '03/02/2026, 02:15pm', 'tapioca')">
+            Tapioca Pearls
+          </button>
+          <div id="qty-tapioca">14</div>
+          <div id="updated-tapioca">03/02/2026, 02:15pm</div>
+        </div>
+
+        <div class="inventory-row" id="row-mango">
+          <button
+            class="ingredient-link"
+            type="button"
+            onclick="openPopup('Mango Syrup', 3, '03/02/2026, 02:15pm', 'mango')">
+            Mango Syrup
+          </button>
+          <div id="qty-mango">3</div>
+          <div id="updated-mango">03/02/2026, 02:15pm</div>
+        </div>
+
+        <div class="inventory-row" id="row-chia">
+          <button
+            class="ingredient-link"
+            type="button"
+            onclick="openPopup('Chia Seeds', 20, '03/05/2026, 08:20pm', 'chia')">
+            Chia Seeds
+          </button>
+          <div id="qty-chia">20</div>
+          <div id="updated-chia">03/05/2026, 08:20pm</div>
+        </div>
+
+        <div class="inventory-row" id="row-largecups">
+          <button
+            class="ingredient-link"
+            type="button"
+            onclick="openPopup('Large Cups', 12, '02/05/2026, 03:20pm', 'largecups')">
+            Large cups
+          </button>
+          <div id="qty-largecups">12</div>
+          <div id="updated-largecups">02/05/2026, 03:20pm</div>
+        </div>
+
+        <div class="inventory-row" id="row-hotmedcups">
+          <button
+            class="ingredient-link"
+            type="button"
+            onclick="openPopup('Hot Med Cups', 20, '04/10/2026, 12:20pm', 'hotmedcups')">
+            Hot med cups
+          </button>
+          <div id="qty-hotmedcups">20</div>
+          <div id="updated-hotmedcups">04/10/2026, 12:20pm</div>
+        </div>
+
+        <div class="inventory-row" id="row-milkpowder">
+          <button
+            class="ingredient-link"
+            type="button"
+            onclick="openPopup('Milk Powder', 4, '02/05/2026, 07:20pm', 'milkpowder')">
+            Milk Powder
+          </button>
+          <div id="qty-milkpowder">4</div>
+          <div id="updated-milkpowder">02/05/2026, 07:20pm</div>
+        </div>
+
+        <div class="inventory-row" id="row-brownsugar">
+          <button
+            class="ingredient-link"
+            type="button"
+            onclick="openPopup('Brown Sugar', 9, '03/01/2026, 10:10am', 'brownsugar')">
+            Brown Sugar
+          </button>
+          <div id="qty-brownsugar">9</div>
+          <div id="updated-brownsugar">03/01/2026, 10:10am</div>
+        </div>
+
+        <div class="inventory-row" id="row-straws">
+          <button
+            class="ingredient-link"
+            type="button"
+            onclick="openPopup('Straws', 45, '03/03/2026, 11:45am', 'straws')">
+            Straws
+          </button>
+          <div id="qty-straws">45</div>
+          <div id="updated-straws">03/03/2026, 11:45am</div>
+        </div>
+
+        <div class="inventory-row" id="row-lycheejelly">
+          <button
+            class="ingredient-link"
+            type="button"
+            onclick="openPopup('Lychee Jelly', 7, '03/06/2026, 01:25pm', 'lycheejelly')">
+            Lychee Jelly
+          </button>
+          <div id="qty-lycheejelly">7</div>
+          <div id="updated-lycheejelly">03/06/2026, 01:25pm</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory update popup -->
+    <div id="inventoryPopup" class="popup-overlay">
+      <div class="popup-card">
+        <button class="close-popup" type="button" onclick="closePopup()">×</button>
+
+        <div class="popup-ingredient-bar">
+          <span id="popupIngredientName">Tapioca Pearls</span>
+        </div>
+
+        <div class="popup-info-box">
+          <div class="popup-info-top">
+            <div class="popup-stock" id="popupStock">Current Stocks: 14 Units</div>
+            <div class="popup-divider"></div>
+            <div class="popup-updated" id="popupUpdated">Last Updated: 03/02/2026, 02:15pm</div>
+          </div>
+
+          <div class="popup-toggle-row">
+            <button
+              type="button"
+              id="addBtn"
+              class="inventory-btn add-btn-pos selected-btn"
+              onclick="setMode('add')">
+              Add Inventory
+            </button>
+
+            <button
+              type="button"
+              id="subtractBtn"
+              class="inventory-btn subtract-btn-pos unselected-btn"
+              onclick="setMode('subtract')">
+              Subtract Inventory
+            </button>
+          </div>
+        </div>
+
+        <div class="popup-entry-box">
+          <div class="popup-entry-row">
+            <div class="popup-label">Quantity</div>
+            <input type="number" id="popupQuantity" value="1" min="1" />
+          </div>
+
+          <div class="popup-time-row">
+            <div class="popup-label timestamp-label">Timestamp:</div>
+            <div id="popupDate">02/26/2026</div>
+            <div id="popupTime">11:05 AM</div>
+          </div>
+        </div>
+
+        <button type="button" class="submit-btn" onclick="submitInventoryUpdate()">Submit</button>
+      </div>
+    </div>
+
+    <!-- Add ingredient popup -->
+    <div id="addIngredientPopup" class="popup-overlay">
+      <div class="small-popup-card">
+        <button class="close-popup" type="button" onclick="closeAddIngredientPopup()">×</button>
+        <div class="small-popup-title">Add Ingredient</div>
+
+        <div class="small-popup-form">
+          <label>Ingredient Name</label>
+          <input type="text" id="newIngredientName" placeholder="Enter ingredient name" />
+
+          <label>Starting Quantity</label>
+          <input type="number" id="newIngredientQty" placeholder="Enter quantity" min="0" />
+        </div>
+
+        <button type="button" class="submit-btn small-submit-btn" onclick="submitAddIngredient()">
+          Add
+        </button>
+      </div>
+    </div>
+
+    <!-- Delete ingredient popup -->
+    <div id="deleteIngredientPopup" class="popup-overlay">
+      <div class="small-popup-card">
+        <button class="close-popup" type="button" onclick="closeDeleteIngredientPopup()">×</button>
+        <div class="small-popup-title">Delete Ingredient</div>
+
+        <div class="small-popup-form">
+          <label>Select Ingredient</label>
+          <select id="deleteIngredientSelect"></select>
+        </div>
+
+        <button type="button" class="submit-btn small-submit-btn" onclick="submitDeleteIngredient()">
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <div id="toastNotification" class="toast-notification"></div>
+  </div>
+
+  <script>
+    let currentIngredientKey = "";
+    let currentStock = 0;
+    let currentMode = "add";
+    let ingredientCounter = 0;
+
+    function getNowParts() {
+      const now = new Date();
+      const formattedDate = `${String(now.getMonth() + 1).padStart(2, "0")}/${String(now.getDate()).padStart(2, "0")}/${now.getFullYear()}`;
+      const hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const ampm = hours >= 12 ? "PM" : "AM";
+      const displayHour = hours % 12 === 0 ? 12 : hours % 12;
+      const formattedTime = `${displayHour}:${minutes} ${ampm}`;
+      return { formattedDate, formattedTime };
+    }
+
+    function openPopup(name, stock, updated, key) {
+      currentIngredientKey = key;
+      currentStock = Number(stock);
+      currentMode = "add";
+
+      const { formattedDate, formattedTime } = getNowParts();
+
+      document.getElementById("popupIngredientName").innerText = name;
+      document.getElementById("popupStock").innerText = `Current Stocks: ${currentStock} Units`;
+      document.getElementById("popupUpdated").innerText = `Last Updated: ${updated}`;
+      document.getElementById("popupQuantity").value = 1;
+      document.getElementById("popupDate").innerText = formattedDate;
+      document.getElementById("popupTime").innerText = formattedTime;
+
+      setMode("add");
+      document.getElementById("inventoryPopup").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("inventoryPopup").style.display = "none";
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+
+      const addBtn = document.getElementById("addBtn");
+      const subtractBtn = document.getElementById("subtractBtn");
+
+      if (mode === "add") {
+        addBtn.className = "inventory-btn add-btn-pos selected-btn";
+        subtractBtn.className = "inventory-btn subtract-btn-pos unselected-btn";
+      } else {
+        addBtn.className = "inventory-btn add-btn-pos unselected-btn";
+        subtractBtn.className = "inventory-btn subtract-btn-pos selected-btn";
+      }
+    }
+
+    function submitInventoryUpdate() {
+      const qtyInput = document.getElementById("popupQuantity");
+      const changeAmount = Number(qtyInput.value);
+
+      if (!changeAmount || changeAmount <= 0) {
+        showToast("Please enter a valid quantity.");
+        return;
+      }
+
+      let newStock = currentStock;
+
+      if (currentMode === "add") {
+        newStock = currentStock + changeAmount;
+      } else {
+        newStock = currentStock - changeAmount;
+
+        if (newStock < 0) {
+          showToast("Not enough inventory to subtract that amount.");
+          return;
+        }
+      }
+
+      currentStock = newStock;
+
+      const popupDate = document.getElementById("popupDate").innerText;
+      const popupTime = document.getElementById("popupTime").innerText;
+      const updatedText = `${popupDate}, ${popupTime.toLowerCase()}`;
+
+      document.getElementById("popupStock").innerText = `Current Stocks: ${currentStock} Units`;
+      document.getElementById(`qty-${currentIngredientKey}`).innerText = currentStock;
+      document.getElementById(`updated-${currentIngredientKey}`).innerText = updatedText;
+      document.getElementById("popupUpdated").innerText = `Last Updated: ${updatedText}`;
+
+      const ingredientName = document.getElementById("popupIngredientName").innerText;
+      const actionText = currentMode === "add" ? "added to" : "subtracted from";
+      showToast(`${changeAmount} units ${actionText} ${ingredientName}. New stock: ${currentStock}.`);
+
+      closePopup();
+    }
+
+    function openAddIngredientPopup() {
+      document.getElementById("newIngredientName").value = "";
+      document.getElementById("newIngredientQty").value = "";
+      document.getElementById("addIngredientPopup").style.display = "flex";
+    }
+
+    function closeAddIngredientPopup() {
+      document.getElementById("addIngredientPopup").style.display = "none";
+    }
+
+    function submitAddIngredient() {
+      const name = document.getElementById("newIngredientName").value.trim();
+      const qty = Number(document.getElementById("newIngredientQty").value);
+
+      if (!name) {
+        showToast("Please enter an ingredient name.");
+        return;
+      }
+
+      if (isNaN(qty) || qty < 0) {
+        showToast("Please enter a valid starting quantity.");
+        return;
+      }
+
+      const key = "custom" + ingredientCounter++;
+      const { formattedDate, formattedTime } = getNowParts();
+      const updatedText = `${formattedDate}, ${formattedTime.toLowerCase()}`;
+
+      const row = document.createElement("div");
+      row.className = "inventory-row";
+      row.id = `row-${key}`;
+      row.innerHTML = `
+        <button
+          class="ingredient-link"
+          type="button"
+          onclick="openPopup('${name.replace(/'/g, "\\'")}', ${qty}, '${updatedText}', '${key}')">
+          ${name}
+        </button>
+        <div id="qty-${key}">${qty}</div>
+        <div id="updated-${key}">${updatedText}</div>
+      `;
+
+      document.getElementById("inventoryRows").appendChild(row);
+      updateDeleteIngredientOptions();
+      showToast(`${name} was added to inventory.`);
+      closeAddIngredientPopup();
+    }
+
+    function openDeleteIngredientPopup() {
+      updateDeleteIngredientOptions();
+      document.getElementById("deleteIngredientPopup").style.display = "flex";
+    }
+
+    function closeDeleteIngredientPopup() {
+      document.getElementById("deleteIngredientPopup").style.display = "none";
+    }
+
+    function updateDeleteIngredientOptions() {
+      const select = document.getElementById("deleteIngredientSelect");
+      select.innerHTML = "";
+
+      const rows = document.querySelectorAll(".inventory-row");
+      rows.forEach((row) => {
+        const button = row.querySelector(".ingredient-link");
+        if (button) {
+          const option = document.createElement("option");
+          option.value = row.id;
+          option.textContent = button.textContent.trim();
+          select.appendChild(option);
+        }
+      });
+    }
+
+    function submitDeleteIngredient() {
+      const select = document.getElementById("deleteIngredientSelect");
+      const rowId = select.value;
+
+      if (!rowId) {
+        showToast("Please select an ingredient to delete.");
+        return;
+      }
+
+      const row = document.getElementById(rowId);
+      const ingredientName = row.querySelector(".ingredient-link").textContent.trim();
+
+      row.remove();
+      updateDeleteIngredientOptions();
+      showToast(`${ingredientName} was deleted from inventory.`);
+      closeDeleteIngredientPopup();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toastNotification");
+      toast.innerText = message;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2500);
+    }
+
+    window.onclick = function (event) {
+      if (event.target === document.getElementById("inventoryPopup")) {
+        closePopup();
+      }
+      if (event.target === document.getElementById("addIngredientPopup")) {
+        closeAddIngredientPopup();
+      }
+      if (event.target === document.getElementById("deleteIngredientPopup")) {
+        closeDeleteIngredientPopup();
+      }
+    };
+  </script>
+</body>
+</html>
