@@ -675,7 +675,6 @@ body {
 .nav-btn:hover {
   background: #f0e6dd;
   color: #964f4c;
-  font-weight: 700;
 }
 /* Standardized Logout Button */
 .logout-btn {
