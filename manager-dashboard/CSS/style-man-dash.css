@@ -13,6 +13,31 @@ body {
   font-family: "Inria Serif", serif;
 }
 
+a,
+button,
+input,
+select,
+h1,
+h2,
+h3,
+h4,
+h5,
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: none;
+  text-decoration: none;
+  background: none; 
+  -webkit-font-smoothing: antialiased;
+}
+   
+menu, ol, ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
 :root {
   --design-width: 1440;
   --design-height: 1024;
@@ -22,7 +47,6 @@ body {
   );
 }
 
-/* 4. Main Content Area Padding */
 .main-content-area {
   margin-left: 270px;
   background: #f0e6dd;
@@ -55,12 +79,6 @@ body {
   border: none;
   display: flex;
   align-items: center;
-}
-
-/* Content Area (everything but navbar)*/
-.content-area {
-  background: #f0e6dd;
-  min-height: 100vh;
 }
 
 .content-container-centered {
