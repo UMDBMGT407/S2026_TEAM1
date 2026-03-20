@@ -13,15 +13,6 @@ body {
   font-family: "Inria Serif", serif;
 }
 
-:root {
-  --design-width: 1440;
-  --design-height: 1024;
-  --scale: min(
-    calc(100vw / (var(--design-width) * 1px)),
-    calc(100vh / (var(--design-height) * 1px))
-  );
-}
-
 .main-content-area {
   margin-left: 270px;
   background: #f0e6dd;
