@@ -41,21 +41,6 @@ body {
   z-index: 1000;
 }
 
-.nav-btn {
-  width: 242px; 
-  min-height: 62px;
-  padding: 0 18px;
-  border-radius: 38px;
-  color: #f0e6dd;
-  background: transparent;
-  font-family: "Inria Serif", serif;
-  font-size: 20px;
-  text-align: left;
-  border: none;
-  display: flex;
-  align-items: center;
-}
-
 .content-container-centered {
   width: 100%;
   max-width: 1170px;
@@ -229,7 +214,6 @@ body {
   gap: 14px;
 }
 
-/* Base Nav Button Style */
 .nav-btn {
   width: 242px;
   min-height: 62px;
