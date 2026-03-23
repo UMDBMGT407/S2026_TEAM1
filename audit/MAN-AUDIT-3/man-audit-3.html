@@ -2,139 +2,328 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./vars.css">
+  <title>Inventory Reconciliation - Audit Report Summary</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../CSS/style-man3.css">
 
   <style>
-    a,
-    button,
-    input,
-    select,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      border: none;
+      font-family: "Inria Serif", serif;
+    }
+    body {
+      background: #f0e6dd;
+    }
+    a, button {
       text-decoration: none;
+      border: none;
       background: none;
-      -webkit-font-smoothing: antialiased;
+      cursor: pointer;
     }
 
-    menu, ol, ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
+    /* SIDEBAR */
+    .sidebar-wrapper {
+      width: 270px;
+      height: 100vh;
+      background: #964f4c;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
+
+    .kft-logo {
+      width: 270px;
+      height: 108px;
+    }
+
+    .sidebar-nav {
+      margin-top: 120px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .nav-btn {
+      width: 242px;
+      min-height: 62px;
+      padding: 0 18px;
+      border-radius: 38px;
+      background: transparent;
+      color: #f0e6dd;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      text-align: left;
+    }
+
+    .nav-btn.active, .nav-btn:hover {
+      background: #f0e6dd;
+      color: #964f4c;
+    }
+
+    .nav-btn.two-line {
+      min-height: 74px;
+      padding-top: 12px;
+      align-items: flex-start;
+    }
+
+    /* LOGOUT */
+    .logout-btn {
+      width: 95px;
+      height: 52px;
+      background: #e9d9cc;
+      color: #964f4c;
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    /* MAIN CONTENT */
+    .main-content-area {
+      margin-left: 270px;
+      padding: 40px 20px;
+    }
+
+    /* HEADER */
+    .header-card {
+      background: #e9d9cc;
+      border-radius: 36px;
+      height: 112px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .page-title {
+      font-size: 34px;
+      font-weight: 700;
+      text-align: center;
+      width: 100%;
+    }
+
+    /* SUMMARY CARD */
+    .summary-card {
+      background: #f8efe6;
+      border: 1px solid #000;
+      border-radius: 22px;
+      overflow: hidden;
+      width: 500px;
+      margin-bottom: 40px;
+    }
+
+    .summary-header {
+      background: #9d5651;
+      color: #f0e6dd;
+      font-size: 32px;
+      font-weight: 700;
+      padding: 0 14px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #000;
+    }
+
+    .summary-row {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      font-size: 32px;
+      font-weight: 700;
+      color: #000;
+      border-bottom: 1px solid #c48a86;
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .red-text {
+      color: #b35d59;
+      margin-left: 10px;
+    }
+
+    /* TABLE CARD */
+    .table-card {
+      background: #f8efe6;
+      border-radius: 22px;
+      border: 1px solid #000;
+      overflow: hidden;
+    }
+
+    .table-header, .table-row {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr 1.5fr 1fr;
+      align-items: center;
+      padding: 0 32px;
+    }
+
+    .table-header {
+      background: #9d5651;
+      color: #f0e6dd;
+      font-size: 32px;
+      font-weight: 700;
+      height: 64px;
+    }
+
+    .table-body {
+      padding: 22px 0 0 0;
+    }
+
+    .table-row {
+      min-height: 70px;
+      border-top: 1px solid #c48a86;
+      padding: 0 32px;
+    }
+
+    .col {
+      font-size: 32px;
+      font-weight: 700;
+      color: #000;
+    }
+
+    .ingredient-col {
+      text-align: left;
+    }
+
+    .qty-col, .count-col, .diff-col {
+      text-align: center;
+    }
+
+    .count-pill {
+      width: 126px;
+      height: 55px;
+      border: 1px solid #b36a66;
+      border-radius: 20px;
+      background: #f8f3ee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    /* ACTION BUTTONS */
+    .frame-actions {
+      margin-top: 40px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .export-btn {
+      background: #e9d9cc;
+      border-radius: 18px;
+      border: 1.5px solid #b36a66;
+      font-size: 32px;
+      font-weight: 700;
+      padding: 12px 24px;
+    }
+
+    .close-btn {
+      background: #9d5651;
+      color: #e9d9cc;
+      border-radius: 18px;
+      font-size: 32px;
+      font-weight: 700;
+      padding: 12px 24px;
+    }
+
+    .close-btn:hover {
+      background: #874946;
+    }
+
+    .export-btn:hover {
+      filter: brightness(0.98);
+    }
+
   </style>
 
-  <title>Inventory Reconciliation - Audit Report Summary</title>
 </head>
 <body>
-  <div class="manager-fourth-1-3-page">
-    <div class="rectangle-5"></div>
-    <div class="inventory-reconciliation-audit-report-summary">
-      Inventory Reconciliation - Audit Report Summary
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar-wrapper">
+    <div>
+      <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea logo">
+      <div class="sidebar-nav">
+        <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">Full Inventory View</button>
+        <button class="nav-btn active">Inventory Reconciliation</button>
+        <button class="nav-btn" onclick="window.location.href='../MAN-AUDIT-4/man-audit-4.html'">Activity Log</button>
+        <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">Dashboards & Analytics</button>
+        <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">Predictive Reports</button>
+        <button class="nav-btn" onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">Manage Users</button>
+        <button class="nav-btn two-line" onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">Purchase Order<br>Management</button>
+      </div>
+    </div>
+    <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content-area">
+    <div class="header-card">
+      <h1 class="page-title">Inventory Reconciliation - Audit Report Summary</h1>
     </div>
 
-    <img class="rectangle-1" src="rectangle-10.svg" alt="" />
-    <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo" />
-
-    <div class="sidebar-nav">
-     <button class="nav-btn" type="button"
-        onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">
-        Full Inventory View
-      </button>
-      <button class="nav-btn active">Inventory Reconciliation</button>
-      <button class="nav-btn"
-        onclick="window.location.href='../MAN-AUDIT-4/man-audit-4.html'">
-        Activity Log
-      </button>
-    
-        <button
-        class="nav-btn"
-        type="button"
-        onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">
-          Dashboards &amp; Analytics
-      </button>
-      
-      <button class="nav-btn"
-    onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
-    Predictive Reports
-  </button>
-      <button class="nav-btn"
-  onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">
-  Manage Users
-</button>
-      <button class="nav-btn two-line"
-  onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
-  Purchase Order<br>Management
-</button>
-    </div>
-
-        <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
-
+    <!-- SUMMARY CARD -->
     <div class="summary-card">
       <div class="summary-header">Audit Date: March 6, 2026</div>
       <div class="summary-row">Conducted by: Evelyn A.</div>
       <div class="summary-row">Total Items Checked: 3</div>
-      <div class="summary-row">
-        <span>Discrepancies Found :</span>
-        <span class="red-text">2</span>
-      </div>
+      <div class="summary-row">Discrepancies Found: <span class="red-text">2</span></div>
     </div>
 
+    <!-- TABLE -->
     <div class="table-card">
       <div class="table-header">
-        <div class="ingredient">Ingredient</div>
-        <div class="system-qty">System Qty</div>
-        <div class="physical-count">Physical Count</div>
-        <div class="difference">Difference</div>
+        <div class="col ingredient-col">Ingredient</div>
+        <div class="col qty-col">System Qty</div>
+        <div class="col count-col">Physical Count</div>
+        <div class="col diff-col">Difference</div>
       </div>
 
       <div class="table-body">
         <div class="table-row">
           <div class="col ingredient-col">Tapioca Pearls</div>
           <div class="col qty-col">10</div>
-          <div class="col count-col">
-            <div class="count-pill">10</div>
-          </div>
+          <div class="col count-col"><div class="count-pill">10</div></div>
           <div class="col diff-col">0</div>
         </div>
 
         <div class="table-row">
           <div class="col ingredient-col">Mango Syrup</div>
           <div class="col qty-col">5</div>
-          <div class="col count-col">
-            <div class="count-pill">1</div>
-          </div>
+          <div class="col count-col"><div class="count-pill">1</div></div>
           <div class="col diff-col red-text">4</div>
         </div>
 
         <div class="table-row">
-          <div class="col ingredient-col">Large cups</div>
+          <div class="col ingredient-col">Large Cups</div>
           <div class="col qty-col">20</div>
-          <div class="col count-col">
-            <div class="count-pill">21</div>
-          </div>
+          <div class="col count-col"><div class="count-pill">21</div></div>
           <div class="col diff-col red-text">-1</div>
         </div>
       </div>
     </div>
 
+    <!-- ACTION BUTTONS -->
     <div class="frame-actions">
       <button class="export-btn" onclick="window.print()">Export Report</button>
-      <button class="close-btn"
-        onclick="window.location.href='../MAN-AUDIT-1/man-audit-1.html'">
-        Approve and Close
-      </button>
+      <button class="close-btn" onclick="window.location.href='../MAN-AUDIT-1/man-audit-1.html'">Approve and Close</button>
     </div>
-  </div>
+
+  </main>
+
 </body>
 </html>
