@@ -18,41 +18,68 @@
 <div class="container-fluid p-0">
 
   <!-- SIDEBAR -->
-  <nav class="sidebar-wrapper">
+  <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
 
-    <div class="sidebar-top">
+    <div class="w-100">
 
-      <img class="kft-logo" src="kft-logo0.png" alt="logo">
+      <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea logo">
 
-      <div class="sidebar-nav">
+      <div class="sidebar-nav d-flex flex-column align-items-center">
 
-        <button class="nav-btn">Full Inventory View</button>
-        <button class="nav-btn active">Inventory Reconciliation</button>
-        <button class="nav-btn">Activity Log</button>
-        <button class="nav-btn">Dashboards & Analytics</button>
-        <button class="nav-btn">Predictive Reports</button>
-        <button class="nav-btn">Manage Users</button>
-        <button class="nav-btn two-line">Purchase Order<br>Management</button>
+        <button class="nav-btn"
+          onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">
+          Full Inventory View
+        </button>
+
+        <button class="nav-btn active">
+          Inventory Reconciliation
+        </button>
+
+        <button class="nav-btn"
+          onclick="window.location.href='../MAN-AUDIT-4/man-audit-4.html'">
+          Activity Log
+        </button>
+
+        <button class="nav-btn"
+          onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">
+          Dashboards &amp; Analytics
+        </button>
+
+        <button class="nav-btn"
+          onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
+          Predictive Reports
+        </button>
+
+        <button class="nav-btn"
+          onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">
+          Manage Users
+        </button>
+
+        <button class="nav-btn two-line"
+          onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
+          Purchase Order<br>Management
+        </button>
 
       </div>
-
     </div>
 
-    <div class="sidebar-bottom">
-      <a href="#" class="logout-btn">Logout</a>
+    <div class="pb-4">
+      <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
     </div>
 
   </nav>
 
-  <!-- MAIN -->
+  <!-- MAIN CONTENT -->
   <main class="main-content-area">
 
     <div class="content-container-centered">
 
+      <!-- HEADER -->
       <div class="rectangle-5 mb-5">
         <h1 class="page-title">Inventory Reconciliation</h1>
       </div>
 
+      <!-- CARD -->
       <div class="row justify-content-center">
         <div class="col-lg-10">
 
@@ -71,17 +98,28 @@
             </div>
 
             <div class="d-flex justify-content-end">
-              <button class="approve-btn">Approve Audit</button>
+              <button class="approve-btn"
+                onclick="window.location.href='../MAN-AUDIT-3/man-audit-3.html'">
+                Approve Audit
+              </button>
             </div>
 
           </div>
 
+          <!-- BOTTOM BUTTONS -->
           <div class="row mt-4 g-3">
             <div class="col-md-6">
-              <button class="resume-btn w-100">Resume Draft Audit</button>
+              <button class="resume-btn w-100"
+                onclick="window.location.href='../MAN-AUDIT-2/man-audit-2.html'">
+                Resume Draft Audit
+              </button>
             </div>
+
             <div class="col-md-6">
-              <button class="start-btn w-100">Start New Audit</button>
+              <button class="start-btn w-100"
+                onclick="window.location.href='../MAN-AUDIT-2/man-audit-2.html'">
+                Start New Audit
+              </button>
             </div>
           </div>
 
