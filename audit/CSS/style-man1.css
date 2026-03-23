@@ -1,306 +1,153 @@
-:root {
-  --design-width: 1440;
-  --design-height: 1024;
-  --scale: min(
-    calc(100vw / (var(--design-width) * 1px)),
-    calc(100vh / (var(--design-height) * 1px))
-  );
-}
-
-.manager-fourth-page,
-.manager-fourth-page * {
-  box-sizing: border-box;
-}
-
-html,
+/* GLOBAL */
 body {
   margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
-  background: #f0e6dd;
   font-family: "Inria Serif", serif;
+  background: #f0e6dd;
 }
 
-.manager-fourth-page {
-  background: #f0e6dd;
-  border: 1px solid #000000;
-  width: 1440px;
-  height: 1024px;
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  overflow: hidden;
-  transform: translate(-50%, -50%) scale(var(--scale));
-  transform-origin: center center;
+/* MAIN CONTENT */
+.main-content-area {
+  margin-left: 270px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
 }
 
 /* SIDEBAR */
-.rectangle-1 {
+.sidebar-wrapper {
   width: 270px;
-  height: 1024px;
-  position: absolute;
+  height: 100vh;
+  background: #964f4c;
+  position: fixed;
   left: 0;
   top: 0;
-  object-fit: fill;
 }
 
 .kft-logo {
-  width: 270px;
+  width: 100%;
   height: 108px;
-  position: absolute;
-  left: 0;
-  top: 0;
   object-fit: cover;
 }
 
-/* NAVBAR */
+/* NAV */
 .sidebar-nav {
-  position: absolute;
-  left: 14px;
-  top: 170px;
-  width: 242px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  margin-top: 150px;
+  align-items: center;
 }
 
 .nav-btn {
   width: 242px;
   min-height: 62px;
   padding: 0 18px;
-  border: none;
   border-radius: 38px;
   background: transparent;
   color: #f0e6dd;
-  font-family: "Inria Serif", serif;
   font-size: 20px;
-  font-weight: 400;
-  line-height: 1.15;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.18s ease, color 0.18s ease;
   display: flex;
   align-items: center;
+  text-align: left;
+  transition: 0.2s;
 }
 
-.nav-btn.two-line {
-  min-height: 74px;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  align-items: flex-start;
-}
-
-.nav-btn.active,
-.nav-btn:hover {
+.nav-btn:hover,
+.nav-btn.active {
   background: #f0e6dd;
   color: #964f4c;
 }
 
-.nav-btn:focus-visible {
-  outline: 2px solid #e9d9cc;
-  outline-offset: 2px;
+.nav-btn.two-line {
+  min-height: 74px;
+  align-items: flex-start;
+  padding-top: 10px;
 }
 
 /* LOGOUT */
 .logout-btn {
-  position: absolute;
-  left: 88px;
-  top: 951px;
   width: 95px;
   height: 52px;
-  border: none;
-  border-radius: 28px;
   background: #e9d9cc;
   color: #964f4c;
-  font-family: "Inria Serif", serif;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.logout-btn {
+  border-radius: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
 }
 
-/* HEADER - moved left */
+/* CONTENT */
+.content-container-centered {
+  max-width: 1170px;
+  width: 100%;
+  padding: 40px 20px;
+}
+
+/* HEADER */
 .rectangle-5 {
   background: #e9d9cc;
   border-radius: 36px;
-  width: 1240px;
   height: 112px;
-  position: absolute;
-  left: 152px;
-  top: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.inventory-reconciliation {
-  color: #000000;
-  text-align: center;
-  font-family: "Inria Serif", serif;
+.page-title {
   font-size: 34px;
   font-weight: 700;
-  position: absolute;
-  left: 152px;
-  top: 62px;
-  width: 1240px;
 }
 
-/* MAIN CARD - moved left */
-.main-rectangle {
-  width: 1060px;
-  height: 366px;
-  position: absolute;
-  left: 350px;
-  top: 394px;
-  object-fit: fill;
-}
-
-/* CARD TEXT - moved left */
-.last-audit-march-5-2026 {
-  color: #964f4c;
-  font-family: "Inria Serif", serif;
-  font-size: 32px;
-  font-weight: 700;
-  position: absolute;
-  left: 400px;
-  top: 423px;
-  white-space: nowrap;
-}
-
-.line-9,
-.line-10 {
-  position: absolute;
-  width: 480px;
-  height: 2px;
-  background: #c48a86;
-  border-radius: 2px;
-}
-
-.line-9 {
-  left: 390px;
-  top: 468px;
-}
-
-.line-10 {
-  left: 390px;
-  top: 653px;
-}
-
-.conducted-by-sophie-m {
-  color: #964f4c;
-  font-family: "Inria Serif", serif;
-  font-size: 31px;
-  font-weight: 700;
-  position: absolute;
-  left: 400px;
-  top: 507px;
-  white-space: nowrap;
-}
-
-.audit-to-approve-march-5-2026 {
-  color: #964f4c;
-  font-family: "Inria Serif", serif;
-  font-size: 32px;
-  font-weight: 700;
-  position: absolute;
-  left: 390px;
-  top: 608px;
-  white-space: nowrap;
-}
-
-.conducted-by-sophie-m2 {
-  color: #964f4c;
-  font-family: "Inria Serif", serif;
-  font-size: 31px;
-  font-weight: 700;
-  position: absolute;
-  left: 390px;
-  top: 695px;
-  white-space: nowrap;
-}
-
-/* APPROVE BUTTON - moved left */
-.approve-btn {
-  position: absolute;
-  left: 1060px;
-  top: 671px;
-  width: 250px;
-  height: 56px;
-  border: none;
+/* CARD */
+.dashboard-card {
+  background: #e9d9cc;
   border-radius: 30px;
+}
+
+/* TEXT */
+.section-title {
+  color: #964f4c;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.section-sub {
+  color: #964f4c;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* BUTTONS */
+.approve-btn {
   background: #9d5651;
   color: #f0e6dd;
-  font-family: "Inria Serif", serif;
-  font-size: 31px;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* BOTTOM BUTTONS - moved left */
-.frame-7 {
-  position: absolute;
-  left: 400px;
-  top: 805px;
-  width: 910px;
-  height: 85px;
-}
-
-.resume-btn {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 430px;
-  height: 85px;
-  border-radius: 20px;
-  border: 1.5px solid #b36a66;
-  background: #e9d9cc;
-  color: #000000;
-  font-family: "Inria Serif", serif;
-  font-size: 30px;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
+  border-radius: 30px;
+  padding: 12px 30px;
+  font-size: 18px;
+  border: none;
 }
 
 .start-btn {
-  position: absolute;
-  left: 480px;
-  top: 0;
-  width: 430px;
-  height: 85px;
-  border: none;
-  border-radius: 20px;
   background: #9d5651;
   color: #f0e6dd;
-  font-family: "Inria Serif", serif;
-  font-size: 30px;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
+  border-radius: 20px;
+  padding: 20px;
+  font-size: 20px;
+  border: none;
 }
 
+.resume-btn {
+  background: #e9d9cc;
+  border: 1.5px solid #b36a66;
+  border-radius: 20px;
+  padding: 20px;
+  font-size: 20px;
+}
+
+/* HOVER */
 .approve-btn:hover,
 .start-btn:hover {
   background: #874946;
 }
 
-.resume-btn:hover,
-.logout-btn:hover {
-  filter: brightness(0.98);
+.resume-btn:hover {
+  background: #f5e7dc;
 }
