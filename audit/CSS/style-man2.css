@@ -118,17 +118,17 @@ body {
   border: 1px solid #964f4c;
 }
 
-/* TABLE CARD */
+/* TABLE */
 .table-card {
   background: #e9d9cc;
   border-radius: 20px;
 }
 
-/* 🔥 GRID FIX */
+/* GRID */
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
   align-items: center;
   gap: 10px;
 }
@@ -148,11 +148,20 @@ body {
   border-bottom: 1px solid rgba(150, 79, 76, 0.2);
 }
 
+/* ensure perfect alignment */
+.table-row div {
+  display: flex;
+  align-items: center;
+}
+
+/* center input column */
+.table-row div:nth-child(3) {
+  justify-content: center;
+}
+
 /* INPUT */
 .count-input {
-  width: 100%;
-  max-width: 80px;
-  justify-self: center;
+  width: 80px;
   text-align: center;
   border: 1px solid #964f4c;
   border-radius: 10px;
