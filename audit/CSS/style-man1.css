@@ -5,7 +5,7 @@ body {
   background: #f0e6dd;
 }
 
-/* MAIN CONTENT */
+/* MAIN */
 .main-content-area {
   margin-left: 270px;
   min-height: 100vh;
@@ -21,6 +21,16 @@ body {
   position: fixed;
   left: 0;
   top: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* TOP SECTION */
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
 }
 
 /* LOGO */
@@ -32,15 +42,15 @@ body {
 
 /* NAV */
 .sidebar-nav {
-  margin-top: 150px; /* EXACT match to dashboard */
-  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 14px;
+
+  padding-top: 30px; /* ✅ replaces margin-top */
+  align-items: center;
 }
 
-/* NAV BUTTONS */
+/* BUTTONS */
 .nav-btn {
   width: 242px;
   min-height: 62px;
@@ -49,22 +59,21 @@ body {
   background: transparent;
   color: #f0e6dd;
   font-size: 20px;
+
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* KEY difference from your version */
+  justify-content: flex-start;
   text-align: left;
-  border: none;
+
   transition: 0.2s;
 }
 
-/* ACTIVE + HOVER */
 .nav-btn.active,
 .nav-btn:hover {
   background: #f0e6dd;
   color: #964f4c;
 }
 
-/* TWO LINE */
 .nav-btn.two-line {
   min-height: 74px;
   padding-top: 12px;
@@ -73,6 +82,12 @@ body {
 }
 
 /* LOGOUT */
+.sidebar-bottom {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 20px;
+}
+
 .logout-btn {
   width: 95px;
   height: 52px;
@@ -132,8 +147,6 @@ body {
   color: #f0e6dd;
   border-radius: 30px;
   padding: 12px 30px;
-  font-size: 18px;
-  border: none;
 }
 
 .start-btn {
@@ -141,8 +154,6 @@ body {
   color: #f0e6dd;
   border-radius: 20px;
   padding: 20px;
-  font-size: 20px;
-  border: none;
 }
 
 .resume-btn {
@@ -150,15 +161,4 @@ body {
   border: 1.5px solid #b36a66;
   border-radius: 20px;
   padding: 20px;
-  font-size: 20px;
-}
-
-/* HOVER */
-.approve-btn:hover,
-.start-btn:hover {
-  background: #874946;
-}
-
-.resume-btn:hover {
-  background: #f5e7dc;
 }
