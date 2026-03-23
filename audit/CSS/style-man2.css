@@ -26,7 +26,6 @@ body {
   justify-content: space-between;
 }
 
-/* LOGO */
 .kft-logo {
   width: 270px;
   height: 108px;
@@ -35,7 +34,6 @@ body {
   left: 0;
 }
 
-/* NAV */
 .sidebar-nav {
   margin-top: 120px;
   width: 100%;
@@ -55,6 +53,7 @@ body {
   border: none;
   display: flex;
   align-items: center;
+  text-align: left;
 }
 
 .nav-btn:hover,
@@ -124,13 +123,12 @@ body {
   border-radius: 20px;
 }
 
-/* GRID */
+/* GRID STRUCTURE */
 .table-header,
 .table-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
   align-items: center;
-  gap: 10px;
 }
 
 /* HEADER */
@@ -138,30 +136,31 @@ body {
   font-weight: 700;
   color: #964f4c;
   border-bottom: 2px solid #964f4c;
-  padding-bottom: 10px;
+  padding-bottom: 12px;
   margin-bottom: 15px;
 }
 
-/* ROWS */
+/* ROW */
 .table-row {
-  padding: 10px 0;
+  padding: 12px 0;
   border-bottom: 1px solid rgba(150, 79, 76, 0.2);
 }
 
-/* ensure perfect alignment */
-.table-row div {
-  display: flex;
-  align-items: center;
+/* COLUMN ALIGNMENT */
+.col-ingredient {
+  text-align: left;
+  padding-left: 10px;
 }
 
-/* center input column */
-.table-row div:nth-child(3) {
+.col-center {
+  display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 /* INPUT */
 .count-input {
-  width: 80px;
+  width: 70px;
   text-align: center;
   border: 1px solid #964f4c;
   border-radius: 10px;
