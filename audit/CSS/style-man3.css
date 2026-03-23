@@ -7,65 +7,63 @@
   );
 }
 
-.manager-fourth-1-3-page,
-.manager-fourth-1-3-page * {
+/* GLOBAL */
+*, *::before, *::after {
   box-sizing: border-box;
-}
-
-html,
-body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
-  background: #f0e6dd;
   font-family: "Inria Serif", serif;
 }
 
-.manager-fourth-1-3-page {
+body {
   background: #f0e6dd;
-  border: 1px solid #000000;
+}
+
+a, button {
+  text-decoration: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* PAGE CONTAINER */
+.manager-fourth-1-3-page {
   width: 1440px;
   height: 1024px;
+  background: #f0e6dd;
+  border: 1px solid #000000;
   position: fixed;
   left: 50%;
   top: 50%;
-  overflow: hidden;
   transform: translate(-50%, -50%) scale(var(--scale));
   transform-origin: center center;
+  overflow: hidden;
 }
 
 /* SIDEBAR */
-.rectangle-1 {
+.sidebar-wrapper {
   width: 270px;
-  height: 1024px;
+  height: 100%;
+  background: #964f4c;
   position: absolute;
   left: 0;
   top: 0;
-  object-fit: fill;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 100;
 }
 
 .kft-logo {
   width: 270px;
   height: 108px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  object-fit: cover;
 }
 
-/* NAVBAR */
 .sidebar-nav {
-  position: absolute;
-  left: 14px;
-  top: 170px;
-  width: 242px;
+  margin-top: 120px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 14px;
 }
 
@@ -73,112 +71,87 @@ body {
   width: 242px;
   min-height: 62px;
   padding: 0 18px;
-  border: none;
   border-radius: 38px;
   background: transparent;
   color: #f0e6dd;
-  font-family: "Inria Serif", serif;
   font-size: 20px;
-  font-weight: 400;
-  line-height: 1.15;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.18s ease, color 0.18s ease;
   display: flex;
   align-items: center;
+  text-align: left;
+}
+
+.nav-btn.active, .nav-btn:hover {
+  background: #f0e6dd;
+  color: #964f4c;
 }
 
 .nav-btn.two-line {
   min-height: 74px;
   padding-top: 12px;
-  padding-bottom: 12px;
   align-items: flex-start;
-}
-
-.nav-btn.active,
-.nav-btn:hover {
-  background: #f0e6dd;
-  color: #964f4c;
-}
-
-.nav-btn:focus-visible {
-  outline: 2px solid #e9d9cc;
-  outline-offset: 2px;
 }
 
 /* LOGOUT */
 .logout-btn {
-  position: absolute;
-  left: 88px;
-  top: 951px;
   width: 95px;
   height: 52px;
-  border: none;
-  border-radius: 28px;
   background: #e9d9cc;
   color: #964f4c;
-  font-family: "Inria Serif", serif;
-  font-size: 20px;
-  cursor: pointer;
+  border-radius: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
+  margin-bottom: 20px;
 }
 
 .logout-btn:hover {
   filter: brightness(0.98);
 }
 
-/* HEADER */
-.rectangle-5 {
-  background: #e9d9cc;
-  border-radius: 36px;
-  width: 1240px;
-  height: 112px;
-  position: absolute;
-  left: 152px;
-  top: 21px;
+/* MAIN CONTENT */
+.main-content-area {
+  margin-left: 270px;
+  padding: 40px 20px;
 }
 
-.inventory-reconciliation-audit-report-summary {
-  color: #000000;
-  text-align: center;
-  font-family: "Inria Serif", serif;
+/* HEADER */
+.header-card {
+  background: #e9d9cc;
+  border-radius: 36px;
+  height: 112px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.page-title {
   font-size: 34px;
   font-weight: 700;
-  position: absolute;
-  left: 152px;
-  top: 62px;
-  width: 1240px;
+  text-align: center;
+  width: 100%;
 }
 
 /* SUMMARY CARD */
 .summary-card {
-  position: absolute;
-  left: 317px;
-  top: 270px;
-  width: 496px;
-  height: 246px;
   background: #f8efe6;
-  border: 1px solid #000000;
+  border: 1px solid #000;
   border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  width: 500px;
+  margin-bottom: 40px;
 }
 
 .summary-header {
-  width: 100%;
-  height: 58px;
   background: #9d5651;
   color: #f0e6dd;
-  font-family: "Inria Serif", serif;
   font-size: 32px;
   font-weight: 700;
+  padding: 0 14px;
+  height: 58px;
   display: flex;
   align-items: center;
-  padding: 0 14px;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #000;
 }
 
 .summary-row {
@@ -186,10 +159,9 @@ body {
   display: flex;
   align-items: center;
   padding: 0 14px;
-  font-family: "Inria Serif", serif;
   font-size: 32px;
   font-weight: 700;
-  color: #000000;
+  color: #000;
   border-bottom: 1px solid #c48a86;
 }
 
@@ -204,56 +176,47 @@ body {
 
 /* TABLE CARD */
 .table-card {
-  position: absolute;
-  left: 278px;
-  top: 563px;
-  width: 1151px;
-  height: 298px;
-  border: 1px solid #000000;
-  border-radius: 22px;
   background: #f8efe6;
+  border-radius: 22px;
+  border: 1px solid #000;
   overflow: hidden;
 }
 
-.table-header {
-  background: #9d5651;
-  height: 64px;
+.table-header, .table-row {
   display: grid;
   grid-template-columns: 2fr 1.2fr 1.5fr 1fr;
   align-items: center;
   padding: 0 32px;
+}
+
+.table-header {
+  background: #9d5651;
   color: #f0e6dd;
-  font-family: "Inria Serif", serif;
   font-size: 32px;
   font-weight: 700;
+  height: 64px;
 }
 
 .table-body {
-  padding: 22px 38px 0 38px;
+  padding: 22px 0 0 0;
 }
 
 .table-row {
-  display: grid;
-  grid-template-columns: 2fr 1.2fr 1.5fr 1fr;
-  align-items: center;
   min-height: 70px;
   border-top: 1px solid #c48a86;
 }
 
 .col {
-  font-family: "Inria Serif", serif;
   font-size: 32px;
   font-weight: 700;
-  color: #000000;
+  color: #000;
 }
 
 .ingredient-col {
   text-align: left;
 }
 
-.qty-col,
-.count-col,
-.diff-col {
+.qty-col, .count-col, .diff-col {
   text-align: center;
 }
 
@@ -263,57 +226,35 @@ body {
   border: 1px solid #b36a66;
   border-radius: 20px;
   background: #f8f3ee;
-  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 auto;
 }
 
 /* ACTION BUTTONS */
 .frame-actions {
-  position: absolute;
-  left: 758px;
-  top: 880px;
-  width: 600px;
-  height: 63px;
+  margin-top: 40px;
+  display: flex;
+  gap: 20px;
 }
 
 .export-btn {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 272px;
-  height: 63px;
+  background: #e9d9cc;
   border-radius: 18px;
   border: 1.5px solid #b36a66;
-  background: #e9d9cc;
-  color: #000000;
-  font-family: "Inria Serif", serif;
   font-size: 32px;
   font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 12px 24px;
 }
 
 .close-btn {
-  position: absolute;
-  left: 328px;
-  top: 0;
-  width: 272px;
-  height: 63px;
-  border: none;
-  border-radius: 18px;
   background: #9d5651;
   color: #e9d9cc;
-  font-family: "Inria Serif", serif;
+  border-radius: 18px;
   font-size: 32px;
   font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 12px 24px;
 }
 
 .close-btn:hover {
@@ -322,55 +263,4 @@ body {
 
 .export-btn:hover {
   filter: brightness(0.98);
-}
-
-/* PRINT / PDF EXPORT */
-@media print {
-  html,
-  body {
-    width: 1440px;
-    height: auto;
-    overflow: visible;
-    background: #ffffff;
-  }
-
-  .manager-fourth-1-3-page {
-    position: static;
-    transform: none;
-    width: 1440px;
-    height: auto;
-    border: none;
-    overflow: visible;
-  }
-
-  .rectangle-1,
-  .kft-logo,
-  .sidebar-nav,
-  .logout-btn,
-  .frame-actions {
-    display: none !important;
-  }
-
-  .rectangle-5 {
-    left: 40px;
-    top: 20px;
-    width: 1360px;
-  }
-
-  .inventory-reconciliation-audit-report-summary {
-    left: 40px;
-    top: 60px;
-    width: 1360px;
-  }
-
-  .summary-card {
-    left: 80px;
-    top: 180px;
-  }
-
-  .table-card {
-    left: 40px;
-    top: 560px;
-    width: 1360px;
-  }
 }
