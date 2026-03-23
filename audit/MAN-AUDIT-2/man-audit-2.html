@@ -21,35 +21,14 @@
 
       <div class="sidebar-nav d-flex flex-column gap-2">
 
-        <button class="nav-btn"
-          onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">
-          Full Inventory View
-        </button>
-
+        <button class="nav-btn">Full Inventory View</button>
         <button class="nav-btn active">Inventory Reconciliation</button>
+        <button class="nav-btn">Activity Log</button>
+        <button class="nav-btn">Dashboards & Analytics</button>
+        <button class="nav-btn">Predictive Reports</button>
+        <button class="nav-btn">Manage Users</button>
 
-        <button class="nav-btn"
-          onclick="window.location.href='../MAN-AUDIT-4/man-audit-4.html'">
-          Activity Log
-        </button>
-
-        <button class="nav-btn"
-          onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">
-          Dashboards &amp; Analytics
-        </button>
-
-        <button class="nav-btn"
-          onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
-          Predictive Reports
-        </button>
-
-        <button class="nav-btn"
-          onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">
-          Manage Users
-        </button>
-
-        <button class="nav-btn two-line"
-          onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
+        <button class="nav-btn two-line">
           Purchase Order<br>Management
         </button>
 
@@ -57,7 +36,7 @@
     </div>
 
     <div class="pb-4">
-      <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
+      <a href="#" class="logout-btn">Logout</a>
     </div>
 
   </nav>
@@ -86,54 +65,55 @@
 
         <!-- HEADER -->
         <div class="table-header">
-          <div>Ingredient</div>
-          <div>System Qty</div>
-          <div>Physical Count</div>
-          <div>Difference</div>
+          <div class="col-ingredient">Ingredient</div>
+          <div class="col-center">System Qty</div>
+          <div class="col-center">Physical Count</div>
+          <div class="col-center">Difference</div>
         </div>
 
         <!-- ROWS -->
         <div class="table-row">
-          <div>Tapioca Pearls</div>
-          <div>10</div>
-          <div><input class="count-input" value="10"></div>
-          <div>0</div>
+          <div class="col-ingredient">Tapioca Pearls</div>
+          <div class="col-center">10</div>
+          <div class="col-center">
+            <input class="count-input" value="10">
+          </div>
+          <div class="col-center">0</div>
         </div>
 
         <div class="table-row">
-          <div>Black Tea</div>
-          <div>6</div>
-          <div><input class="count-input" value="3"></div>
-          <div class="text-danger">3</div>
+          <div class="col-ingredient">Black Tea</div>
+          <div class="col-center">6</div>
+          <div class="col-center">
+            <input class="count-input" value="3">
+          </div>
+          <div class="col-center text-danger">3</div>
         </div>
 
         <div class="table-row">
-          <div>Mango Syrup</div>
-          <div>5</div>
-          <div><input class="count-input" value="3"></div>
-          <div class="text-danger">2</div>
+          <div class="col-ingredient">Mango Syrup</div>
+          <div class="col-center">5</div>
+          <div class="col-center">
+            <input class="count-input" value="3">
+          </div>
+          <div class="col-center text-danger">2</div>
         </div>
 
         <div class="table-row">
-          <div>Large Cups</div>
-          <div>20</div>
-          <div><input class="count-input" value="21"></div>
-          <div class="text-danger">-1</div>
+          <div class="col-ingredient">Large Cups</div>
+          <div class="col-center">20</div>
+          <div class="col-center">
+            <input class="count-input" value="21">
+          </div>
+          <div class="col-center text-danger">-1</div>
         </div>
 
       </div>
 
       <!-- BUTTONS -->
       <div class="d-flex justify-content-end gap-3 mt-4">
-        <button class="resume-btn"
-          onclick="window.location.href='../MAN-AUDIT-1/man-audit-1.html'">
-          Save Draft
-        </button>
-
-        <button class="start-btn"
-          onclick="window.location.href='../MAN-AUDIT-3/man-audit-3.html'">
-          Submit Audit
-        </button>
+        <button class="resume-btn">Save Draft</button>
+        <button class="start-btn">Submit Audit</button>
       </div>
 
     </div>
