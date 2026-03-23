@@ -1,139 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <div class="w-100 d-flex flex-column align-items-center">
 
-  <!-- Your CSS -->
-  <link rel="stylesheet" href="../CSS/style-man1.css">
+    <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea logo" />
 
-  <title>Inventory Reconciliation</title>
-</head>
+    <div class="sidebar-nav d-flex flex-column align-items-center gap-3 w-100">
 
-<body>
+      <button class="nav-btn"
+        onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">
+        Full Inventory View
+      </button>
 
-<div class="container-fluid p-0">
+      <button class="nav-btn active">
+        Inventory Reconciliation
+      </button>
 
-  <!-- SIDEBAR -->
-  <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
+      <button class="nav-btn"
+        onclick="window.location.href='../MAN-AUDIT-4/man-audit-4.html'">
+        Activity Log
+      </button>
 
-    <div class="w-100">
-      <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea logo">
+      <button class="nav-btn"
+        onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">
+        Dashboards & Analytics
+      </button>
 
-      <div class="sidebar-nav d-flex flex-column gap-2">
+      <button class="nav-btn"
+        onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
+        Predictive Reports
+      </button>
 
-        <button class="nav-btn"
-          onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">
-          Full Inventory View
-        </button>
+      <button class="nav-btn"
+        onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">
+        Manage Users
+      </button>
 
-        <button class="nav-btn active">
-          Inventory Reconciliation
-        </button>
-
-        <button class="nav-btn"
-          onclick="window.location.href='../MAN-AUDIT-4/man-audit-4.html'">
-          Activity Log
-        </button>
-
-        <button class="nav-btn"
-          onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">
-          Dashboards & Analytics
-        </button>
-
-        <button class="nav-btn"
-          onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
-          Predictive Reports
-        </button>
-
-        <button class="nav-btn"
-          onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">
-          Manage Users
-        </button>
-
-        <button class="nav-btn two-line"
-          onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
-          Purchase Order<br>Management
-        </button>
-
-      </div>
-    </div>
-
-    <div class="pb-4">
-      <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
-    </div>
-
-  </nav>
-
-  <!-- MAIN CONTENT -->
-  <main class="main-content-area">
-
-    <div class="content-container-centered">
-
-      <!-- HEADER -->
-      <div class="rectangle-5 mb-5">
-        <h1 class="page-title">Inventory Reconciliation</h1>
-      </div>
-
-      <!-- CARD -->
-      <div class="row justify-content-center">
-        <div class="col-lg-10">
-
-          <div class="dashboard-card p-4">
-
-            <!-- LAST AUDIT -->
-            <div class="mb-4">
-              <h2 class="section-title">Last Audit: March 5, 2026</h2>
-              <hr>
-              <p class="section-sub">Conducted by: Sophie M.</p>
-            </div>
-
-            <!-- AUDIT TO APPROVE -->
-            <div class="mb-4">
-              <h2 class="section-title">Audit to Approve: March 5, 2026</h2>
-              <hr>
-              <p class="section-sub">Conducted by: Sophie M.</p>
-            </div>
-
-            <!-- APPROVE BUTTON -->
-            <div class="d-flex justify-content-end">
-              <button class="approve-btn"
-                onclick="window.location.href='../MAN-AUDIT-3/man-audit-3.html'">
-                Approve Audit
-              </button>
-            </div>
-
-          </div>
-
-          <!-- BOTTOM BUTTONS -->
-          <div class="row mt-4 g-3">
-            <div class="col-md-6">
-              <button class="resume-btn w-100"
-                onclick="window.location.href='../MAN-AUDIT-2/man-audit-2.html'">
-                Resume Draft Audit
-              </button>
-            </div>
-
-            <div class="col-md-6">
-              <button class="start-btn w-100"
-                onclick="window.location.href='../MAN-AUDIT-2/man-audit-2.html'">
-                Start New Audit
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </div>
+      <button class="nav-btn two-line"
+        onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
+        Purchase Order<br>Management
+      </button>
 
     </div>
+  </div>
 
-  </main>
+  <div class="pb-4">
+    <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
+  </div>
 
-</div>
-
-</body>
-</html>
+</nav>
