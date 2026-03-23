@@ -5,7 +5,7 @@ body {
   background: #f0e6dd;
 }
 
-/* MAIN */
+/* MAIN CONTENT */
 .main-content-area {
   margin-left: 270px;
   min-height: 100vh;
@@ -21,16 +21,6 @@ body {
   position: fixed;
   left: 0;
   top: 0;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-/* TOP SECTION */
-.sidebar-top {
-  display: flex;
-  flex-direction: column;
 }
 
 /* LOGO */
@@ -40,24 +30,28 @@ body {
   object-fit: cover;
 }
 
-/* NAV */
+/* NAV CONTAINER */
 .sidebar-nav {
+  margin-top: 150px; /* EXACT match to dashboard */
   display: flex;
   flex-direction: column;
-  gap: 14px;
-
-  padding-top: 30px; /* ✅ replaces margin-top */
   align-items: center;
+  gap: 14px;
 }
 
-/* BUTTONS */
+/* NAV BUTTONS */
 .nav-btn {
   width: 242px;
   min-height: 62px;
   padding: 0 18px;
+
+  border: none; /* IMPORTANT */
   border-radius: 38px;
+
   background: transparent;
   color: #f0e6dd;
+
+  font-family: "Inria Serif", serif;
   font-size: 20px;
 
   display: flex;
@@ -65,15 +59,18 @@ body {
   justify-content: flex-start;
   text-align: left;
 
-  transition: 0.2s;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
-.nav-btn.active,
-.nav-btn:hover {
+/* HOVER + ACTIVE */
+.nav-btn:hover,
+.nav-btn.active {
   background: #f0e6dd;
   color: #964f4c;
 }
 
+/* TWO LINE */
 .nav-btn.two-line {
   min-height: 74px;
   padding-top: 12px;
@@ -82,18 +79,13 @@ body {
 }
 
 /* LOGOUT */
-.sidebar-bottom {
-  display: flex;
-  justify-content: center;
-  padding-bottom: 20px;
-}
-
 .logout-btn {
   width: 95px;
   height: 52px;
   background: #e9d9cc;
   color: #964f4c;
   border-radius: 28px;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -147,6 +139,7 @@ body {
   color: #f0e6dd;
   border-radius: 30px;
   padding: 12px 30px;
+  border: none;
 }
 
 .start-btn {
@@ -154,6 +147,7 @@ body {
   color: #f0e6dd;
   border-radius: 20px;
   padding: 20px;
+  border: none;
 }
 
 .resume-btn {
@@ -161,4 +155,14 @@ body {
   border: 1.5px solid #b36a66;
   border-radius: 20px;
   padding: 20px;
+}
+
+/* HOVER */
+.approve-btn:hover,
+.start-btn:hover {
+  background: #874946;
+}
+
+.resume-btn:hover {
+  background: #f5e7dc;
 }
