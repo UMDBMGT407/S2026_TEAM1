@@ -1,5 +1,4 @@
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -13,14 +12,6 @@ body {
   font-family: "Inria Serif", serif;
 }
 
-/* MAIN CONTENT */
-.main-content-area {
-  margin-left: 270px;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-}
-
 /* SIDEBAR */
 .sidebar-wrapper {
   width: 270px;
@@ -29,39 +20,36 @@ body {
   position: fixed;
   left: 0;
   top: 0;
+  z-index: 1000;
 
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* 🔥 KEY */
+  justify-content: space-between;
 }
 
-/* NAV AREA */
-.sidebar-nav {
-  margin-top: 20px; /* small spacing only */
-  align-items: center;
-}
-
-/* LOGOUT */
-.logout-container {
-  display: flex;
-  justify-content: center;
-  padding-bottom: 20px;
-}
+/* LOGO */
 .kft-logo {
   width: 270px;
   height: 108px;
   position: absolute;
-  left: 0;
   top: 0;
+  left: 0;
   object-fit: cover;
-  z-index: 30;
 }
 
+/* NAV AREA */
+.sidebar-nav {
+  margin-top: 120px; /* 🔥 KEY FIX */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 /* NAV BUTTONS */
 .nav-btn {
   width: 242px;
-  min-height: 62px;
+  min-height: 52px; /* 🔥 MATCHED */
   padding: 0 18px;
   border: none;
   border-radius: 38px;
@@ -70,21 +58,21 @@ body {
   font-family: "Inria Serif", serif;
   font-size: 20px;
   cursor: pointer;
-  transition: background-color 0.18s ease, color 0.18s ease;
+  transition: 0.18s;
   display: flex;
   align-items: center;
-  text-align: left;
   justify-content: flex-start;
+  text-align: left;
 }
 
-/* HOVER + ACTIVE */
+/* ACTIVE + HOVER */
 .nav-btn:hover,
 .nav-btn.active {
   background: #f0e6dd;
   color: #964f4c;
 }
 
-/* TWO LINE */
+/* TWO LINE BUTTON */
 .nav-btn.two-line {
   min-height: 74px;
   padding-top: 12px;
@@ -92,6 +80,7 @@ body {
   align-items: flex-start;
 }
 
+/* LOGOUT */
 .logout-btn {
   width: 95px;
   height: 52px;
@@ -101,9 +90,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Inria Serif", serif;
   font-size: 20px;
   text-decoration: none;
+}
+
+/* MAIN CONTENT */
+.main-content-area {
+  margin-left: 270px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
 }
 
 /* CONTENT */
@@ -171,7 +167,7 @@ body {
   padding: 20px;
 }
 
-/* HOVER */
+/* HOVER EFFECTS */
 .approve-btn:hover,
 .start-btn:hover {
   background: #874946;
