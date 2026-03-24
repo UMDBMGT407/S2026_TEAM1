@@ -10,10 +10,9 @@ html, body {
 
 body {
   font-family: "Inria Serif", serif;
-  color: #1f1f1f;
 }
 
-/* SIDEBAR */
+/* SIDEBAR — LEFT UNCHANGED */
 .sidebar-wrapper {
   width: 270px;
   height: 100vh;
@@ -34,7 +33,7 @@ body {
 }
 
 .sidebar-nav {
-  margin-top: 110px;
+  margin-top: 120px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -44,19 +43,17 @@ body {
 
 .nav-btn {
   width: 242px;
-  min-height: 50px;
+  min-height: 52px;
   padding: 0 18px;
   border-radius: 38px;
   background: transparent;
   color: #f0e6dd;
-  font-size: 18px;
-  font-weight: 400;
+  font-size: 20px;
   border: none;
   display: flex;
   align-items: center;
   text-align: left;
   cursor: pointer;
-  transition: 0.2s ease;
 }
 
 .nav-btn:hover,
@@ -66,26 +63,22 @@ body {
 }
 
 .nav-btn.two-line {
-  min-height: 68px;
-  padding-top: 10px;
-  line-height: 1.2;
+  min-height: 74px;
+  padding-top: 12px;
 }
 
 /* LOGOUT */
-.logout-wrap {
-  padding-bottom: 24px;
-}
-
 .logout-btn {
-  width: 98px;
-  height: 46px;
+  width: 95px;
+  height: 52px;
   background: #e9d9cc;
   color: #964f4c;
-  border-radius: 24px;
+  border-radius: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  margin-bottom: 20px;
   font-size: 18px;
   font-weight: 600;
 }
@@ -94,103 +87,122 @@ body {
 .main-content-area {
   margin-left: 270px;
   min-height: 100vh;
-  padding: 34px 24px 28px;
-  display: flex;
-  justify-content: center;
+  padding: 20px 0 40px 0;
 }
 
-.content-container-centered {
-  width: 100%;
-  max-width: 1140px;
+.main-layout {
+  width: 1170px;
+  margin-left: 8px;
+  padding-top: 0;
 }
 
 /* HEADER */
 .rectangle-5 {
+  width: 1138px;
+  height: 112px;
   background: #e9d9cc;
-  border-radius: 32px;
-  min-height: 108px;
+  border-radius: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 36px;
-  margin-bottom: 34px;
+  margin: 0 0 20px 0;
 }
 
 .page-title {
   margin: 0;
-  font-size: 30px;
+  font-size: 34px;
   font-weight: 700;
   text-align: center;
-  line-height: 1.2;
+  color: #111;
 }
 
 /* SUMMARY CARD */
 .summary-card {
+  width: 495px;
   background: #f8efe6;
-  border: 1px solid rgba(0, 0, 0, 0.65);
+  border: 1px solid #000;
   border-radius: 22px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10);
   overflow: hidden;
-  margin-bottom: 34px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  margin: 0 0 46px 46px;
 }
 
 .summary-header {
   background: #9d5651;
   color: #f0e6dd;
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 700;
-  padding: 16px 24px;
-  line-height: 1.2;
+  line-height: 1.1;
+  padding: 10px 16px 12px 16px;
+  border-bottom: 1px solid #000;
 }
 
 .summary-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 18px 24px;
-  font-size: 24px;
+  justify-content: space-between;
+  min-height: 62px;
+  padding: 8px 14px;
+  font-size: 28px;
   font-weight: 700;
-  line-height: 1.2;
-  border-top: 1px solid #d8b0ac;
+  color: #111;
+  border-bottom: 1px solid #d79a95;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
 }
 
 .red-text {
-  color: #b35d59;
+  color: #b45a56;
   font-weight: 700;
 }
 
 /* TABLE */
 .table-card {
+  width: 1152px;
   background: #f8efe6;
+  border: 1px solid #000;
   border-radius: 22px;
-  border: 1px solid rgba(0, 0, 0, 0.65);
   overflow: hidden;
-  margin-bottom: 34px;
+  margin-left: 8px;
 }
 
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 2.2fr 1fr 1.25fr 0.95fr;
+  grid-template-columns: 2.1fr 1.1fr 1.5fr 1.1fr;
   align-items: center;
-  column-gap: 12px;
-  padding: 14px 24px;
 }
 
 .table-header {
   background: #9d5651;
   color: #f0e6dd;
-  font-size: 24px;
+  font-size: 31px;
   font-weight: 700;
-  line-height: 1.2;
+  padding: 14px 28px;
 }
 
 .table-row {
-  font-size: 22px;
+  font-size: 30px;
   font-weight: 700;
-  line-height: 1.2;
-  border-top: 1px solid #d8b0ac;
-  min-height: 82px;
+  color: #111;
+  padding: 8px 28px;
+  min-height: 70px;
+  position: relative;
+}
+
+.table-row::before {
+  content: "";
+  position: absolute;
+  left: 36px;
+  right: 36px;
+  top: 0;
+  border-top: 1px solid #c98f89;
+}
+
+.table-card .table-row:first-of-type::before {
+  display: none;
 }
 
 .ingredient-col {
@@ -204,48 +216,53 @@ body {
 }
 
 .count-pill {
-  width: 112px;
-  height: 48px;
-  border: 1px solid #c88d88;
-  border-radius: 18px;
-  background: #faf5f0;
+  width: 128px;
+  height: 52px;
+  border: 1px solid #b36a66;
+  border-radius: 20px;
+  background: #f8f3ee;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  font-size: 22px;
+  font-size: 30px;
   font-weight: 700;
 }
 
 /* ACTION BUTTONS */
 .frame-actions {
+  width: 1152px;
   display: flex;
   justify-content: flex-end;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.export-btn,
-.close-btn {
-  padding: 12px 22px;
-  font-size: 22px;
-  font-weight: 700;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: 0.2s ease;
+  gap: 54px;
+  margin-top: 18px;
+  padding-right: 72px;
 }
 
 .export-btn {
+  width: 274px;
+  height: 64px;
+  border-radius: 20px;
   border: 1.5px solid #b36a66;
   background: #e9d9cc;
-  color: #000;
+  color: #111;
+  font-size: 30px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .close-btn {
-  background: #9d5651;
-  color: #e9d9cc;
+  width: 274px;
+  height: 64px;
+  border-radius: 20px;
   border: none;
+  background: #9d5651;
+  color: #f0e6dd;
+  font-size: 30px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .close-btn:hover {
@@ -254,81 +271,4 @@ body {
 
 .export-btn:hover {
   filter: brightness(0.98);
-}
-
-/* RESPONSIVE */
-@media (max-width: 1200px) {
-  .page-title {
-    font-size: 27px;
-  }
-
-  .summary-header {
-    font-size: 24px;
-  }
-
-  .summary-row,
-  .table-header,
-  .table-row,
-  .count-pill,
-  .export-btn,
-  .close-btn {
-    font-size: 20px;
-  }
-}
-
-@media (max-width: 992px) {
-  .sidebar-wrapper {
-    width: 230px;
-  }
-
-  .kft-logo {
-    width: 230px;
-    height: 95px;
-  }
-
-  .main-content-area {
-    margin-left: 230px;
-    padding: 26px 18px;
-  }
-
-  .nav-btn {
-    width: 205px;
-    font-size: 16px;
-  }
-
-  .rectangle-5 {
-    min-height: 95px;
-    padding: 18px 24px;
-  }
-
-  .page-title {
-    font-size: 24px;
-  }
-
-  .summary-header {
-    font-size: 22px;
-  }
-
-  .summary-row {
-    font-size: 20px;
-    padding: 16px 20px;
-  }
-
-  .table-header,
-  .table-row {
-    font-size: 18px;
-    padding: 12px 16px;
-  }
-
-  .count-pill {
-    width: 95px;
-    height: 42px;
-    font-size: 18px;
-  }
-
-  .export-btn,
-  .close-btn {
-    font-size: 18px;
-    padding: 10px 18px;
-  }
 }
