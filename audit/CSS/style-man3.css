@@ -99,7 +99,7 @@ body {
 
 /* TITLE */
 .rectangle-5 {
-  width: calc(100vw - 270px - 54px);
+  width: calc(100vw - 270px - 30px);
   max-width: 1120px;
   height: 96px;
   background: #e9d9cc;
@@ -122,9 +122,9 @@ body {
 
 /* SHARED LEFT ALIGNMENT */
 .aligned-content {
-  margin-left: 28px;
-  width: calc(100vw - 270px - 54px);
-  max-width: 1120px;
+  margin-left: 10px;
+  width: calc(100vw - 270px - 30px);
+  max-width: 1100px;
 }
 
 /* TOP CARD */
