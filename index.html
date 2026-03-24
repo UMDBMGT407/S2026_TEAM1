@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/S2026_TEAM1/vars.css">
-<link rel="stylesheet" href="/S2026_TEAM1/audit/CSS/style-log.css">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="/S2026_TEAM1/vars.css" />
+  <link rel="stylesheet" href="/S2026_TEAM1/audit/CSS/style-log.css" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
 
   <style>
     a,
@@ -27,7 +32,9 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    menu, ol, ul {
+    menu,
+    ol,
+    ul {
       list-style-type: none;
       margin: 0;
       padding: 0;
@@ -38,55 +45,74 @@
 </head>
 <body>
   <div
-    class="login-page"
+    class="login-page d-flex flex-column align-items-center"
     style="
-      background: url(/S2026_TEAM1/audit/LOGIN/login-page.png) center;
-      background-size: cover;
-      background-repeat: no-repeat;
+      background: url('/S2026_TEAM1/audit/LOGIN/login-page.png') center center / cover no-repeat;
     "
   >
-    <div class="frame-1">
-      <div class="welcome-to-kung-fu-tea-silver-spring-inventory-management-system">
-        WELCOME TO KUNG FU TEA SILVER SPRING INVENTORY MANAGEMENT SYSTEM
+    <div class="content-wrapper container-fluid d-flex flex-column align-items-center">
+
+      <!-- Top Title -->
+      <div class="frame-1 d-flex align-items-center justify-content-center">
+        <h1 class="welcome-to-kung-fu-tea-silver-spring-inventory-management-system mb-0">
+          WELCOME TO KUNG FU TEA SILVER SPRING INVENTORY MANAGEMENT SYSTEM
+        </h1>
+      </div>
+
+      <!-- Login Card Section -->
+      <div class="login-card-wrapper position-relative d-flex justify-content-center align-items-start">
+        <img
+          class="rectangle-1"
+          src="/S2026_TEAM1/audit/LOGIN/rectangle-10.svg"
+          alt=""
+        />
+
+        <div class="login-card-content position-absolute d-flex flex-column align-items-center">
+          <div class="login-user">LOGIN USER</div>
+
+          <form class="login-form w-100 d-flex flex-column align-items-center" onsubmit="handleLogin(event)">
+            <input
+              class="login-input form-control"
+              type="text"
+              id="userId"
+              placeholder="Enter your ID"
+              aria-label="Enter your ID"
+            />
+
+            <input
+              class="login-input form-control"
+              type="password"
+              id="userPassword"
+              placeholder="Enter your password"
+              aria-label="Enter your password"
+            />
+
+            <button type="submit" class="login-btn">Login</button>
+          </form>
+
+          <div class="new-member-contact-your-manager-to-set-up-an-account">
+            <span>
+              <span class="new-member-contact-your-manager-to-set-up-an-account-span">
+                Forgot password? New member?
+              </span>
+              <span class="new-member-contact-your-manager-to-set-up-an-account-span2">
+                <br />
+                Contact your manager to set up an account.
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Image -->
+      <div class="bottom-image-wrapper d-flex justify-content-center w-100">
+        <img
+          class="kft-quality-image-1"
+          src="/S2026_TEAM1/audit/LOGIN/kft-quality-image-10.png"
+          alt="Kung Fu Tea drinks"
+        />
       </div>
     </div>
-
-    <img class="kft-quality-image-1" src="audit/LOGIN/kft-quality-image-10.png" alt="Kung Fu Tea drinks" />
-    <img class="rectangle-1" src="audit/LOGIN/rectangle-10.svg" alt="" />
-
-    <div class="new-member-contact-your-manager-to-set-up-an-account">
-      <span>
-        <span class="new-member-contact-your-manager-to-set-up-an-account-span">
-          Forgot password? New member?
-        </span>
-        <span class="new-member-contact-your-manager-to-set-up-an-account-span2">
-          <br />
-          Contact your manager to set up an account.
-        </span>
-      </span>
-    </div>
-
-    <div class="login-user">LOGIN USER</div>
-
-    <form class="login-form" onsubmit="handleLogin(event)">
-      <input
-        class="login-input id-input"
-        type="text"
-        id="userId"
-        placeholder="Enter your ID"
-        aria-label="Enter your ID"
-      />
-
-      <input
-        class="login-input password-input"
-        type="password"
-        id="userPassword"
-        placeholder="Enter your password"
-        aria-label="Enter your password"
-      />
-
-      <button type="submit" class="login-btn">Login</button>
-    </form>
   </div>
 
   <script>
@@ -96,18 +122,15 @@
       const userId = document.getElementById("userId").value.trim();
       const password = document.getElementById("userPassword").value.trim();
 
-   if (userId === "MANAGER" && password === "manager") {
-  window.location.href = "FULL/MAN-FULL/man-full.html";
-} 
-else if (userId === "SHIFTLEAD" && password === "shiftlead") {
-  window.location.href = "FULL/SL-FULL/sl-full.html";
-} 
-  else if (userId === "EMPLOYEE" && password === "employee") {
-  window.location.href = "FULL/employee/emp-full-inv.html";
-} 
-else {
-  alert("Invalid ID or password.");
-}
+      if (userId === "MANAGER" && password === "manager") {
+        window.location.href = "/S2026_TEAM1/FULL/MAN-FULL/man-full.html";
+      } else if (userId === "SHIFTLEAD" && password === "shiftlead") {
+        window.location.href = "/S2026_TEAM1/FULL/SL-FULL/sl-full.html";
+      } else if (userId === "EMPLOYEE" && password === "employee") {
+        window.location.href = "/S2026_TEAM1/FULL/employee/emp-full-inv.html";
+      } else {
+        alert("Invalid ID or password.");
+      }
     }
   </script>
 </body>
