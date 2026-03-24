@@ -13,7 +13,7 @@ body {
   background: #f0e6dd;
 }
 
-/* SIDEBAR - back to original feel */
+/* SIDEBAR */
 .sidebar-wrapper {
   width: 270px;
   height: 100vh;
@@ -39,7 +39,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .nav-btn {
@@ -69,6 +69,7 @@ body {
   padding-top: 12px;
 }
 
+/* LOGOUT */
 .logout-btn {
   width: 95px;
   height: 52px;
@@ -88,26 +89,24 @@ body {
 .main-content-area {
   margin-left: 270px;
   min-height: 100vh;
-  padding: 16px 22px 30px 18px;
+  padding-top: 18px;
 }
 
-.content-wrap {
-  width: 100%;
-  max-width: 1110px;
+.page-container {
+  width: 1120px;
 }
 
 /* HEADER */
 .rectangle-5 {
-  width: 100%;
-  max-width: 1085px;
-  height: 92px;
+  width: 1080px;
+  height: 90px;
   background: #e9d9cc;
   border-radius: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 0 24px 10px;
-  padding: 0 28px;
+  margin-left: 40px;
+  margin-bottom: 28px;
 }
 
 .page-title {
@@ -116,49 +115,48 @@ body {
   font-weight: 700;
   text-align: center;
   color: #111;
-  line-height: 1.15;
+}
+
+/* SHARED LEFT ALIGNMENT */
+.content-left-align {
+  margin-left: 60px;
 }
 
 /* SUMMARY CARD */
 .summary-card {
-  width: 560px;
+  width: 540px;
   background: #f8efe6;
-  border: 1px solid rgba(0, 0, 0, 0.55);
   border-radius: 20px;
+  border: 1px solid #000;
   overflow: hidden;
+  margin-bottom: 26px;
   box-shadow: 0 2px 7px rgba(0, 0, 0, 0.10);
-  margin: 0 0 26px 58px;
 }
 
 .summary-header {
   background: #9d5651;
   color: #f0e6dd;
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
-  line-height: 1.1;
   padding: 12px 18px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.35);
 }
 
 .summary-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   min-height: 56px;
-  padding: 8px 18px;
-  font-size: 24px;
+  padding: 10px 18px;
+  font-size: 22px;
   font-weight: 700;
   color: #111;
-  border-bottom: 1px solid #ddb3ae;
-}
-
-.summary-row:last-child {
-  border-bottom: none;
+  border-top: 1px solid #ddb3ae;
 }
 
 .summary-value {
-  min-width: 110px;
   text-align: right;
+  min-width: 80px;
 }
 
 .red-text {
@@ -167,37 +165,33 @@ body {
 
 /* TABLE */
 .table-card {
-  width: 100%;
-  max-width: 1085px;
+  width: 1080px;
   background: #f8efe6;
-  border: 1px solid rgba(0, 0, 0, 0.6);
   border-radius: 22px;
+  border: 1px solid #000;
   overflow: hidden;
-  margin-left: 10px;
-}
-
-.table-header,
-.table-row {
-  display: grid;
-  grid-template-columns: 2.1fr 1fr 1.35fr 0.85fr;
-  align-items: center;
 }
 
 .table-header {
   background: #9d5651;
   color: #f0e6dd;
-  font-size: 24px;
+  font-size: 23px;
   font-weight: 700;
   padding: 14px 24px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.3fr 0.8fr;
+  align-items: center;
 }
 
 .table-row {
-  font-size: 23px;
+  font-size: 22px;
   font-weight: 700;
-  color: #111;
   padding: 10px 24px;
-  min-height: 68px;
   border-top: 1px solid #ddb3ae;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.3fr 0.8fr;
+  align-items: center;
+  min-height: 68px;
 }
 
 .ingredient-col {
@@ -211,53 +205,50 @@ body {
 }
 
 .count-pill {
-  width: 108px;
-  height: 44px;
-  border: 1px solid #c58d88;
+  width: 100px;
+  height: 40px;
   border-radius: 18px;
+  border: 1px solid #c58d88;
   background: #f8f3ee;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
+  margin: auto;
   font-size: 22px;
   font-weight: 700;
 }
 
 /* BUTTONS */
 .frame-actions {
-  width: 100%;
-  max-width: 1085px;
+  width: 1080px;
+  margin-left: 60px;
+  margin-top: 20px;
   display: flex;
   justify-content: flex-end;
-  gap: 26px;
-  margin-top: 18px;
-  padding-right: 18px;
+  gap: 22px;
+}
+
+.export-btn,
+.close-btn {
+  height: 56px;
+  min-width: 200px;
+  border-radius: 18px;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .export-btn {
-  min-width: 220px;
-  height: 58px;
-  border-radius: 18px;
   border: 1.5px solid #b36a66;
   background: #e9d9cc;
   color: #111;
-  font-size: 24px;
-  font-weight: 700;
-  cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
 }
 
 .close-btn {
-  min-width: 220px;
-  height: 58px;
-  border-radius: 18px;
   border: none;
   background: #9d5651;
   color: #f0e6dd;
-  font-size: 24px;
-  font-weight: 700;
-  cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
 }
 
