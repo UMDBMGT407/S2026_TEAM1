@@ -102,7 +102,7 @@ body{
 /* ================= TITLE ================= */
 
 .rectangle-5{
-  width:1000px;
+  width:960px;
   height:96px;
   background:#e9d9cc;
   border-radius:34px;
@@ -125,7 +125,7 @@ body{
 
 .aligned-content{
   margin-left:0px;
-  width:1000px;
+  width:960px;
 }
 
 /* ================= SUMMARY CARD ================= */
@@ -171,7 +171,7 @@ body{
 /* ================= TABLE ================= */
 
 .table-card{
-  width:1000px;
+  width:960px;
   background:#f8efe6;
   border:1px solid rgba(0,0,0,0.55);
   border-radius:24px;
@@ -230,7 +230,7 @@ body{
 /* ================= BUTTONS ================= */
 
 .frame-actions{
-  width:1000px;
+  width:960px;
   display:flex;
   justify-content:flex-end;
   gap:20px;
