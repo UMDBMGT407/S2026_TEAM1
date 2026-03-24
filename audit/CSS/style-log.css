@@ -1,300 +1,105 @@
-.login-page,
-.login-page * {
-  box-sizing: border-box;
-}
-
 html,
 body {
   margin: 0;
   padding: 0;
-  width: 100%;
   height: 100%;
   overflow: hidden;
-}
-
-body {
-  background: #f0e6dd;
   font-family: "Inria Serif", serif;
 }
 
-/* FULL PAGE BACKGROUND */
 .login-page {
+  height: 100vh;
   width: 100%;
-  height: 100vh;
-  background: url("/S2026_TEAM1/audit/LOGIN/login-page.png") center center / cover no-repeat;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* MAIN CONTENT */
-.content-wrapper {
-  width: min(92vw, 1440px);
-  height: 100vh;
+  background: url("/S2026_TEAM1/audit/LOGIN/login-page.png") center/cover no-repeat;
   position: relative;
-  margin: 0 auto;
 }
 
-/* TOP TITLE BOX */
+/* TITLE */
 .frame-1 {
   position: absolute;
-  top: 6.5vh;
+  top: 3vh;
   left: 50%;
   transform: translateX(-50%);
-  width: min(88vw, 1119px);
-  min-height: 120px;
-  background: #ffffff;
-  border: 1px solid #000000;
-  padding: 18px 28px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  width: 82%;
+  padding: 14px;
+  background: white;
+  border: 1px solid black;
+  box-shadow: 0 4px 4px rgba(0,0,0,0.25);
 }
 
 .welcome-to-kung-fu-tea-silver-spring-inventory-management-system {
-  color: #000000;
+  font-size: clamp(24px,2.6vw,38px);
   text-align: center;
-  font-family: "Inria Serif", serif;
-  font-size: clamp(30px, 3.5vw, 48px);
-  font-weight: 400;
-  line-height: 1.15;
-  width: 100%;
-  max-width: 980px;
-  margin: 0 auto;
 }
 
-/* LOGIN CARD */
+/* CARD */
 .login-card-wrapper {
   position: absolute;
-  top: 30.5vh;
+  top: 23vh;
   left: 50%;
   transform: translateX(-50%);
-  width: min(40vw, 509px);
-  aspect-ratio: 509 / 502;
+  width: 420px;
+  height: 410px;
 }
 
 .rectangle-1 {
   width: 100%;
   height: 100%;
-  display: block;
-  object-fit: fill;
 }
 
 .login-card-content {
+  position: absolute;
   inset: 0;
-  padding: 4.5% 4.5% 0 4.5%;
+  padding: 22px;
 }
 
 .login-user {
-  color: #ffffff;
+  font-size: 32px;
+  color: white;
   text-align: center;
-  font-family: "Inria Serif", serif;
-  font-size: clamp(28px, 2.6vw, 40px);
-  font-weight: 400;
-  width: 100%;
-  margin-bottom: 6.5%;
+  margin-bottom: 22px;
 }
 
 .login-form {
-  width: 100%;
-  max-width: 459px;
-  gap: 7%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .login-input {
-  width: 100%;
-  height: clamp(48px, 6.2vh, 63px);
+  height: 48px !important;
   background: #d9d9d9 !important;
-  color: #000000 !important;
-  font-family: "Inria Serif", serif;
-  font-size: clamp(16px, 1.5vw, 20px);
-  font-weight: 400;
-  padding: 0 18px;
-  outline: none;
   border: none !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
-.login-input::placeholder {
-  color: #000000;
-  opacity: 1;
-}
-
-.login-input:focus {
-  outline: 2px solid #e9d9cc;
-  outline-offset: 0;
+  font-size: 16px;
 }
 
 .login-btn {
+  width: 120px;
+  height: 42px;
+  margin: 6px auto 0;
   background: #d9d9d9 !important;
   border-radius: 30px;
-  width: clamp(110px, 10vw, 135px);
-  height: clamp(42px, 4.8vh, 49px);
-  color: #000000;
-  text-align: center;
-  font-family: "Inria Serif", serif;
-  font-size: clamp(17px, 1.4vw, 20px);
-  font-weight: 400;
-  cursor: pointer;
-  transition: filter 0.18s ease, transform 0.1s ease;
+  font-size: 17px;
 }
 
-.login-btn:hover {
-  filter: brightness(0.96);
-}
-
-.login-btn:active {
-  transform: translateY(1px);
-}
-
-/* FOOTER TEXT */
 .new-member-contact-your-manager-to-set-up-an-account {
-  color: #ffffff;
+  color: white;
+  font-size: 15px;
   text-align: center;
-  font-family: "Inria Serif", serif;
-  font-size: clamp(15px, 1.35vw, 20px);
-  font-weight: 400;
-  width: 100%;
-  max-width: 423px;
-  margin-top: 8%;
-  line-height: 1.25;
+  margin-top: 18px;
 }
 
-.new-member-contact-your-manager-to-set-up-an-account-span,
-.new-member-contact-your-manager-to-set-up-an-account-span2 {
-  color: #ffffff;
-}
-
-/* BOTTOM IMAGE */
+/* DRINKS */
 .bottom-image-wrapper {
   position: absolute;
+  bottom: 1vh;
   left: 50%;
-  bottom: 0.8vh;
   transform: translateX(-50%);
-  width: min(56vw, 725px);
-  display: flex;
-  justify-content: center;
+  width: 600px;
 }
 
 .kft-quality-image-1 {
-  border-radius: 138px;
   width: 100%;
-  max-width: 725px;
-  height: auto;
-  max-height: 18vh;
-  object-fit: cover;
-  display: block;
-}
-
-/* SMALLER LAPTOPS */
-@media (max-width: 1200px) {
-  .frame-1 {
-    top: 5.5vh;
-    width: min(90vw, 1050px);
-  }
-
-  .login-card-wrapper {
-    top: 29vh;
-    width: min(44vw, 500px);
-  }
-
-  .bottom-image-wrapper {
-    width: min(58vw, 680px);
-  }
-}
-
-@media (max-width: 992px) {
-  .frame-1 {
-    top: 5vh;
-    width: min(92vw, 950px);
-    padding: 16px 20px;
-  }
-
-  .login-card-wrapper {
-    top: 28vh;
-    width: min(52vw, 470px);
-  }
-
-  .bottom-image-wrapper {
-    width: min(64vw, 620px);
-    bottom: 1vh;
-  }
-
-  .kft-quality-image-1 {
-    max-height: 16vh;
-  }
-}
-
-@media (max-width: 768px) {
-  .frame-1 {
-    top: 4vh;
-    min-height: auto;
-    padding: 14px 18px;
-  }
-
-  .login-card-wrapper {
-    top: 26vh;
-    width: min(68vw, 430px);
-  }
-
-  .bottom-image-wrapper {
-    width: min(72vw, 520px);
-  }
-
-  .kft-quality-image-1 {
-    max-height: 14vh;
-  }
-}
-
-@media (max-width: 576px) {
-  html,
-  body {
-    overflow-y: auto;
-  }
-
-  .login-page {
-    height: auto;
-    min-height: 100vh;
-    overflow: visible;
-    align-items: flex-start;
-  }
-
-  .content-wrapper {
-    height: auto;
-    min-height: 100vh;
-    padding: 24px 0 20px;
-  }
-
-  .frame-1,
-  .login-card-wrapper,
-  .bottom-image-wrapper {
-    position: relative;
-    top: auto;
-    left: auto;
-    bottom: auto;
-    transform: none;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .frame-1 {
-    width: 92vw;
-    margin-top: 12px;
-  }
-
-  .login-card-wrapper {
-    width: 88vw;
-    max-width: 420px;
-    margin-top: 28px;
-  }
-
-  .bottom-image-wrapper {
-    width: 88vw;
-    max-width: 500px;
-    margin-top: 24px;
-  }
-
-  .kft-quality-image-1 {
-    max-height: none;
-  }
+  max-height: 120px;
+  object-fit: contain;
 }
