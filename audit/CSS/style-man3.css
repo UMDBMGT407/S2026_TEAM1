@@ -10,9 +10,10 @@ html, body {
 
 body {
   font-family: "Inria Serif", serif;
+  background: #f0e6dd;
 }
 
-/* SIDEBAR — LEFT UNCHANGED */
+/* SIDEBAR - back to original feel */
 .sidebar-wrapper {
   width: 270px;
   height: 100vh;
@@ -38,7 +39,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .nav-btn {
@@ -54,6 +55,7 @@ body {
   align-items: center;
   text-align: left;
   cursor: pointer;
+  line-height: 1.2;
 }
 
 .nav-btn:hover,
@@ -67,7 +69,6 @@ body {
   padding-top: 12px;
 }
 
-/* LOGOUT */
 .logout-btn {
   width: 95px;
   height: 52px;
@@ -83,126 +84,120 @@ body {
   font-weight: 600;
 }
 
-/* MAIN CONTENT */
+/* MAIN AREA */
 .main-content-area {
   margin-left: 270px;
   min-height: 100vh;
-  padding: 20px 0 40px 0;
+  padding: 16px 22px 30px 18px;
 }
 
-.main-layout {
-  width: 1170px;
-  margin-left: 8px;
-  padding-top: 0;
+.content-wrap {
+  width: 100%;
+  max-width: 1110px;
 }
 
 /* HEADER */
 .rectangle-5 {
-  width: 1138px;
-  height: 112px;
+  width: 100%;
+  max-width: 1085px;
+  height: 92px;
   background: #e9d9cc;
-  border-radius: 36px;
+  border-radius: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 0 20px 0;
+  margin: 0 0 24px 10px;
+  padding: 0 28px;
 }
 
 .page-title {
   margin: 0;
-  font-size: 34px;
+  font-size: 28px;
   font-weight: 700;
   text-align: center;
   color: #111;
+  line-height: 1.15;
 }
 
 /* SUMMARY CARD */
 .summary-card {
-  width: 495px;
+  width: 560px;
   background: #f8efe6;
-  border: 1px solid #000;
-  border-radius: 22px;
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
-  margin: 0 0 46px 46px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.10);
+  margin: 0 0 26px 58px;
 }
 
 .summary-header {
   background: #9d5651;
   color: #f0e6dd;
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   line-height: 1.1;
-  padding: 10px 16px 12px 16px;
-  border-bottom: 1px solid #000;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.35);
 }
 
 .summary-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 62px;
-  padding: 8px 14px;
-  font-size: 28px;
+  min-height: 56px;
+  padding: 8px 18px;
+  font-size: 24px;
   font-weight: 700;
   color: #111;
-  border-bottom: 1px solid #d79a95;
+  border-bottom: 1px solid #ddb3ae;
 }
 
 .summary-row:last-child {
   border-bottom: none;
 }
 
+.summary-value {
+  min-width: 110px;
+  text-align: right;
+}
+
 .red-text {
   color: #b45a56;
-  font-weight: 700;
 }
 
 /* TABLE */
 .table-card {
-  width: 1152px;
+  width: 100%;
+  max-width: 1085px;
   background: #f8efe6;
-  border: 1px solid #000;
+  border: 1px solid rgba(0, 0, 0, 0.6);
   border-radius: 22px;
   overflow: hidden;
-  margin-left: 8px;
+  margin-left: 10px;
 }
 
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 2.1fr 1.1fr 1.5fr 1.1fr;
+  grid-template-columns: 2.1fr 1fr 1.35fr 0.85fr;
   align-items: center;
 }
 
 .table-header {
   background: #9d5651;
   color: #f0e6dd;
-  font-size: 31px;
+  font-size: 24px;
   font-weight: 700;
-  padding: 14px 28px;
+  padding: 14px 24px;
 }
 
 .table-row {
-  font-size: 30px;
+  font-size: 23px;
   font-weight: 700;
   color: #111;
-  padding: 8px 28px;
-  min-height: 70px;
-  position: relative;
-}
-
-.table-row::before {
-  content: "";
-  position: absolute;
-  left: 36px;
-  right: 36px;
-  top: 0;
-  border-top: 1px solid #c98f89;
-}
-
-.table-card .table-row:first-of-type::before {
-  display: none;
+  padding: 10px 24px;
+  min-height: 68px;
+  border-top: 1px solid #ddb3ae;
 }
 
 .ingredient-col {
@@ -216,53 +211,54 @@ body {
 }
 
 .count-pill {
-  width: 128px;
-  height: 52px;
-  border: 1px solid #b36a66;
-  border-radius: 20px;
+  width: 108px;
+  height: 44px;
+  border: 1px solid #c58d88;
+  border-radius: 18px;
   background: #f8f3ee;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  font-size: 30px;
+  font-size: 22px;
   font-weight: 700;
 }
 
-/* ACTION BUTTONS */
+/* BUTTONS */
 .frame-actions {
-  width: 1152px;
+  width: 100%;
+  max-width: 1085px;
   display: flex;
   justify-content: flex-end;
-  gap: 54px;
+  gap: 26px;
   margin-top: 18px;
-  padding-right: 72px;
+  padding-right: 18px;
 }
 
 .export-btn {
-  width: 274px;
-  height: 64px;
-  border-radius: 20px;
+  min-width: 220px;
+  height: 58px;
+  border-radius: 18px;
   border: 1.5px solid #b36a66;
   background: #e9d9cc;
   color: #111;
-  font-size: 30px;
+  font-size: 24px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
 }
 
 .close-btn {
-  width: 274px;
-  height: 64px;
-  border-radius: 20px;
+  min-width: 220px;
+  height: 58px;
+  border-radius: 18px;
   border: none;
   background: #9d5651;
   color: #f0e6dd;
-  font-size: 30px;
+  font-size: 24px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
 }
 
 .close-btn:hover {
