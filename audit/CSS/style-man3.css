@@ -35,8 +35,9 @@ body {
 .kft-logo {
   width: 270px;
   height: 108px;
-  object-fit: cover;
-  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .sidebar-nav {
@@ -45,7 +46,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
 }
 
 .nav-btn {
@@ -60,9 +60,6 @@ body {
   display: flex;
   align-items: center;
   text-align: left;
-  cursor: pointer;
-  font-family: "Inria Serif", serif;
-  line-height: 1.2;
 }
 
 .nav-btn:hover,
@@ -87,10 +84,6 @@ body {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  margin-bottom: 20px;
-  font-size: 18px;
-  font-weight: 600;
-  font-family: "Inria Serif", serif;
 }
 
 /* MAIN AREA */
