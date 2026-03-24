@@ -36,7 +36,9 @@ body {
 .kft-logo {
   width: 270px;
   height: 108px;
-  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
   object-fit: cover;
 }
 
@@ -48,20 +50,23 @@ body {
   align-items: center;
 }
 
+
 .nav-btn {
   width: 242px;
-  min-height: 52px;
+  min-height: 52px; /* 🔥 MATCHED */
   padding: 0 18px;
+  border: none;
   border-radius: 38px;
   background: transparent;
   color: #f0e6dd;
+  font-family: "Inria Serif", serif;
   font-size: 20px;
-  border: none;
+  cursor: pointer;
+  transition: 0.18s;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   text-align: left;
-  font-family: "Inria Serif", serif;
-  cursor: pointer;
 }
 
 .nav-btn:hover,
@@ -73,7 +78,8 @@ body {
 .nav-btn.two-line {
   min-height: 74px;
   padding-top: 12px;
-  line-height: 1.15;
+  padding-bottom: 12px;
+  align-items: flex-start;
 }
 
 /* LOGOUT */
@@ -86,11 +92,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 20px;
   text-decoration: none;
-  font-family: "Inria Serif", serif;
-  font-size: 18px;
-  margin-bottom: 18px;
 }
+
 
 .logout-btn:hover {
   color: #964f4c;
