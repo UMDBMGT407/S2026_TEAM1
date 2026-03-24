@@ -100,7 +100,7 @@ body {
 /* TITLE */
 .rectangle-5 {
   width: calc(100vw - 270px - 30px);
-  max-width: 1120px;
+  max-width: 1000px;
   height: 96px;
   background: #e9d9cc;
   border-radius: 34px;
@@ -124,7 +124,7 @@ body {
 .aligned-content {
   margin-left: 10px;
   width: calc(100vw - 270px - 30px);
-  max-width: 1100px;
+  max-width: 1000px;
 }
 
 /* TOP CARD */
