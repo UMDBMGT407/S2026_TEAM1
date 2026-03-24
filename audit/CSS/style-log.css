@@ -27,7 +27,6 @@ body {
 }
 
 .login-page {
-  border: 1px solid #000000;
   width: 1440px;
   height: 1024px;
   position: fixed;
@@ -36,23 +35,26 @@ body {
   overflow: hidden;
   transform: translate(-50%, -50%) scale(var(--scale));
   transform-origin: center center;
+  border: 1px solid #000000;
+}
+
+.content-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  padding: 0;
 }
 
 /* TOP TITLE BOX */
 .frame-1 {
   background: #ffffff;
   border: 1px solid #000000;
-  padding: 10px;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
   width: 1119px;
-  position: absolute;
-  left: 160px;
-  top: 125px;
+  min-height: 134px;
+  margin-top: 125px;
+  padding: 10px 30px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  z-index: 5;
 }
 
 .welcome-to-kung-fu-tea-silver-spring-inventory-management-system {
@@ -62,32 +64,29 @@ body {
   font-size: 48px;
   font-weight: 400;
   line-height: 1.15;
-  position: relative;
   width: 964px;
-  min-height: 114px;
+  max-width: 100%;
 }
 
-/* BOTTOM IMAGE */
-.kft-quality-image-1 {
-  border-radius: 138px;
-  width: 725px;
-  height: 188px;
-  position: absolute;
-  left: 327px;
-  top: 890px;
-  object-fit: cover;
-  aspect-ratio: 725/188;
-}
-
-/* LOGIN CARD */
-.rectangle-1 {
-  border-radius: 0px;
+/* LOGIN CARD SECTION */
+.login-card-wrapper {
   width: 509px;
   height: 502px;
-  position: absolute;
-  left: 447px;
-  top: 340px;
-  overflow: visible;
+  margin-top: 56px;
+  position: relative;
+}
+
+.rectangle-1 {
+  width: 509px;
+  height: 502px;
+  display: block;
+}
+
+.login-card-content {
+  inset: 0;
+  padding-top: 23px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .login-user {
@@ -96,33 +95,30 @@ body {
   font-family: "Inria Serif", serif;
   font-size: 40px;
   font-weight: 400;
-  position: absolute;
-  left: 496px;
-  top: 363px;
-  width: 413px;
-  height: 73px;
+  width: 100%;
+  margin-bottom: 34px;
 }
 
-/* FORM */
 .login-form {
-  position: absolute;
-  left: 467px;
-  top: 425px;
-  width: 462px;
-  height: 270px;
+  width: 100%;
+  max-width: 459px;
+  gap: 43px;
 }
 
 .login-input {
   width: 459px;
+  max-width: 100%;
   height: 63px;
-  background: #d9d9d9;
-  color: #000000;
+  background: #d9d9d9 !important;
+  color: #000000 !important;
   font-family: "Inria Serif", serif;
   font-size: 20px;
   font-weight: 400;
   padding: 0 18px;
   outline: none;
-  display: block;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 .login-input::placeholder {
@@ -135,50 +131,57 @@ body {
   outline-offset: 0;
 }
 
-.id-input {
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.password-input {
-  position: absolute;
-  left: 0;
-  top: 106px;
-}
-
 .login-btn {
-  background: #d9d9d9;
+  background: #d9d9d9 !important;
   border-radius: 30px;
   width: 135px;
   height: 49px;
-  position: absolute;
-  left: 162px;
-  top: 207px;
-
   color: #000000;
   text-align: center;
   font-family: "Inria Serif", serif;
   font-size: 20px;
   font-weight: 400;
   cursor: pointer;
-  transition: filter 0.18s ease, background-color 0.18s ease;
+  transition: filter 0.18s ease, background-color 0.18s ease, transform 0.1s ease;
 }
 
 .login-btn:hover {
   filter: brightness(0.96);
 }
 
-/* FOOTER TEXT */
+.login-btn:active {
+  transform: translateY(1px);
+}
+
 .new-member-contact-your-manager-to-set-up-an-account {
   color: #ffffff;
   text-align: center;
   font-family: "Inria Serif", serif;
   font-size: 20px;
   font-weight: 400;
-  position: absolute;
-  left: 490px;
-  top: 757px;
   width: 423px;
+  max-width: 100%;
+  margin-top: 42px;
+  line-height: 1.3;
 }
 
+.new-member-contact-your-manager-to-set-up-an-account-span,
+.new-member-contact-your-manager-to-set-up-an-account-span2 {
+  color: #ffffff;
+}
+
+/* BOTTOM IMAGE */
+.bottom-image-wrapper {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding-bottom: 0;
+}
+
+.kft-quality-image-1 {
+  border-radius: 138px;
+  width: 725px;
+  height: 188px;
+  object-fit: cover;
+  aspect-ratio: 725/188;
+}
