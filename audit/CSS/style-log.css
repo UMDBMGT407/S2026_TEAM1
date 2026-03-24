@@ -25,33 +25,35 @@ body {
   background: url("/S2026_TEAM1/audit/LOGIN/login-page.png") center center / cover no-repeat;
 }
 
-/* TITLE */
+/* ========= TITLE ========= */
+
 .frame-1 {
   position: absolute;
-  top: 2.4vh;
+  top: 3vh;
   left: 50%;
   transform: translateX(-50%);
-  width: 78%;
-  padding: 10px 16px;
+  width: 82%;
+  padding: 14px 20px;
   background: #ffffff;
   border: 1px solid #000000;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 4px rgba(0,0,0,0.25);
 }
 
 .welcome-to-kung-fu-tea-silver-spring-inventory-management-system {
   margin: 0;
-  color: #000000;
   text-align: center;
+  color: #000000;
   font-family: "Inria Serif", serif !important;
-  font-size: clamp(22px, 2.3vw, 34px);
+  font-size: clamp(26px, 2.6vw, 42px);
   font-weight: 400;
-  line-height: 1.12;
+  line-height: 1.1;
 }
 
-/* LOGIN CARD */
+/* ========= LOGIN CARD ========= */
+
 .login-card-wrapper {
   position: absolute;
-  top: 20.5vh;
+  top: 21vh;
   left: 50%;
   transform: translateX(-50%);
   width: 355px;
@@ -75,7 +77,7 @@ body {
   color: #ffffff;
   text-align: center;
   font-family: "Inria Serif", serif !important;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 400;
 }
 
@@ -90,41 +92,28 @@ body {
   height: 40px !important;
   padding: 0 14px;
   background: #d9d9d9 !important;
-  color: #000000 !important;
   border: none !important;
   border-radius: 0 !important;
-  box-shadow: none !important;
+  color: #000000 !important;
   font-family: "Inria Serif", serif !important;
   font-size: 15px;
-  font-weight: 400;
 }
 
 .login-input::placeholder {
   color: #000000;
   opacity: 1;
-  font-family: "Inria Serif", serif !important;
-}
-
-.login-input:focus {
-  outline: 2px solid #e9d9cc;
-  outline-offset: 0;
 }
 
 .login-btn {
   width: 105px;
   height: 36px;
-  margin: 8px auto 0;
+  margin: 10px auto 0;
   background: #d9d9d9 !important;
-  color: #000000;
   border-radius: 30px;
+  color: #000000;
   font-family: "Inria Serif", serif !important;
   font-size: 15px;
-  font-weight: 400;
   cursor: pointer;
-}
-
-.login-btn:hover {
-  filter: brightness(0.97);
 }
 
 .new-member-contact-your-manager-to-set-up-an-account {
@@ -133,23 +122,23 @@ body {
   text-align: center;
   font-family: "Inria Serif", serif !important;
   font-size: 13px;
-  font-weight: 400;
-  line-height: 1.22;
+  line-height: 1.25;
 }
 
-/* BOTTOM IMAGE */
+/* ========= BOBA ========= */
+
 .bottom-image-wrapper {
   position: absolute;
   left: 50%;
-  bottom: 1.2vh;
+  bottom: 1.8vh;
   transform: translateX(-50%);
-  width: 760px;
+  width: 620px;      /* SMALLER than before */
 }
 
 .kft-quality-image-1 {
   width: 100%;
   height: auto;
-  max-height: 185px;
+  max-height: 150px; /* smaller boba */
   object-fit: contain;
   display: block;
 }
