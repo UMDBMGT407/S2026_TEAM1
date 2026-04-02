@@ -1,31 +1,41 @@
-.audit-container {
-    padding: 20px;
-    background: transparent;
+/* Custom Styles for Audit Page Reconciliation */
+
+.text-brown {
+    color: #964f4c; /* Primary brand color from style.css */
 }
 
+/* Audit Input Styling */
 .audit-input {
-    width: 60px;
+    width: 70px;
+    height: 35px;
     border: 1px solid #964f4c;
-    border-radius: 4px;
+    border-radius: 8px;
     text-align: center;
     font-family: "Inria Serif", serif;
-    background: #ffffff;
+    background-color: #ffffff;
 }
 
-.table-header div {
-    font-weight: 700;
-    color: #964f4c;
-    font-size: 18px;
+.audit-input:focus {
+    border-color: #8b4a44;
+    box-shadow: 0 0 0 0.2rem rgba(150, 79, 76, 0.25);
 }
 
-.table-row div {
-    align-self: center;
-    font-size: 16px;
-    color: #000000;
+
+.table-card-bg {
+    background: #fcefe4; 
+    border-radius: 20px;
+    width: 100%;
+    height: auto; 
+    position: relative;
+    padding: 10px;
 }
 
-/* Ensure the main area shifts correctly for the sidebar */
+
 .main-content-area {
-    margin-left: 270px;
-    width: calc(100% - 270px);
+    margin-left: 270px; 
+    background: #f0e6dd;
+    min-height: 100vh;
 }
+
+.text-danger { color: #de2323 !important; }
+.text-success { color: #28a745 !important; }
