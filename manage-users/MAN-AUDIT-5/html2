@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../css/style-man-dash.css">
+  <link rel="stylesheet" href="./style-audit.css">
+  <title>Inventory Reconciliation</title>
+</head>
+<body>
+  <div class="manager-eight-page-process-1-1-user-permissions">
+    <div class="sidebar-wrapper">
+        <img class="kft-logo" src="../../Images/kft-logo0.png" alt="KFT Logo">
+        <div class="sidebar-nav">
+            <button class="nav-btn" onclick="window.location.href='../MAN-FULL/man-full.html'">Full Inventory View</button>
+            <button class="nav-btn active">Inventory Reconciliation</button>
+            <button class="nav-btn" onclick="window.location.href='../MAN-AUDIT-4/man-audit-4.html'">Activity Log</button>
+            <button class="nav-btn" onclick="window.location.href='../../manager-dashboard/man-dash.html'">Dashboards & Analytics</button>
+            <button class="nav-btn" onclick="window.location.href='../../predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">Predictive Reports</button>
+            <button class="nav-btn" onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">Manage Users</button>
+            <button class="nav-btn two-line">Purchase Order<br>Management</button>
+        </div>
+        <a href="../../index.html" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="main-content-area">
+        <div class="content-container-centered">
+            <div class="rectangle-5">
+                <div class="manage-users">Inventory Reconciliation</div>
+            </div>
+
+            <div class="audit-container">
+                <div class="controls-row">
+                    <input type="text" class="dropdown-box" placeholder="Search Item..." style="width: 250px;">
+                    <select class="dropdown-box">
+                        <option>Category: All</option>
+                        <option>Toppings</option>
+                        <option>Syrups</option>
+                    </select>
+                    <button class="refresh-btn" style="margin-left: auto;">Submit Audit</button>
+                </div>
+
+                <div class="table-card-bg" style="height: auto; margin-top: 20px;">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <div style="flex: 2;">Item Name</div>
+                            <div style="flex: 1;">System Qty</div>
+                            <div style="flex: 1;">Physical Qty</div>
+                            <div style="flex: 1;">Discrepancy</div>
+                        </div>
+                        <div class="table-body">
+                            <div class="table-row">
+                                <div style="flex: 2;">Tapioca Pearls (Boba)</div>
+                                <div style="flex: 1;">10</div>
+                                <div style="flex: 1;"><input type="number" class="audit-input" value="10"></div>
+                                <div style="flex: 1; color: green;">0</div>
+                            </div>
+                            <div class="table-row">
+                                <div style="flex: 2;">Black Tea Leaves</div>
+                                <div style="flex: 1;">6</div>
+                                <div style="flex: 1;"><input type="number" class="audit-input" value="4"></div>
+                                <div style="flex: 1; color: #de2323;">-2</div>
+                            </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</body>
+</html>
