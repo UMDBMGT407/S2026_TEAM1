@@ -57,7 +57,6 @@
       </div>
     </div>
 
-    <!-- LOGOUT -->
     <div class="pb-4">
       <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
     </div>
@@ -66,7 +65,6 @@
 
   <!-- MAIN CONTENT -->
   <main class="col main-content-area">
-
     <div class="content-container-centered">
 
       <!-- HEADER -->
@@ -77,6 +75,7 @@
       <!-- TABLE -->
       <div class="table-card">
         <div class="table-scroll">
+
           <div class="table-header">
             <div>Timestamp</div>
             <div>User</div>
@@ -88,6 +87,7 @@
 
           <div class="table-body">
 
+            <!-- PAGE 1 -->
             <div class="table-row" data-page="1">
               <div class="timestamp-col">03/02/2026, 02:15pm</div>
               <div class="user-col">John D.</div>
@@ -142,6 +142,7 @@
               <div class="qty-col">-6</div>
             </div>
 
+            <!-- PAGE 2 -->
             <div class="table-row" data-page="2">
               <div class="timestamp-col">04/12/2026, 09:10am</div>
               <div class="user-col">Ariana T.</div>
@@ -205,25 +206,27 @@
         <div class="pagination-custom">
           <button class="page-btn active" data-page-btn="1">1</button>
           <button class="page-btn" data-page-btn="2">2</button>
-          <button class="page-btn" data-page-btn="3">3</button>
-          <button class="page-btn" data-page-btn="4">4</button>
-          <button class="page-btn" data-page-btn="5">5</button>
-          <button class="page-btn" data-page-btn="6">6</button>
         </div>
+
         <button class="next-btn" id="nextBtn">Next &gt;</button>
       </div>
 
     </div>
-
   </main>
 
 </div>
 
 <script>
-  const pageButtons = document.querySelectorAll(".page-btn");
   const rows = document.querySelectorAll(".table-row");
+  const pageButtons = document.querySelectorAll(".page-btn");
   const nextBtn = document.getElementById("nextBtn");
-  const totalPages = pageButtons.length;
+
+  let maxPage = 1;
+  rows.forEach((row) => {
+    const page = Number(row.getAttribute("data-page"));
+    if (page > maxPage) maxPage = page;
+  });
+
   let currentPage = 1;
 
   function showPage(pageNumber) {
@@ -239,7 +242,7 @@
       btn.classList.toggle("active", btnPage === pageNumber);
     });
 
-    if (currentPage === totalPages) {
+    if (currentPage === maxPage) {
       nextBtn.disabled = true;
       nextBtn.classList.add("disabled");
     } else {
@@ -256,7 +259,7 @@
   });
 
   nextBtn.addEventListener("click", () => {
-    if (currentPage < totalPages) {
+    if (currentPage < maxPage) {
       showPage(currentPage + 1);
     }
   });
