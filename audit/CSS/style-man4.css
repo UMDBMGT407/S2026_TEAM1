@@ -12,7 +12,7 @@ body {
   font-family: "Inria Serif", serif;
 }
 
-/* SIDEBAR (UNCHANGED — SAME AS OTHER PAGE) */
+/* SIDEBAR */
 .sidebar-wrapper {
   width: 270px;
   height: 100vh;
@@ -51,6 +51,7 @@ body {
   border-radius: 38px;
   background: transparent;
   color: #f0e6dd;
+  font-family: "Inria Serif", serif;
   font-size: 20px;
   cursor: pointer;
   transition: 0.18s;
@@ -126,13 +127,11 @@ body {
   overflow: hidden;
 }
 
-/* REMOVE SCROLL */
 .table-scroll {
   width: 100%;
   overflow-x: visible;
 }
 
-/* TABLE GRID (FIXED WIDTH ISSUE) */
 .table-header,
 .table-row {
   display: grid;
@@ -140,7 +139,6 @@ body {
   align-items: center;
 }
 
-/* HEADER ROW */
 .table-header {
   min-height: 70px;
   background: #9d5651;
@@ -154,14 +152,13 @@ body {
 .table-header > div {
   text-align: center;
   line-height: 1.05;
+  padding: 0 6px;
 }
 
-/* BODY */
 .table-body {
   padding: 5px 18px 0 18px;
 }
 
-/* ROWS */
 .table-row {
   min-height: 55px;
   font-size: 16px;
@@ -173,14 +170,11 @@ body {
   border-bottom: none;
 }
 
-/* CELL ALIGNMENT */
-.table-row > div,
-.table-header > div {
+.table-row > div {
   text-align: center;
   padding: 0 6px;
 }
 
-/* QTY COLUMN */
 .qty-col {
   font-size: 18px;
 }
@@ -211,6 +205,7 @@ body {
   border-right: 1px solid #c48a86;
   background: #f8efe6;
   color: #000000;
+  font-family: "Inria Serif", serif;
   font-size: 24px;
   cursor: pointer;
 }
@@ -227,6 +222,7 @@ body {
 .next-btn {
   background: transparent;
   color: #000000;
+  font-family: "Inria Serif", serif;
   font-size: 24px;
   border: none;
   cursor: pointer;
