@@ -117,66 +117,71 @@ body {
   text-align: center;
 }
 
-/* MAIN CARD */
+/* MIDDLE CARD - MATCH FIRST PAGE STYLE MORE */
 .main-card {
-  background: #efefef;
-  border: 1px solid #7b7b7b;
-  border-radius: 20px;
-  min-height: 180px;
+  background: #d8c4b5;
+  border: none;
+  border-radius: 30px;
+  min-height: 220px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-shadow: none;
 }
 
 .section-title {
   color: #964f4c;
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   margin: 0;
 }
 
 .section-divider {
-  width: 300px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 420px;
   border: 0;
-  border-top: 1px solid #c48a86;
+  border-top: 1px solid #b9928d;
   opacity: 1;
-  margin: 18px 0 16px 0;
+  margin: 18px 0 18px 0;
 }
 
 .section-sub {
   color: #964f4c;
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
   margin: 0;
 }
 
-/* ACTION BUTTONS */
+/* BUTTON ROW */
 .action-row {
-  margin-top: 70px !important;
+  margin-top: 28px !important;
 }
 
+/* BUTTONS - MATCH FIRST PAGE */
 .resume-btn,
 .start-btn {
   height: 85px;
   border-radius: 20px;
   font-family: "Inria Serif", serif;
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition: 0.18s;
 }
 
 .resume-btn {
-  border: 1.5px solid #b36a66;
   background: #e9d9cc;
+  border: 1.5px solid #b36a66;
   color: #000000;
+  padding: 20px;
 }
 
 .start-btn {
-  border: none;
   background: #9d5651;
-  color: #e9d9cc;
+  color: #f0e6dd;
+  border: none;
+  padding: 20px;
 }
 
 .start-btn:hover {
@@ -184,7 +189,7 @@ body {
 }
 
 .resume-btn:hover {
-  filter: brightness(0.98);
+  background: #f5e7dc;
 }
 
 /* RESPONSIVE */
@@ -193,35 +198,51 @@ body {
     padding: 30px 16px 60px;
   }
 
-  .section-title,
-  .section-sub,
-  .resume-btn,
-  .start-btn {
+  .main-card {
+    min-height: 190px;
+  }
+
+  .section-title {
     font-size: 24px;
   }
 
-  .main-card {
-    min-height: 160px;
+  .section-sub {
+    font-size: 18px;
+  }
+
+  .resume-btn,
+  .start-btn {
+    font-size: 18px;
+    height: 75px;
   }
 }
 
 @media (max-width: 768px) {
-  .page-title {
-    font-size: 28px;
-  }
-
   .rectangle-5 {
     height: 96px;
   }
 
-  .resume-btn,
-  .start-btn {
-    height: 72px;
+  .page-title {
+    font-size: 28px;
+  }
+
+  .main-card {
+    min-height: 170px;
+    border-radius: 24px;
+  }
+
+  .section-title {
     font-size: 22px;
   }
 
-  .section-title,
   .section-sub {
-    font-size: 22px;
+    font-size: 17px;
+  }
+
+  .resume-btn,
+  .start-btn {
+    height: 68px;
+    font-size: 17px;
+    white-space: normal;
   }
 }
