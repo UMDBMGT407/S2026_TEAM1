@@ -1,0 +1,31 @@
+.audit-container {
+    padding: 20px;
+    background: transparent;
+}
+
+.audit-input {
+    width: 60px;
+    border: 1px solid #964f4c;
+    border-radius: 4px;
+    text-align: center;
+    font-family: "Inria Serif", serif;
+    background: #ffffff;
+}
+
+.table-header div {
+    font-weight: 700;
+    color: #964f4c;
+    font-size: 18px;
+}
+
+.table-row div {
+    align-self: center;
+    font-size: 16px;
+    color: #000000;
+}
+
+/* Ensure the main area shifts correctly for the sidebar */
+.main-content-area {
+    margin-left: 270px;
+    width: calc(100% - 270px);
+}
