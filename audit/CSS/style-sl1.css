@@ -55,14 +55,12 @@ body {
   border-radius: 38px;
   background: transparent;
   color: #f0e6dd;
-  font-family: "Inria Serif", serif;
   font-size: 20px;
   cursor: pointer;
   transition: 0.18s;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  text-align: left;
 }
 
 .nav-btn:hover,
@@ -110,25 +108,23 @@ body {
 }
 
 .page-title {
-  margin: 0;
   font-size: 34px;
   font-weight: 700;
-  color: #000000;
-  text-align: center;
+  color: #000;
+  margin: 0;
 }
 
-/* MIDDLE CARD - MATCH FIRST PAGE STYLE MORE */
+/* CARD */
 .main-card {
   background: #d8c4b5;
-  border: none;
   border-radius: 30px;
-  min-height: 220px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  box-shadow: none;
 }
 
+/* TEXT */
 .section-title {
   color: #964f4c;
   font-size: 28px;
@@ -139,51 +135,52 @@ body {
 .section-divider {
   width: 100%;
   max-width: 420px;
-  border: 0;
+  border: none;
   border-top: 1px solid #b9928d;
-  opacity: 1;
-  margin: 18px 0 18px 0;
+  margin: 18px 0;
 }
 
 .section-sub {
   color: #964f4c;
   font-size: 20px;
   font-weight: 600;
-  margin: 0;
 }
 
 /* BUTTON ROW */
 .action-row {
-  margin-top: 28px !important;
+  margin-top: 20px !important;
 }
 
-/* BUTTONS - MATCH FIRST PAGE */
+/* BUTTONS (FIXED SIZE) */
 .resume-btn,
 .start-btn {
-  height: 85px;
+  height: 65px;
   border-radius: 20px;
-  font-family: "Inria Serif", serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  white-space: nowrap;
   transition: 0.18s;
 }
 
+/* LIGHT BUTTON */
 .resume-btn {
   background: #e9d9cc;
   border: 1.5px solid #b36a66;
-  color: #000000;
-  padding: 20px;
+  color: #000;
 }
 
+/* RED BUTTON */
 .start-btn {
   background: #9d5651;
   color: #f0e6dd;
   border: none;
-  padding: 20px;
 }
 
+/* HOVER */
 .start-btn:hover {
   background: #874946;
 }
@@ -193,13 +190,15 @@ body {
 }
 
 /* RESPONSIVE */
-@media (max-width: 992px) {
-  .content-container-centered {
-    padding: 30px 16px 60px;
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 28px;
   }
 
-  .main-card {
-    min-height: 190px;
+  .resume-btn,
+  .start-btn {
+    height: 60px;
+    font-size: 16px;
   }
 
   .section-title {
@@ -208,41 +207,5 @@ body {
 
   .section-sub {
     font-size: 18px;
-  }
-
-  .resume-btn,
-  .start-btn {
-    font-size: 18px;
-    height: 75px;
-  }
-}
-
-@media (max-width: 768px) {
-  .rectangle-5 {
-    height: 96px;
-  }
-
-  .page-title {
-    font-size: 28px;
-  }
-
-  .main-card {
-    min-height: 170px;
-    border-radius: 24px;
-  }
-
-  .section-title {
-    font-size: 22px;
-  }
-
-  .section-sub {
-    font-size: 17px;
-  }
-
-  .resume-btn,
-  .start-btn {
-    height: 68px;
-    font-size: 17px;
-    white-space: normal;
   }
 }
