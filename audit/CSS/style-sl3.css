@@ -19,48 +19,50 @@ body {
 
 .sidebar-wrapper {
   width: 270px;
-  min-height: 100vh;
+  height: 100vh;
   background: #964f4c;
   position: fixed;
   left: 0;
   top: 0;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-
 .kft-logo {
   width: 270px;
   height: 108px;
+  position: absolute;
+  top: 0;
+  left: 0;
   object-fit: cover;
-  display: block;
-  margin-bottom: 10px;
 }
 
 .sidebar-nav {
-  margin-top: 40px;
+  margin-top: 120px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
 }
 
 .nav-btn {
   width: 242px;
-  min-height: 62px;
+  min-height: 52px;
+  padding: 0 18px;
+  border: none;
   border-radius: 38px;
-  padding: 0 22px;
   background: transparent;
   color: #f0e6dd;
   font-size: 20px;
   font-family: "Inria Serif", serif;
-  border: none;
+  cursor: pointer;
+  transition: 0.18s;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   text-align: left;
-  cursor: pointer;
-  line-height: 1.15;
 }
 
 .nav-btn:hover,
@@ -72,21 +74,20 @@ body {
 .logout-wrap {
   display: flex;
   justify-content: center;
-  padding-bottom: 50px;
+  padding-bottom: 40px;
 }
 
 .logout-btn {
-  width: 110px;
+  width: 95px;
   height: 52px;
-  background: #f0e6dd;
+  background: #e9d9cc;
   color: #964f4c;
   border-radius: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
   font-size: 20px;
-  font-family: "Inria Serif", serif;
+  text-decoration: none;
 }
 
 .logout-btn:hover {
@@ -98,20 +99,23 @@ body {
 
 .main-content-area {
   margin-left: 270px;
-  padding: 30px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
 }
 
 .content-container {
-  max-width: 1140px;
+  max-width: 1170px;
+  width: 100%;
+  padding: 40px 20px 70px;
 }
 
 /* ================= TITLE ================= */
 
 .rectangle-5 {
-  width: 100%;
-  min-height: 110px;
   background: #e9d9cc;
   border-radius: 36px;
+  min-height: 112px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,11 +124,11 @@ body {
 }
 
 .page-title {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 700;
+  color: #000;
   margin: 0;
   text-align: center;
-  color: #111;
 }
 
 /* ================= SUMMARY ================= */
@@ -186,13 +190,13 @@ body {
 .table-header {
   background: #9d5651;
   color: #f0e6dd;
-  padding: 20px 20px;
+  padding: 20px;
   font-size: 20px;
   font-weight: 700;
 }
 
 .table-row {
-  padding: 20px 20px;
+  padding: 20px;
   border-top: 1px solid #ddb3ae;
   font-size: 18px;
   color: #111;
@@ -267,20 +271,35 @@ body {
   .sidebar-wrapper {
     position: relative;
     width: 100%;
-    min-height: auto;
+    height: auto;
+  }
+
+  .kft-logo {
+    position: relative;
+    display: block;
+  }
+
+  .sidebar-nav {
+    margin-top: 20px;
+    padding-bottom: 20px;
   }
 
   .main-content-area {
     margin-left: 0;
-    padding: 20px;
   }
 
   .content-container {
     max-width: 100%;
+    padding: 20px;
   }
 
   .summary-card {
     width: 100%;
+  }
+
+  .action-buttons {
+    justify-content: flex-start;
+    margin-top: 40px;
   }
 }
 
@@ -291,7 +310,7 @@ body {
   }
 
   .page-title {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   .summary-header {
@@ -315,11 +334,6 @@ body {
     height: 36px;
   }
 
-  .action-buttons {
-    justify-content: flex-start;
-    margin-top: 40px;
-  }
-
   .export-btn,
   .close-btn {
     min-width: 180px;
@@ -337,10 +351,12 @@ body {
   .main-content-area {
     margin-left: 0;
     padding: 0;
+    display: block;
   }
 
   .content-container {
     max-width: 100%;
+    padding: 0;
   }
 
   .summary-card,
