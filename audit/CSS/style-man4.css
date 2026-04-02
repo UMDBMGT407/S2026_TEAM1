@@ -12,7 +12,7 @@ body {
   font-family: "Inria Serif", serif;
 }
 
-/* SIDEBAR - EXACT SAME STRUCTURE/LOOK AS PREVIOUS PAGE */
+/* SIDEBAR (UNCHANGED — SAME AS OTHER PAGE) */
 .sidebar-wrapper {
   width: 270px;
   height: 100vh;
@@ -51,7 +51,6 @@ body {
   border-radius: 38px;
   background: transparent;
   color: #f0e6dd;
-  font-family: "Inria Serif", serif;
   font-size: 20px;
   cursor: pointer;
   transition: 0.18s;
@@ -98,7 +97,7 @@ body {
 .content-container-centered {
   max-width: 1240px;
   width: 100%;
-  padding: 22px 28px 60px;
+  padding: 22px 28px 50px;
 }
 
 /* HEADER */
@@ -127,28 +126,28 @@ body {
   overflow: hidden;
 }
 
+/* REMOVE SCROLL */
 .table-scroll {
   width: 100%;
-  overflow-x: auto;
+  overflow-x: visible;
 }
 
-/* SHARED GRID */
+/* TABLE GRID (FIXED WIDTH ISSUE) */
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 2.2fr 1.2fr 1.3fr 1.7fr 1fr 1.1fr;
+  grid-template-columns: 2fr 1fr 1.1fr 1.5fr 0.8fr 0.9fr;
   align-items: center;
-  min-width: 1080px;
 }
 
 /* HEADER ROW */
 .table-header {
-  min-height: 83px;
+  min-height: 70px;
   background: #9d5651;
   color: #f0e6dd;
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 400;
-  padding: 0 32px;
+  padding: 0 18px;
   border-bottom: 1px solid #000000;
 }
 
@@ -159,13 +158,13 @@ body {
 
 /* BODY */
 .table-body {
-  padding: 5px 36px 0 36px;
+  padding: 5px 18px 0 18px;
 }
 
+/* ROWS */
 .table-row {
-  min-height: 70px;
-  font-size: 24px;
-  font-weight: 400;
+  min-height: 55px;
+  font-size: 16px;
   color: #000000;
   border-bottom: 1px solid #c48a86;
 }
@@ -174,17 +173,16 @@ body {
   border-bottom: none;
 }
 
-.timestamp-col,
-.user-col,
-.role-col,
-.ingredient-col,
-.action-col,
-.qty-col {
+/* CELL ALIGNMENT */
+.table-row > div,
+.table-header > div {
   text-align: center;
+  padding: 0 6px;
 }
 
+/* QTY COLUMN */
 .qty-col {
-  font-size: 32px;
+  font-size: 18px;
 }
 
 /* PAGINATION */
@@ -192,8 +190,8 @@ body {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 22px;
-  margin-top: 26px;
+  gap: 18px;
+  margin-top: 22px;
 }
 
 .pagination-custom {
@@ -203,21 +201,18 @@ body {
   border: 1px solid #000000;
   border-radius: 20px;
   background: #f8efe6;
-  height: 49px;
+  height: 42px;
 }
 
 .page-btn {
-  width: 45px;
-  height: 49px;
+  width: 40px;
+  height: 42px;
   border: none;
   border-right: 1px solid #c48a86;
   background: #f8efe6;
   color: #000000;
-  font-family: "Inria Serif", serif;
-  font-size: 32px;
-  font-weight: 400;
+  font-size: 24px;
   cursor: pointer;
-  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
 .page-btn:last-child {
@@ -232,9 +227,7 @@ body {
 .next-btn {
   background: transparent;
   color: #000000;
-  font-family: "Inria Serif", serif;
-  font-size: 32px;
-  font-weight: 400;
+  font-size: 24px;
   border: none;
   cursor: pointer;
 }
@@ -242,11 +235,4 @@ body {
 .next-btn.disabled {
   opacity: 0.45;
   cursor: default;
-}
-
-/* OPTIONAL SMALL SCREEN SAFETY */
-@media (max-width: 1200px) {
-  .content-container-centered {
-    padding: 22px 16px 50px;
-  }
 }
