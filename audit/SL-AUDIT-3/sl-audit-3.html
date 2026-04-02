@@ -4,113 +4,120 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./vars.css">
-  <link rel="stylesheet" href="../CSS/style-sl3.css">
-
-  <style>
-    a,
-    button,
-    input,
-    select,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      border: none;
-      text-decoration: none;
-      background: none;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    menu, ol, ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-  </style>
-
   <title>Inventory Audit Summary Report</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../CSS/style-sl3.css">
 </head>
 <body>
-  <div class="shift-lead-fourth-1-3-page-audit-summary-report">
-    <div class="rectangle-5"></div>
-    <div class="inventory-audit-summary-report">
-      Inventory Audit Summary Report
-    </div>
 
-    <img class="rectangle-1" src="rectangle-10.svg" alt="" />
-    <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo" />
+<div class="container-fluid p-0">
 
-    <div class="sidebar-nav">
-     <button class="nav-btn" type="button"
-        onclick="window.location.href='/S2026_TEAM1/FULL/SL-FULL/sl-full.html'">
-        Full Inventory View
-      </button>
-      <button class="nav-btn active">Inventory Audit</button>
-    </div>
+  <!-- SIDEBAR -->
+  <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
+    <div class="w-100">
+      <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo">
 
-        <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
+      <div class="sidebar-nav d-flex flex-column gap-2">
+        <button class="nav-btn" type="button"
+          onclick="window.location.href='/S2026_TEAM1/FULL/SL-FULL/sl-full.html'">
+          Full Inventory View
+        </button>
 
-    <div class="summary-card">
-      <div class="summary-header">Audit Date: March 6, 2026</div>
-      <div class="summary-row">Conducted by: Evelyn A.</div>
-      <div class="summary-row">Total Items Checked: 3</div>
-      <div class="summary-row">
-        <span>Discrepancies Found :</span>
-        <span class="red-text">2</span>
+        <button class="nav-btn active" type="button">
+          Inventory Audit
+        </button>
       </div>
     </div>
 
-    <div class="table-card">
-      <div class="table-header">
-        <div class="ingredient">Ingredient</div>
-        <div class="system-qty">System Qty</div>
-        <div class="physical-count">Physical Count</div>
-        <div class="difference">Difference</div>
+    <div class="pb-4">
+      <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content-area">
+    <div class="page-shell">
+
+      <!-- TITLE -->
+      <div class="rectangle-5">
+        <h1 class="page-title">Inventory Audit Summary Report</h1>
       </div>
 
-      <div class="table-body">
-        <div class="table-row">
-          <div class="col ingredient-col">Tapioca Pearls</div>
-          <div class="col qty-col">10</div>
-          <div class="col count-col">
-            <div class="count-pill">10</div>
+      <!-- SHARED LEFT ALIGNMENT BLOCK -->
+      <div class="aligned-content">
+
+        <!-- SUMMARY CARD -->
+        <div class="summary-card">
+          <div class="summary-header">Audit Date: March 6, 2026</div>
+
+          <div class="summary-row">
+            <span>Conducted by:</span>
+            <span class="summary-value">Evelyn A.</span>
           </div>
-          <div class="col diff-col">0</div>
+
+          <div class="summary-row">
+            <span>Total Items Checked:</span>
+            <span class="summary-value">3</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Discrepancies Found :</span>
+            <span class="summary-value red-text">2</span>
+          </div>
         </div>
 
-        <div class="table-row">
-          <div class="col ingredient-col">Mango Syrup</div>
-          <div class="col qty-col">5</div>
-          <div class="col count-col">
-            <div class="count-pill">1</div>
+        <!-- TABLE -->
+        <div class="table-card">
+          <div class="table-header">
+            <div class="ingredient-col">Ingredient</div>
+            <div class="qty-col">System Qty</div>
+            <div class="count-col">Physical Count</div>
+            <div class="diff-col">Difference</div>
           </div>
-          <div class="col diff-col red-text">4</div>
+
+          <div class="table-row">
+            <div class="ingredient-col">Tapioca Pearls</div>
+            <div class="qty-col">10</div>
+            <div class="count-col">
+              <div class="count-pill">10</div>
+            </div>
+            <div class="diff-col">0</div>
+          </div>
+
+          <div class="table-row">
+            <div class="ingredient-col">Mango Syrup</div>
+            <div class="qty-col">5</div>
+            <div class="count-col">
+              <div class="count-pill">1</div>
+            </div>
+            <div class="diff-col red-text">4</div>
+          </div>
+
+          <div class="table-row">
+            <div class="ingredient-col">Large cups</div>
+            <div class="qty-col">20</div>
+            <div class="count-col">
+              <div class="count-pill">21</div>
+            </div>
+            <div class="diff-col red-text">-1</div>
+          </div>
         </div>
 
-        <div class="table-row">
-          <div class="col ingredient-col">Large cups</div>
-          <div class="col qty-col">20</div>
-          <div class="col count-col">
-            <div class="count-pill">21</div>
-          </div>
-          <div class="col diff-col red-text">-1</div>
+        <!-- BUTTONS -->
+        <div class="frame-actions">
+          <button class="export-btn" onclick="window.print()">Export Report</button>
+          <button class="close-btn"
+            onclick="window.location.href='../SL-AUDIT-1/sl-audit-1.html'">
+            Close Audit
+          </button>
         </div>
+
       </div>
     </div>
+  </main>
 
-    <div class="frame-actions">
-      <button class="export-btn" onclick="window.print()">Export Report</button>
-      <button class="close-btn"
-        onclick="window.location.href='../SL-AUDIT-1/sl-audit-1.html'">
-        Close Audit
-      </button>
-    </div>
-  </div>
+</div>
+
 </body>
 </html>
