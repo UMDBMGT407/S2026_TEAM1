@@ -1,10 +1,9 @@
-/* Custom Styles for Audit Page Reconciliation */
+
 
 .text-brown {
-    color: #964f4c; /* Primary brand color from style.css */
+    color: #964f4c;
 }
 
-/* Audit Input Styling */
 .audit-input {
     width: 70px;
     height: 35px;
