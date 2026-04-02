@@ -2,75 +2,83 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./vars.css">
-  <link rel="stylesheet" href="../CSS/style-sl1.css">
-
-  <style>
-    a,
-    button,
-    input,
-    select,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      border: none;
-      text-decoration: none;
-      background: none;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    menu, ol, ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-  </style>
-
   <title>Inventory Audit - Begin Audit</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../CSS/style-sl1.css">
 </head>
 <body>
-  <div class="shift-lead-fourth-page-start-new-audit">
-    <div class="rectangle-5"></div>
-    <div class="inventory-audit-begin-audit">Inventory Audit - Begin Audit</div>
 
-    <img class="rectangle-1" src="rectangle-10.svg" alt="" />
-    <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo" />
+<div class="container-fluid p-0">
 
-    <div class="sidebar-nav">
-       <button class="nav-btn" type="button"
-        onclick="window.location.href='/S2026_TEAM1/FULL/SL-FULL/sl-full.html'">
-        Full Inventory View
-      </button>
-      <button class="nav-btn active">Inventory Audit</button>
+  <!-- SIDEBAR -->
+  <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
+
+    <div class="w-100">
+      <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo">
+
+      <div class="sidebar-nav d-flex flex-column gap-2">
+        <button class="nav-btn" type="button"
+          onclick="window.location.href='/S2026_TEAM1/FULL/SL-FULL/sl-full.html'">
+          Full Inventory View
+        </button>
+
+        <button class="nav-btn active" type="button">
+          Inventory Audit
+        </button>
+      </div>
     </div>
 
-     <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
-
-    <div class="main-card">
-      <div class="last-audit-march-5-2026">Last Audit : March 5, 2026</div>
-      <div class="line-6"></div>
-      <div class="conducted-by-evelyn-a">Conducted by: Evelyn A.</div>
+    <div class="pb-4">
+      <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
     </div>
 
-    <div class="frame-actions">
-      <button class="resume-btn"
-        onclick="window.location.href='../SL-AUDIT-2/sl-audit-2.html'">
-        Resume Draft Audit
-      </button>
+  </nav>
 
-      <button class="start-btn"
-        onclick="window.location.href='../SL-AUDIT-2/sl-audit-2.html'">
-        Start New Audit
-      </button>
+  <!-- MAIN CONTENT -->
+  <main class="col main-content-area">
+
+    <div class="content-container-centered">
+
+      <!-- HEADER -->
+      <div class="rectangle-5 mb-5">
+        <h1 class="page-title">Inventory Audit - Begin Audit</h1>
+      </div>
+
+      <!-- CARD -->
+      <div class="row justify-content-center">
+        <div class="col-lg-9 col-xl-8">
+          <div class="main-card p-4 p-md-5">
+            <h2 class="section-title">Last Audit : March 5, 2026</h2>
+            <hr class="section-divider">
+            <p class="section-sub">Conducted by: Evelyn A.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="row justify-content-center mt-5 g-4 action-row">
+        <div class="col-md-6 col-lg-4">
+          <button class="resume-btn w-100"
+            onclick="window.location.href='../SL-AUDIT-2/sl-audit-2.html'">
+            Resume Draft Audit
+          </button>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <button class="start-btn w-100"
+            onclick="window.location.href='../SL-AUDIT-2/sl-audit-2.html'">
+            Start New Audit
+          </button>
+        </div>
+      </div>
+
     </div>
-  </div>
+
+  </main>
+
+</div>
+
 </body>
 </html>
