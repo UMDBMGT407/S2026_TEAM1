@@ -2,70 +2,92 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../../css/style-man-dash.css">
   <link rel="stylesheet" href="./style-audit.css">
-  <title>Inventory Reconciliation</title>
+  <title>Inventory Reconciliation | Kung Fu Tea</title>
 </head>
 <body>
-  <div class="manager-eight-page-process-1-1-user-permissions">
-    <div class="sidebar-wrapper">
-        <img class="kft-logo" src="../../Images/kft-logo0.png" alt="KFT Logo">
-        <div class="sidebar-nav">
-            <button class="nav-btn" onclick="window.location.href='../MAN-FULL/man-full.html'">Full Inventory View</button>
+  <div class="container-fluid p-0">
+    <div class="row g-0">
+      
+      <nav class="col-auto sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
+        <div class="w-100">
+          <img class="kft-logo" src="../../Images/kft-logo0.png" alt="KFT Logo">
+          <div class="sidebar-nav d-flex flex-column gap-2">
+            <button class="nav-btn" onclick="location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">Full Inventory View</button>
             <button class="nav-btn active">Inventory Reconciliation</button>
-            <button class="nav-btn" onclick="window.location.href='../MAN-AUDIT-4/man-audit-4.html'">Activity Log</button>
-            <button class="nav-btn" onclick="window.location.href='../../manager-dashboard/man-dash.html'">Dashboards & Analytics</button>
-            <button class="nav-btn" onclick="window.location.href='../../predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">Predictive Reports</button>
-            <button class="nav-btn" onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">Manage Users</button>
-            <button class="nav-btn two-line">Purchase Order<br>Management</button>
+            <button class="nav-btn" onclick="location.href='/S2026_TEAM1/audit/MAN-AUDIT-4/man-audit-4.html'">Activity Log</button>
+            <button class="nav-btn" onclick="location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">Dashboards & Analytics</button>
+            <button class="nav-btn" onclick="location.href='/S2026_TEAM1/manage-users/MAN-AUDIT-5/user1.html'">Manage Users</button>
+          </div>
         </div>
-        <a href="../../index.html" class="logout-btn">Logout</a>
-    </div>
+        <div class="pb-4">
+          <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
+        </div>
+      </nav>
 
-    <div class="main-content-area">
-        <div class="content-container-centered">
-            <div class="rectangle-5">
-                <div class="manage-users">Inventory Reconciliation</div>
+      <main class="col main-content-area">
+        <div class="content-container-centered container">
+          
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="rectangle-5">
+                <h1 class="dashboard-analytics">Inventory Reconciliation</h1>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-card p-4">
+            <div class="row g-3 align-items-center mb-4">
+              <div class="col-md-5">
+                <input type="text" class="form-control dropdown-box" placeholder="Search Item Name...">
+              </div>
+              <div class="col-md-4">
+                <select class="form-select dropdown-box">
+                  <option selected>Category: All</option>
+                  <option>Toppings</option>
+                  <option>Tea Leaves</option>
+                  <option>Syrups</option>
+                </select>
+              </div>
+              <div class="col-md-3 text-end">
+                <button class="refresh-btn w-100">Submit Audit</button>
+              </div>
             </div>
 
-            <div class="audit-container">
-                <div class="controls-row">
-                    <input type="text" class="dropdown-box" placeholder="Search Item..." style="width: 250px;">
-                    <select class="dropdown-box">
-                        <option>Category: All</option>
-                        <option>Toppings</option>
-                        <option>Syrups</option>
-                    </select>
-                    <button class="refresh-btn" style="margin-left: auto;">Submit Audit</button>
+            <div class="table-card-bg">
+              <div class="container-fluid py-2">
+                <div class="row fw-bold border-bottom pb-2 pt-2 text-brown">
+                  <div class="col-6 col-sm-5">Item Name</div>
+                  <div class="col-3 col-sm-2 text-center">System</div>
+                  <div class="col-3 col-sm-3 text-center">Physical</div>
+                  <div class="col-sm-2 d-none d-sm-block text-end">Diff</div>
                 </div>
 
-                <div class="table-card-bg" style="height: auto; margin-top: 20px;">
-                    <div class="table-container">
-                        <div class="table-header">
-                            <div style="flex: 2;">Item Name</div>
-                            <div style="flex: 1;">System Qty</div>
-                            <div style="flex: 1;">Physical Qty</div>
-                            <div style="flex: 1;">Discrepancy</div>
-                        </div>
-                        <div class="table-body">
-                            <div class="table-row">
-                                <div style="flex: 2;">Tapioca Pearls (Boba)</div>
-                                <div style="flex: 1;">10</div>
-                                <div style="flex: 1;"><input type="number" class="audit-input" value="10"></div>
-                                <div style="flex: 1; color: green;">0</div>
-                            </div>
-                            <div class="table-row">
-                                <div style="flex: 2;">Black Tea Leaves</div>
-                                <div style="flex: 1;">6</div>
-                                <div style="flex: 1;"><input type="number" class="audit-input" value="4"></div>
-                                <div style="flex: 1; color: #de2323;">-2</div>
-                            </div>
-                            </div>
-                    </div>
+                <div class="row align-items-center py-3 border-bottom border-light">
+                  <div class="col-6 col-sm-5">Tapioca Pearls (Boba)</div>
+                  <div class="col-3 col-sm-2 text-center">10</div>
+                  <div class="col-3 col-sm-3 d-flex justify-content-center">
+                    <input type="number" class="form-control audit-input" value="10">
+                  </div>
+                  <div class="col-sm-2 d-none d-sm-block text-end text-success fw-bold">0</div>
                 </div>
-            </div>
-        </div>
+
+                <div class="row align-items-center py-3 border-bottom border-light">
+                  <div class="col-6 col-sm-5">Black Tea Leaves</div>
+                  <div class="col-3 col-sm-2 text-center">6</div>
+                  <div class="col-3 col-sm-3 d-flex justify-content-center">
+                    <input type="number" class="form-control audit-input" value="4">
+                  </div>
+                  <div class="col-sm-2 d-none d-sm-block text-end text-danger fw-bold">-2</div>
+                </div>
+              </div>
+            </div> </div> </div>
+      </main>
+
     </div>
   </div>
 </body>
