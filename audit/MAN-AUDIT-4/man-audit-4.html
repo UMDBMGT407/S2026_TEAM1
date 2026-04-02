@@ -14,18 +14,18 @@
 
   <!-- SIDEBAR -->
   <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
+
     <div class="w-100">
       <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo">
 
       <div class="sidebar-nav d-flex flex-column gap-2">
-        <button class="nav-btn"
-          type="button"
+
+        <button class="nav-btn" type="button"
           onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">
           Full Inventory View
         </button>
 
-        <button class="nav-btn"
-          type="button"
+        <button class="nav-btn" type="button"
           onclick="window.location.href='../MAN-AUDIT-1/man-audit-1.html'">
           Inventory Reconciliation
         </button>
@@ -34,39 +34,39 @@
           Activity Log
         </button>
 
-        <button class="nav-btn"
-          type="button"
+        <button class="nav-btn" type="button"
           onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">
           Dashboards &amp; Analytics
         </button>
 
-        <button class="nav-btn"
-          type="button"
+        <button class="nav-btn" type="button"
           onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
           Predictive Reports
         </button>
 
-        <button class="nav-btn"
-          type="button"
+        <button class="nav-btn" type="button"
           onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">
           Manage Users
         </button>
 
-        <button class="nav-btn two-line"
-          type="button"
+        <button class="nav-btn two-line" type="button"
           onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
           Purchase Order<br>Management
         </button>
+
       </div>
     </div>
 
+    <!-- LOGOUT -->
     <div class="pb-4">
       <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
     </div>
+
   </nav>
 
   <!-- MAIN CONTENT -->
   <main class="col main-content-area">
+
     <div class="content-container-centered">
 
       <!-- HEADER -->
@@ -74,130 +74,129 @@
         <h1 class="page-title">Activity Log</h1>
       </div>
 
-      <!-- TABLE CARD -->
+      <!-- TABLE -->
       <div class="table-card">
-
-        <div class="table-header d-grid">
-          <div>Timestamp</div>
-          <div>User</div>
-          <div>Role</div>
-          <div>Ingredient</div>
-          <div>Action</div>
-          <div>Qty<br>Change</div>
-        </div>
-
-        <div class="table-body">
-
-          <!-- PAGE 1 -->
-          <div class="table-row d-grid" data-page="1">
-            <div class="timestamp-col">03/02/2026, 02:15pm</div>
-            <div class="user-col">John D.</div>
-            <div class="role-col">Employee</div>
-            <div class="ingredient-col">Tapioca Pearls</div>
-            <div class="action-col">Add</div>
-            <div class="qty-col">+3</div>
+        <div class="table-scroll">
+          <div class="table-header">
+            <div>Timestamp</div>
+            <div>User</div>
+            <div>Role</div>
+            <div>Ingredient</div>
+            <div>Action</div>
+            <div>Qty<br>Change</div>
           </div>
 
-          <div class="table-row d-grid" data-page="1">
-            <div class="timestamp-col">03/02/2026, 02:15pm</div>
-            <div class="user-col">Evelyn A.</div>
-            <div class="role-col">Manager</div>
-            <div class="ingredient-col">Mango Syrup</div>
-            <div class="action-col">Sub</div>
-            <div class="qty-col">-5</div>
-          </div>
+          <div class="table-body">
 
-          <div class="table-row d-grid" data-page="1">
-            <div class="timestamp-col">03/05/2026, 08:20pm</div>
-            <div class="user-col">Sophia M.</div>
-            <div class="role-col">Shift Lead</div>
-            <div class="ingredient-col">Large Cups</div>
-            <div class="action-col">Correct</div>
-            <div class="qty-col">+20</div>
-          </div>
+            <div class="table-row" data-page="1">
+              <div class="timestamp-col">03/02/2026, 02:15pm</div>
+              <div class="user-col">John D.</div>
+              <div class="role-col">Employee</div>
+              <div class="ingredient-col">Tapioca Pearls</div>
+              <div class="action-col">Add</div>
+              <div class="qty-col">+3</div>
+            </div>
 
-          <div class="table-row d-grid" data-page="1">
-            <div class="timestamp-col">02/05/2026, 03:20pm</div>
-            <div class="user-col">Joanna M.</div>
-            <div class="role-col">Employee</div>
-            <div class="ingredient-col">Chia Seeds</div>
-            <div class="action-col">Add</div>
-            <div class="qty-col">+2</div>
-          </div>
+            <div class="table-row" data-page="1">
+              <div class="timestamp-col">03/02/2026, 02:15pm</div>
+              <div class="user-col">Evelyn A.</div>
+              <div class="role-col">Manager</div>
+              <div class="ingredient-col">Mango Syrup</div>
+              <div class="action-col">Sub</div>
+              <div class="qty-col">-5</div>
+            </div>
 
-          <div class="table-row d-grid" data-page="1">
-            <div class="timestamp-col">04/10/2026, 12:20pm</div>
-            <div class="user-col">Sophia M.</div>
-            <div class="role-col">Shift Lead</div>
-            <div class="ingredient-col">Hot Med Cups</div>
-            <div class="action-col">Add</div>
-            <div class="qty-col">+10</div>
-          </div>
+            <div class="table-row" data-page="1">
+              <div class="timestamp-col">03/05/2026, 08:20pm</div>
+              <div class="user-col">Sophia M.</div>
+              <div class="role-col">Shift Lead</div>
+              <div class="ingredient-col">Large Cups</div>
+              <div class="action-col">Correct</div>
+              <div class="qty-col">+20</div>
+            </div>
 
-          <div class="table-row d-grid" data-page="1">
-            <div class="timestamp-col">02/05/2026, 07:20pm</div>
-            <div class="user-col">Lesly M.</div>
-            <div class="role-col">Employee</div>
-            <div class="ingredient-col">Milk Powder</div>
-            <div class="action-col">Sub</div>
-            <div class="qty-col">-6</div>
-          </div>
+            <div class="table-row" data-page="1">
+              <div class="timestamp-col">02/05/2026, 03:20pm</div>
+              <div class="user-col">Joanna M.</div>
+              <div class="role-col">Employee</div>
+              <div class="ingredient-col">Chia Seeds</div>
+              <div class="action-col">Add</div>
+              <div class="qty-col">+2</div>
+            </div>
 
-          <!-- PAGE 2 -->
-          <div class="table-row d-grid" data-page="2">
-            <div class="timestamp-col">04/12/2026, 09:10am</div>
-            <div class="user-col">Ariana T.</div>
-            <div class="role-col">Employee</div>
-            <div class="ingredient-col">Brown Sugar</div>
-            <div class="action-col">Add</div>
-            <div class="qty-col">+4</div>
-          </div>
+            <div class="table-row" data-page="1">
+              <div class="timestamp-col">04/10/2026, 12:20pm</div>
+              <div class="user-col">Sophia M.</div>
+              <div class="role-col">Shift Lead</div>
+              <div class="ingredient-col">Hot Med Cups</div>
+              <div class="action-col">Add</div>
+              <div class="qty-col">+10</div>
+            </div>
 
-          <div class="table-row d-grid" data-page="2">
-            <div class="timestamp-col">04/12/2026, 11:40am</div>
-            <div class="user-col">Kevin R.</div>
-            <div class="role-col">Manager</div>
-            <div class="ingredient-col">Strawberry Syrup</div>
-            <div class="action-col">Sub</div>
-            <div class="qty-col">-2</div>
-          </div>
+            <div class="table-row" data-page="1">
+              <div class="timestamp-col">02/05/2026, 07:20pm</div>
+              <div class="user-col">Lesly M.</div>
+              <div class="role-col">Employee</div>
+              <div class="ingredient-col">Milk Powder</div>
+              <div class="action-col">Sub</div>
+              <div class="qty-col">-6</div>
+            </div>
 
-          <div class="table-row d-grid" data-page="2">
-            <div class="timestamp-col">04/13/2026, 02:05pm</div>
-            <div class="user-col">Mia S.</div>
-            <div class="role-col">Shift Lead</div>
-            <div class="ingredient-col">Medium Cups</div>
-            <div class="action-col">Correct</div>
-            <div class="qty-col">+8</div>
-          </div>
+            <div class="table-row" data-page="2">
+              <div class="timestamp-col">04/12/2026, 09:10am</div>
+              <div class="user-col">Ariana T.</div>
+              <div class="role-col">Employee</div>
+              <div class="ingredient-col">Brown Sugar</div>
+              <div class="action-col">Add</div>
+              <div class="qty-col">+4</div>
+            </div>
 
-          <div class="table-row d-grid" data-page="2">
-            <div class="timestamp-col">04/13/2026, 04:22pm</div>
-            <div class="user-col">Leo P.</div>
-            <div class="role-col">Employee</div>
-            <div class="ingredient-col">Matcha Powder</div>
-            <div class="action-col">Add</div>
-            <div class="qty-col">+1</div>
-          </div>
+            <div class="table-row" data-page="2">
+              <div class="timestamp-col">04/12/2026, 11:40am</div>
+              <div class="user-col">Kevin R.</div>
+              <div class="role-col">Manager</div>
+              <div class="ingredient-col">Strawberry Syrup</div>
+              <div class="action-col">Sub</div>
+              <div class="qty-col">-2</div>
+            </div>
 
-          <div class="table-row d-grid" data-page="2">
-            <div class="timestamp-col">04/14/2026, 08:55am</div>
-            <div class="user-col">Nina K.</div>
-            <div class="role-col">Employee</div>
-            <div class="ingredient-col">Ice Bags</div>
-            <div class="action-col">Sub</div>
-            <div class="qty-col">-7</div>
-          </div>
+            <div class="table-row" data-page="2">
+              <div class="timestamp-col">04/13/2026, 02:05pm</div>
+              <div class="user-col">Mia S.</div>
+              <div class="role-col">Shift Lead</div>
+              <div class="ingredient-col">Medium Cups</div>
+              <div class="action-col">Correct</div>
+              <div class="qty-col">+8</div>
+            </div>
 
-          <div class="table-row d-grid" data-page="2">
-            <div class="timestamp-col">04/14/2026, 01:00pm</div>
-            <div class="user-col">Chris L.</div>
-            <div class="role-col">Shift Lead</div>
-            <div class="ingredient-col">Whole Milk</div>
-            <div class="action-col">Add</div>
-            <div class="qty-col">+5</div>
-          </div>
+            <div class="table-row" data-page="2">
+              <div class="timestamp-col">04/13/2026, 04:22pm</div>
+              <div class="user-col">Leo P.</div>
+              <div class="role-col">Employee</div>
+              <div class="ingredient-col">Matcha Powder</div>
+              <div class="action-col">Add</div>
+              <div class="qty-col">+1</div>
+            </div>
 
+            <div class="table-row" data-page="2">
+              <div class="timestamp-col">04/14/2026, 08:55am</div>
+              <div class="user-col">Nina K.</div>
+              <div class="role-col">Employee</div>
+              <div class="ingredient-col">Ice Bags</div>
+              <div class="action-col">Sub</div>
+              <div class="qty-col">-7</div>
+            </div>
+
+            <div class="table-row" data-page="2">
+              <div class="timestamp-col">04/14/2026, 01:00pm</div>
+              <div class="user-col">Chris L.</div>
+              <div class="role-col">Shift Lead</div>
+              <div class="ingredient-col">Whole Milk</div>
+              <div class="action-col">Add</div>
+              <div class="qty-col">+5</div>
+            </div>
+
+          </div>
         </div>
       </div>
 
@@ -211,11 +210,11 @@
           <button class="page-btn" data-page-btn="5">5</button>
           <button class="page-btn" data-page-btn="6">6</button>
         </div>
-
         <button class="next-btn" id="nextBtn">Next &gt;</button>
       </div>
 
     </div>
+
   </main>
 
 </div>
