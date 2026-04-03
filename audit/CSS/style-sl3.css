@@ -71,11 +71,7 @@ body {
   color: #964f4c;
 }
 
-.logout-wrap {
-  display: flex;
-  justify-content: center;
-  padding-bottom: 40px;
-}
+/* 🔥 logout-wrap REMOVED */
 
 .logout-btn {
   width: 95px;
@@ -242,126 +238,14 @@ body {
   font-size: 18px;
   font-family: "Inria Serif", serif;
   cursor: pointer;
-  transition: 0.18s ease;
 }
 
 .export-btn {
   background: #e9d9cc;
   border: 1.5px solid #b36a66;
-  color: #111;
 }
 
 .close-btn {
   background: #9d5651;
   color: #f0e6dd;
-  border: none;
-}
-
-.export-btn:hover {
-  filter: brightness(0.98);
-}
-
-.close-btn:hover {
-  background: #874946;
-}
-
-/* ================= RESPONSIVE ================= */
-
-@media (max-width: 992px) {
-  .sidebar-wrapper {
-    position: relative;
-    width: 100%;
-    height: auto;
-  }
-
-  .kft-logo {
-    position: relative;
-    display: block;
-  }
-
-  .sidebar-nav {
-    margin-top: 20px;
-    padding-bottom: 20px;
-  }
-
-  .main-content-area {
-    margin-left: 0;
-  }
-
-  .content-container {
-    max-width: 100%;
-    padding: 20px;
-  }
-
-  .summary-card {
-    width: 100%;
-  }
-
-  .action-buttons {
-    justify-content: flex-start;
-    margin-top: 40px;
-  }
-}
-
-@media (max-width: 768px) {
-  .rectangle-5 {
-    min-height: 90px;
-    padding: 18px 20px;
-  }
-
-  .page-title {
-    font-size: 26px;
-  }
-
-  .summary-header {
-    font-size: 22px;
-  }
-
-  .summary-row {
-    font-size: 17px;
-    padding: 16px 18px;
-  }
-
-  .table-header,
-  .table-row {
-    grid-template-columns: 1.7fr 0.9fr 1fr 0.8fr;
-    font-size: 16px;
-    padding: 16px 14px;
-  }
-
-  .count-pill {
-    width: 72px;
-    height: 36px;
-  }
-
-  .export-btn,
-  .close-btn {
-    min-width: 180px;
-    height: 52px;
-    font-size: 16px;
-  }
-}
-
-@media print {
-  .sidebar-wrapper,
-  .action-buttons {
-    display: none !important;
-  }
-
-  .main-content-area {
-    margin-left: 0;
-    padding: 0;
-    display: block;
-  }
-
-  .content-container {
-    max-width: 100%;
-    padding: 0;
-  }
-
-  .summary-card,
-  .table-card,
-  .rectangle-5 {
-    width: 100%;
-  }
 }
