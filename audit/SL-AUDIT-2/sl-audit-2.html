@@ -13,19 +13,19 @@
 
 <div class="container-fluid p-0">
 
-  <!-- SIDEBAR (FIXED VERSION) -->
+  <!-- SIDEBAR -->
   <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
 
     <div class="w-100">
       <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo">
 
       <div class="sidebar-nav d-flex flex-column gap-2">
-        <button class="nav-btn"
+        <button class="nav-btn" type="button"
           onclick="window.location.href='/S2026_TEAM1/FULL/SL-FULL/sl-full.html'">
           Full Inventory View
         </button>
 
-        <button class="nav-btn active">
+        <button class="nav-btn active" type="button">
           Inventory Audit
         </button>
       </div>
@@ -48,10 +48,10 @@
 
       <!-- FILTER -->
       <div class="mb-4">
-        <select class="category-filter">
-          <option>Category: All</option>
-          <option>Category: Powder</option>
-          <option>Category: Syrup</option>
+        <select class="category-filter" aria-label="Category filter">
+          <option value="all" selected>Category: All</option>
+          <option value="powder">Category: Powder</option>
+          <option value="syrup">Category: Syrup</option>
         </select>
       </div>
 
@@ -69,7 +69,7 @@
           <div class="col-ingredient">Tapioca Pearls</div>
           <div class="col-center">10</div>
           <div class="col-center">
-            <input class="count-input" value="10">
+            <input class="count-input" type="text" value="10" aria-label="Physical count Tapioca Pearls">
           </div>
           <div class="col-center">0</div>
         </div>
@@ -78,7 +78,7 @@
           <div class="col-ingredient">Black Tea</div>
           <div class="col-center">6</div>
           <div class="col-center">
-            <input class="count-input" value="3">
+            <input class="count-input" type="text" value="3" aria-label="Physical count Black Tea">
           </div>
           <div class="col-center text-danger">3</div>
         </div>
@@ -87,7 +87,7 @@
           <div class="col-ingredient">Mango Syrup</div>
           <div class="col-center">5</div>
           <div class="col-center">
-            <input class="count-input" value="3">
+            <input class="count-input" type="text" value="3" aria-label="Physical count Mango Syrup">
           </div>
           <div class="col-center text-danger">2</div>
         </div>
@@ -96,14 +96,14 @@
           <div class="col-ingredient">Large Cups</div>
           <div class="col-center">20</div>
           <div class="col-center">
-            <input class="count-input" value="21">
+            <input class="count-input" type="text" value="21" aria-label="Physical count Large Cups">
           </div>
           <div class="col-center text-danger">-1</div>
         </div>
 
       </div>
 
-      <!-- BUTTONS -->
+      <!-- ACTION BUTTONS -->
       <div class="d-flex justify-content-end gap-3 mt-4 flex-wrap">
         <button class="resume-btn"
           onclick="window.location.href='../SL-AUDIT-1/sl-audit-1.html'">
