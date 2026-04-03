@@ -842,4 +842,118 @@ body {
 }
 
 
+/*MAN 4*/
+/* TABLE CARD */
+.man4-table-card {
+  width: 100%;
+  background: #f8efe6;
+  border: 1px solid #000000;
+  border-radius: 22px;
+  overflow: hidden;
+}
 
+.man4-table-scroll {
+  width: 100%;
+  overflow-x: visible;
+}
+
+.man4-table-header,
+.man4-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.1fr 1.5fr 0.8fr 0.9fr;
+  align-items: center;
+}
+
+.man4-table-header {
+  min-height: 70px;
+  background: #9d5651;
+  color: #f0e6dd;
+  font-size: 24px;
+  font-weight: 400;
+  padding: 0 18px;
+  border-bottom: 1px solid #000000;
+}
+
+.man4-table-header > div {
+  text-align: center;
+  line-height: 1.05;
+  padding: 0 6px;
+}
+
+.man4-table-body {
+  padding: 5px 18px 0 18px;
+}
+
+.man4-table-row {
+  min-height: 55px;
+  font-size: 16px;
+  color: #000000;
+  border-bottom: 1px solid #c48a86;
+}
+
+.man4-table-row:last-child {
+  border-bottom: none;
+}
+
+.man4-table-row > div {
+  text-align: center;
+  padding: 0 6px;
+}
+
+.man4-qty-col {
+  font-size: 18px;
+}
+
+/* PAGINATION */
+.pagination-wrap {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.pagination-custom {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  background: #f8efe6;
+  height: 42px;
+}
+
+.page-btn {
+  width: 40px;
+  height: 42px;
+  border: none;
+  border-right: 1px solid #c48a86;
+  background: #f8efe6;
+  color: #000000;
+  font-family: "Inria Serif", serif;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.page-btn:last-child {
+  border-right: none;
+}
+
+.page-btn.active {
+  background: #9d5651;
+  color: #000000;
+}
+
+.next-btn {
+  background: transparent;
+  color: #000000;
+  font-family: "Inria Serif", serif;
+  font-size: 24px;
+  border: none;
+  cursor: pointer;
+}
+
+.next-btn.disabled {
+  opacity: 0.45;
+  cursor: default;
+}
