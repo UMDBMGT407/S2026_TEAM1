@@ -7,7 +7,7 @@
   <title>Inventory Audit - Physical Count</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../CSS/style-sl2.css">
+  <link rel="stylesheet" href="/S2026_TEAM1/manager-dashboard/CSS/style-man-dash.css">
 </head>
 <body>
 
@@ -48,7 +48,7 @@
 
       <!-- FILTER -->
       <div class="mb-4">
-        <select class="category-filter" aria-label="Category filter">
+        <select class="sl2-category-filter" aria-label="Category filter">
           <option value="all" selected>Category: All</option>
           <option value="powder">Category: Powder</option>
           <option value="syrup">Category: Syrup</option>
@@ -56,61 +56,61 @@
       </div>
 
       <!-- TABLE -->
-      <div class="table-card p-4">
+      <div class="sl2-table-card p-4">
 
-        <div class="table-header">
-          <div class="col-ingredient">Ingredient</div>
-          <div class="col-center">System Qty</div>
-          <div class="col-center">Physical Count</div>
-          <div class="col-center">Difference</div>
+        <div class="sl2-table-header">
+          <div class="sl2-col-ingredient">Ingredient</div>
+          <div class="sl2-col-center">System Qty</div>
+          <div class="sl2-col-center">Physical Count</div>
+          <div class="sl2-col-center">Difference</div>
         </div>
 
-        <div class="table-row">
-          <div class="col-ingredient">Tapioca Pearls</div>
-          <div class="col-center">10</div>
-          <div class="col-center">
-            <input class="count-input" type="text" value="10" aria-label="Physical count Tapioca Pearls">
+        <div class="sl2-table-row">
+          <div class="sl2-col-ingredient">Tapioca Pearls</div>
+          <div class="sl2-col-center">10</div>
+          <div class="sl2-col-center">
+            <input class="sl2-count-input" type="text" value="10" aria-label="Physical count Tapioca Pearls">
           </div>
-          <div class="col-center">0</div>
+          <div class="sl2-col-center">0</div>
         </div>
 
-        <div class="table-row">
-          <div class="col-ingredient">Black Tea</div>
-          <div class="col-center">6</div>
-          <div class="col-center">
-            <input class="count-input" type="text" value="3" aria-label="Physical count Black Tea">
+        <div class="sl2-table-row">
+          <div class="sl2-col-ingredient">Black Tea</div>
+          <div class="sl2-col-center">6</div>
+          <div class="sl2-col-center">
+            <input class="sl2-count-input" type="text" value="3" aria-label="Physical count Black Tea">
           </div>
-          <div class="col-center text-danger">3</div>
+          <div class="sl2-col-center sl2-text-danger">3</div>
         </div>
 
-        <div class="table-row">
-          <div class="col-ingredient">Mango Syrup</div>
-          <div class="col-center">5</div>
-          <div class="col-center">
-            <input class="count-input" type="text" value="3" aria-label="Physical count Mango Syrup">
+        <div class="sl2-table-row">
+          <div class="sl2-col-ingredient">Mango Syrup</div>
+          <div class="sl2-col-center">5</div>
+          <div class="sl2-col-center">
+            <input class="sl2-count-input" type="text" value="3" aria-label="Physical count Mango Syrup">
           </div>
-          <div class="col-center text-danger">2</div>
+          <div class="sl2-col-center sl2-text-danger">2</div>
         </div>
 
-        <div class="table-row">
-          <div class="col-ingredient">Large Cups</div>
-          <div class="col-center">20</div>
-          <div class="col-center">
-            <input class="count-input" type="text" value="21" aria-label="Physical count Large Cups">
+        <div class="sl2-table-row">
+          <div class="sl2-col-ingredient">Large Cups</div>
+          <div class="sl2-col-center">20</div>
+          <div class="sl2-col-center">
+            <input class="sl2-count-input" type="text" value="21" aria-label="Physical count Large Cups">
           </div>
-          <div class="col-center text-danger">-1</div>
+          <div class="sl2-col-center sl2-text-danger">-1</div>
         </div>
 
       </div>
 
       <!-- ACTION BUTTONS -->
       <div class="d-flex justify-content-end gap-3 mt-4 flex-wrap">
-        <button class="resume-btn"
+        <button class="sl2-resume-btn"
           onclick="window.location.href='../SL-AUDIT-1/sl-audit-1.html'">
           Save Draft
         </button>
 
-        <button class="start-btn"
+        <button class="sl2-start-btn"
           onclick="window.location.href='../SL-AUDIT-3/sl-audit-3.html'">
           Submit Audit
         </button>
