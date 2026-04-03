@@ -341,3 +341,70 @@ body {
 
 .col-status.critical { color: #de2323; font-weight: 700; }
 .col-status.low { color: #c2bf17; font-weight: 700; }
+
+
+
+
+
+
+
+/*FELICIA PARRT*/
+
+/* man 1*/
+.page-title {
+  font-size: 34px;
+  font-weight: 700;
+}
+
+/* CARD */
+.dashboard-card {
+  background: #d8c4b5;
+  border-radius: 30px;
+}
+
+/* TEXT */
+.section-title {
+  color: #964f4c;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.section-sub {
+  color: #964f4c;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* BUTTONS */
+.approve-btn {
+  background: #9d5651;
+  color: #f0e6dd;
+  border-radius: 30px;
+  padding: 12px 30px;
+  border: none;
+}
+
+.start-btn {
+  background: #9d5651;
+  color: #f0e6dd;
+  border-radius: 20px;
+  padding: 20px;
+  border: none;
+}
+
+.resume-btn {
+  background: #e9d9cc;
+  border: 1.5px solid #b36a66;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+/* HOVER EFFECTS */
+.approve-btn:hover,
+.start-btn:hover {
+  background: #874946;
+}
+
+.resume-btn:hover {
+  background: #f5e7dc;
+}
