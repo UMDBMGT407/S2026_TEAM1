@@ -957,3 +957,81 @@ body {
   opacity: 0.45;
   cursor: default;
 }
+
+
+/*SL 1*/
+
+/* CARD */
+.sl1-main-card {
+  background: #d8c4b5;
+  border-radius: 30px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* TEXT */
+.sl1-section-title {
+  color: #964f4c;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.sl1-section-divider {
+  width: 100%;
+  max-width: 420px;
+  border: none;
+  border-top: 1px solid #b9928d;
+  margin: 18px 0;
+}
+
+.sl1-section-sub {
+  color: #964f4c;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* BUTTON ROW */
+.sl1-action-row {
+  margin-top: 20px !important;
+}
+
+/* BUTTONS (FIXED SIZE) */
+.sl1-resume-btn,
+.sl1-start-btn {
+  height: 65px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.18s;
+}
+
+/* LIGHT BUTTON */
+.sl1-resume-btn {
+  background: #e9d9cc;
+  border: 1.5px solid #b36a66;
+  color: #000;
+}
+
+/* RED BUTTON */
+.sl1-start-btn {
+  background: #9d5651;
+  color: #f0e6dd;
+  border: none;
+}
+
+/* HOVER */
+.sl1-start-btn:hover {
+  background: #874946;
+}
+
+.sl1-resume-btn:hover {
+  background: #f5e7dc;
+}
