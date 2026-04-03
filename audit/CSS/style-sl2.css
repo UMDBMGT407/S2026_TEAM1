@@ -19,7 +19,8 @@ body {
   color: #111;
 }
 
-/* SIDEBAR */
+/* ================= SIDEBAR (FIXED EXACT MATCH) ================= */
+
 .sidebar-wrapper {
   width: 270px;
   height: 100vh;
@@ -43,7 +44,7 @@ body {
 }
 
 .sidebar-nav {
-  margin-top: 140px;
+  margin-top: 120px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -66,7 +67,6 @@ body {
   align-items: center;
   justify-content: flex-start;
   text-align: left;
-  line-height: 1.15;
 }
 
 .nav-btn:hover,
@@ -75,7 +75,14 @@ body {
   color: #964f4c;
 }
 
-/* LOGOUT */
+.nav-btn.two-line {
+  min-height: 74px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  align-items: flex-start;
+}
+
+/* LOGOUT (FIXED POSITION) */
 .logout-btn {
   width: 95px;
   height: 52px;
@@ -94,7 +101,8 @@ body {
   filter: brightness(0.98);
 }
 
-/* MAIN AREA */
+/* ================= MAIN (UNCHANGED) ================= */
+
 .main-content-area {
   margin-left: 270px;
   min-height: 100vh;
@@ -108,7 +116,7 @@ body {
   padding: 40px 20px;
 }
 
-/* HEADER */
+/* TITLE */
 .rectangle-5 {
   width: 100%;
   height: 112px;
@@ -126,235 +134,59 @@ body {
   font-size: 32px;
   font-weight: 700;
   text-align: center;
-  color: #111;
-  line-height: 1.15;
 }
 
 /* FILTER */
 .category-filter {
   width: 420px;
-  max-width: 100%;
   height: 54px;
-  border: 1.5px solid #b36a66;
   border-radius: 22px;
+  border: 1.5px solid #b36a66;
   background: #f8f3ee;
-  color: #9d5651;
-  font-family: "Inria Serif", serif;
-  font-size: 22px;
-  font-weight: 700;
   padding: 0 20px;
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: linear-gradient(45deg, transparent 50%, #9d5651 50%),
-                    linear-gradient(135deg, #9d5651 50%, transparent 50%);
-  background-position: calc(100% - 26px) calc(50% - 4px),
-                       calc(100% - 18px) calc(50% - 4px);
-  background-size: 8px 8px;
-  background-repeat: no-repeat;
-  padding-right: 54px;
-  margin-bottom: 28px;
-  box-shadow: none;
+  font-size: 22px;
 }
 
-/* TABLE CARD */
+/* TABLE */
 .table-card {
   width: 100%;
   background: #f8efe6;
-  border: 1px solid rgba(0, 0, 0, 0.45);
   border-radius: 28px;
-  overflow: hidden;
-  padding: 0 !important;
 }
 
-/* TABLE HEADER AND ROWS */
 .table-header,
 .table-row {
   display: grid;
   grid-template-columns: 2.2fr 1fr 1.1fr 0.9fr;
-  align-items: center;
 }
 
 .table-header {
   background: #9d5651;
-  color: #f0e6dd;
-  font-size: 23px;
-  font-weight: 700;
+  color: white;
   padding: 16px 30px;
 }
 
 .table-row {
-  min-height: 78px;
-  padding: 0 30px;
-  font-size: 19px;
-  font-weight: 700;
-  border-top: 1px solid #ddb3ae;
-}
-
-.col-ingredient {
-  text-align: left;
-}
-
-.col-center {
-  text-align: center;
+  padding: 16px 30px;
 }
 
 /* INPUT */
 .count-input {
   width: 90px;
   height: 42px;
-  border: 1.5px solid #c58d88;
   border-radius: 18px;
-  background: #f8f3ee;
   text-align: center;
-  font-family: "Inria Serif", serif;
-  font-size: 19px;
-  font-weight: 700;
-  color: #111;
-  outline: none;
-  box-shadow: none;
-}
-
-.count-input:focus {
-  border-color: #9d5651;
-}
-
-/* DIFFERENCE COLOR */
-.text-danger {
-  color: #b45a56 !important;
 }
 
 /* BUTTONS */
-.resume-btn,
-.start-btn {
-  min-width: 220px;
-  height: 52px;
-  border-radius: 20px;
-  font-family: "Inria Serif", serif;
-  font-size: 17px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.18s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 24px;
-  box-shadow: none;
-}
-
 .resume-btn {
   background: #e9d9cc;
-  color: #111;
   border: 1.5px solid #b36a66;
+  height: 52px;
 }
 
 .start-btn {
   background: #9d5651;
-  color: #f0e6dd;
-  border: none;
-}
-
-.resume-btn:hover {
-  background: #f3e4d8;
-}
-
-.start-btn:hover {
-  background: #874946;
-}
-
-/* RESPONSIVE */
-@media (max-width: 1200px) {
-  .table-header {
-    font-size: 21px;
-  }
-
-  .table-row {
-    font-size: 18px;
-  }
-
-  .page-title {
-    font-size: 28px;
-  }
-
-  .category-filter {
-    font-size: 20px;
-  }
-}
-
-@media (max-width: 992px) {
-  .sidebar-wrapper {
-    position: relative;
-    width: 100%;
-    height: auto;
-  }
-
-  .kft-logo {
-    position: relative;
-    display: block;
-  }
-
-  .sidebar-nav {
-    margin-top: 20px;
-    padding-bottom: 20px;
-  }
-
-  .main-content-area {
-    margin-left: 0;
-    padding: 20px;
-  }
-
-  .content-container-centered {
-    max-width: 100%;
-    padding: 20px 0;
-  }
-
-  .table-header,
-  .table-row {
-    grid-template-columns: 2fr 1fr 1.1fr 0.9fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .rectangle-5 {
-    height: auto;
-    min-height: 90px;
-    padding: 20px;
-  }
-
-  .page-title {
-    font-size: 24px;
-  }
-
-  .category-filter {
-    width: 100%;
-  }
-
-  .table-header,
-  .table-row {
-    grid-template-columns: 1.8fr 1fr 1fr 0.8fr;
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
-  .table-header {
-    font-size: 18px;
-  }
-
-  .table-row {
-    font-size: 16px;
-    min-height: 70px;
-  }
-
-  .count-input {
-    width: 72px;
-    height: 38px;
-    font-size: 16px;
-  }
-
-  .resume-btn,
-  .start-btn {
-    min-width: 170px;
-    font-size: 16px;
-  }
+  color: white;
+  height: 52px;
 }
