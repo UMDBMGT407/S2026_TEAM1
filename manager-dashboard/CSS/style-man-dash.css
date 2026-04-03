@@ -905,7 +905,7 @@ body {
 }
 
 /* PAGINATION */
-.pagination-wrap {
+.man4-pagination-wrap {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -913,7 +913,7 @@ body {
   margin-top: 22px;
 }
 
-.pagination-custom {
+.man4-pagination-custom {
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -923,7 +923,7 @@ body {
   height: 42px;
 }
 
-.page-btn {
+.man4-page-btn {
   width: 40px;
   height: 42px;
   border: none;
@@ -935,16 +935,16 @@ body {
   cursor: pointer;
 }
 
-.page-btn:last-child {
+.man4-page-btn:last-child {
   border-right: none;
 }
 
-.page-btn.active {
+.man4-page-btn.active {
   background: #9d5651;
   color: #000000;
 }
 
-.next-btn {
+.man4-next-btn {
   background: transparent;
   color: #000000;
   font-family: "Inria Serif", serif;
@@ -953,7 +953,7 @@ body {
   cursor: pointer;
 }
 
-.next-btn.disabled {
+.man4-next-btn.disabled {
   opacity: 0.45;
   cursor: default;
 }
