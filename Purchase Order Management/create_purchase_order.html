@@ -4,602 +4,191 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./vars.css">
-  <link rel="stylesheet" href="./css/styles_create_purchase_order.css">
+  <link rel="stylesheet" href="./CSS/style-man-dash.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <style>
-    a, button, input, select, h1, h2, h3, h4, h5, * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      border: none;
-      text-decoration: none;
-      background: none;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    menu, ol, ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    html,
-    body {
-      margin: 0 !important;
-      padding: 0 !important;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #f0e6dd !important;
-    }
-
-    body {
-      font-family: "Inria Serif", serif;
-    }
-
-    .add-new-order-rectangle,
-    .add-product,
-    .purchase-order-button,
-    .add-purchase-order,
-    .add-new-supplier-rectangle,
-    .add-supplier,
-    .edit-supplier-rectangle,
-    .edit-supplier,
-    .logout-btn,
-    .x3 {
-      cursor: pointer;
-    }
-
-    /* supplier select */
-    #supplierSelect {
-      position: absolute;
-      left: 417px;
-      top: 328px;
-      width: 795px;
-      height: 64px;
-      background: transparent;
-      font-family: "InriaSerif-Regular", sans-serif;
-      font-size: 20px;
-      color: #964f4c;
-      text-align: center;
-      padding: 0 16px;
-      cursor: pointer;
-      z-index: 5;
-      outline: none;
-      -webkit-appearance: auto;
-      appearance: auto;
-    }
-
-    #supplierPlaceholder.hidden {
-      visibility: hidden;
-    }
-
-    #addSupplierOverlay,
-    #editSupplierOverlay {
-      position: absolute;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      z-index: 10;
-      padding: 0;
-    }
-
-    #addSupplierOverlay {
-      left: 866px;
-      top: 281px;
-      width: 170px;
-      height: 36px;
-    }
-
-    #editSupplierOverlay {
-      left: 1042px;
-      top: 281px;
-      width: 170px;
-      height: 36px;
-    }
-
-    /* date inputs */
-    #timestampInput {
-      position: absolute;
-      left: 417px;
-      top: 716px;
-      width: 378px;
-      height: 66px;
-      background: transparent;
-      font-family: "InriaSerif-Regular", sans-serif;
-      font-size: 20px;
-      color: transparent;
-      text-align: center;
-      padding: 0 12px;
-      cursor: pointer;
-      z-index: 5;
-      outline: none;
-    }
-
-    #timestampInput.date-chosen {
-      color: #964f4c;
-    }
-
-    #timestampInput::-webkit-calendar-picker-indicator {
-      opacity: 0.5;
-      cursor: pointer;
-    }
-
-    #expectedDateInput {
-      position: absolute;
-      left: 837px;
-      top: 717px;
-      width: 378px;
-      height: 66px;
-      background: transparent;
-      font-family: "InriaSerif-Regular", sans-serif;
-      font-size: 20px;
-      color: transparent;
-      text-align: center;
-      padding: 0 12px;
-      cursor: pointer;
-      z-index: 5;
-      outline: none;
-    }
-
-    #expectedDateInput.date-chosen {
-      color: #964f4c;
-    }
-
-    #expectedDateInput::-webkit-calendar-picker-indicator {
-      opacity: 0.5;
-      cursor: pointer;
-    }
-
-    /* product rows */
-    #productRowsContainer {
-      position: absolute;
-      left: 417px;
-      top: 466px;
-      width: 840px;
-      max-height: 148px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      z-index: 6;
-      scrollbar-width: thin;
-      scrollbar-color: #964f4c #f0e6dd;
-    }
-
-    #productRowsContainer::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    #productRowsContainer::-webkit-scrollbar-track {
-      background: #f0e6dd;
-      border-radius: 10px;
-    }
-
-    #productRowsContainer::-webkit-scrollbar-thumb {
-      background: #964f4c;
-      border-radius: 10px;
-    }
-
-    .product-row {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      flex-shrink: 0;
-    }
-
-    .product-select {
-      width: 534px;
-      height: 70px;
-      background: #ffffff;
-      border-radius: 10px;
-      font-family: "InriaSerif-Regular", sans-serif;
-      font-size: 20px;
-      color: #964f4c;
-      padding: 0 16px;
-      cursor: pointer;
-      -webkit-appearance: auto;
-      appearance: auto;
-      flex-shrink: 0;
-      margin-right: 31px;
-    }
-
-    .product-qty-input {
-      width: 230px;
-      height: 71px;
-      background: #ffffff;
-      border-radius: 10px;
-      font-family: "InriaSerif-Regular", sans-serif;
-      font-size: 24px;
-      color: #964f4c;
-      padding: 0 16px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-
-    .row-delete-btn {
-      font-family: "InstrumentSans-Bold", sans-serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: #000;
-      cursor: pointer;
-      padding: 0 10px;
-      flex-shrink: 0;
-      user-select: none;
-    }
-
-    #formError {
-      display: none;
-      position: absolute;
-      left: 417px;
-      top: 800px;
-      color: #c0392b;
-      font-family: "InriaSerif-Regular", sans-serif;
-      font-size: 15px;
-      z-index: 10;
-    }
-
-    .input-error {
-      outline: 2px solid #c0392b !important;
-    }
-
-    /* supplier modal */
-    #supplierModalWrapper {
-      display: none;
-      position: absolute;
-      left: 270px;
-      top: 0;
-      width: calc(100% - 270px);
-      height: 100%;
-      z-index: 200;
-    }
-
-    #supplierModalWrapper.modal-visible {
-      display: block;
-    }
-
-    #supplierModalOverlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.25);
-    }
-
-    #supplierModalWrapper .add-new-supplier-main-rectangle,
-    #supplierModalWrapper .supplier-information2,
-    #supplierModalWrapper .x3,
-    #supplierModalWrapper .supplier-name2,
-    #supplierModalWrapper .supplier-name-entry-box,
-    #supplierModalWrapper .supplier-address,
-    #supplierModalWrapper .supplier-address-entry-box,
-    #supplierModalWrapper .anu-role,
-    #supplierModalWrapper .add-supplier-button,
-    #supplierModalWrapper .add-supplier2 {
-      z-index: 201;
-    }
-
-    #inputSupplierName {
-      position: absolute;
-      left: 309px;
-      top: 738px;
-      width: 217px;
-      height: 38px;
-      background: transparent;
-      z-index: 202;
-      font-family: "InriaSerif-Regular", sans-serif;
-      font-size: 16px;
-      color: #964f4c;
-      padding: 0 10px;
-      outline: none;
-    }
-
-    #inputSupplierName:focus {
-      outline: 2px solid #964f4c;
-      border-radius: 20px;
-    }
-
-    #inputSupplierName.input-error {
-      outline: 2px solid #c0392b !important;
-      border-radius: 20px;
-    }
-
-    #inputSupplierAddress {
-      position: absolute;
-      left: 309px;
-      top: 830px;
-      width: 217px;
-      height: 38px;
-      background: transparent;
-      z-index: 202;
-      font-family: "InriaSerif-Regular", sans-serif;
-      font-size: 16px;
-      color: #964f4c;
-      padding: 0 10px;
-      outline: none;
-    }
-
-    #inputSupplierAddress:focus {
-      outline: 2px solid #964f4c;
-      border-radius: 20px;
-    }
-
-    #supplierNameError {
-      position: absolute;
-      left: 309px;
-      top: 779px;
-      color: #c0392b;
-      font-family: "InriaSerif-Regular", sans-serif;
-      font-size: 12px;
-      z-index: 203;
-      display: none;
-    }
-
-    #supplierSubmitOverlay {
-      position: absolute;
-      left: 350px;
-      top: 914px;
-      width: 146px;
-      height: 38px;
-      background: transparent;
-      z-index: 203;
-      cursor: pointer;
-    }
-
-    #supplierCancelLink {
-      position: absolute;
-      left: 265px;
-      top: 921px;
-      color: #964f4c;
-      font-family: "InriaSerif-Regular", sans-serif;
-      font-size: 17px;
-      cursor: pointer;
-      z-index: 203;
-      text-decoration: underline;
-    }
-
-    #supplierCancelLink:hover {
-      opacity: 0.7;
-    }
-  </style>
   <title>Create Purchase Order</title>
 </head>
 <body>
-  <div class="manager-ninth-page-create-new-purchase-order">
-
-    <div class="rectangle-5"></div>
-    <div class="purchase-order-management-title">Purchase Order Management</div>
-    <img class="main-rectangle" src="main-rectangle0.svg" alt="">
-    <img class="inner-new-purchase-order-rec" src="inner-new-purchase-order-rec0.svg" alt="">
-    <div class="create-purchase-order">Create Purchase Order</div>
-
-    <div class="supplier">Supplier:</div>
-    <div class="rounded-rectangle"></div>
-    <div class="supplier-name" id="supplierPlaceholder">Supplier Name</div>
-
-    <select id="supplierSelect" onchange="onSupplierChange()">
-      <option value="" selected hidden></option>
-      <option value="Kung Fu Tea HQ">Kung Fu Tea HQ</option>
-    </select>
-
-    <div class="new-supplier-button">
-      <div class="add-new-supplier-rectangle"></div>
-      <div class="add-supplier">+ Add Supplier</div>
-    </div>
-
-    <div class="edit-supplier-button">
-      <div class="edit-supplier-rectangle"></div>
-      <div class="edit-supplier">+ Edit Supplier</div>
-    </div>
-
-    <button id="addSupplierOverlay" onclick="openSupplierModal('add')"></button>
-    <button id="editSupplierOverlay" onclick="openSupplierModal('edit')"></button>
-
-    <div class="products">
-      <div class="x" style="display:none"></div>
-      <div class="x2" style="display:none"></div>
-      <div class="rectangle-40" style="display:none"></div>
-      <div class="rectangle-41" style="display:none"></div>
-      <div class="rectangle-39" style="display:none"></div>
-      <div class="rectangle-38" style="display:none"></div>
-      <div class="product-name" style="display:none"></div>
-      <div class="_64" style="display:none"></div>
-      <div class="v" style="display:none"></div>
-      <div class="tapioca-balls" style="display:none"></div>
-      <div class="v2" style="display:none"></div>
-      <div class="products2">Products:</div>
-    </div>
-
-    <div class="add-new-order-rectangle" onclick="addProductRow()"></div>
-    <div class="add-product" onclick="addProductRow()">+ Add Product</div>
-
-    <div id="productRowsContainer">
-      <div class="product-row">
-        <select class="product-select">
-          <option value="" disabled>Product Name</option>
-          <option selected>Tapioca Balls</option>
-          <option>Black Tea</option><option>Chia Seeds</option>
-          <option>Grass Jelly</option><option>Green Tea</option>
-          <option>Hot Large Cups</option><option>Hot Med. Cups</option>
-          <option>Jasmine Tea</option><option>Large Cups</option>
-          <option>Lychee Jelly</option><option>Mango Bubbles</option>
-          <option>Mango Syrup</option><option>Milk Powder</option>
-          <option>Oolong Tea</option><option>Straws</option>
-          <option>Taro Powder</option><option>Thai Powder</option>
-        </select>
-        <input type="number" class="product-qty-input" placeholder="Qty" value="64" min="1">
-        <span class="row-delete-btn" onclick="removeProductRow(this)">X</span>
+  <div class="container-fluid p-0">
+ 
+    <!-- ══ SIDEBAR ══ -->
+    <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
+      <div class="w-100">
+        <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea logo" />
+        <div class="sidebar-nav d-flex flex-column gap-2">
+          <button class="nav-btn" onclick="window.location.href='full_inventory.html'">Full Inventory View</button>
+          <button class="nav-btn" onclick="window.location.href='reconciliation.html'">Inventory Reconciliation</button>
+          <button class="nav-btn" onclick="window.location.href='activity_log.html'">Activity Log</button>
+          <button class="nav-btn" onclick="window.location.href='dashboards.html'">Dashboards &amp; Analytics</button>
+          <button class="nav-btn" onclick="window.location.href='predictive_reports.html'">Predictive Reports</button>
+          <button class="nav-btn" onclick="window.location.href='manage_users.html'">Manage Users</button>
+          <button class="nav-btn active two-line">Purchase Order Management</button>
+        </div>
       </div>
-
-      <div class="product-row">
-        <select class="product-select">
-          <option value="" disabled selected>Product Name</option>
-          <option>Black Tea</option><option>Chia Seeds</option>
-          <option>Grass Jelly</option><option>Green Tea</option>
-          <option>Hot Large Cups</option><option>Hot Med. Cups</option>
-          <option>Jasmine Tea</option><option>Large Cups</option>
-          <option>Lychee Jelly</option><option>Mango Bubbles</option>
-          <option>Mango Syrup</option><option>Milk Powder</option>
-          <option>Oolong Tea</option><option>Straws</option>
-          <option>Tapioca Balls</option>
-          <option>Taro Powder</option><option>Thai Powder</option>
-        </select>
-        <input type="number" class="product-qty-input" placeholder="Qty" min="1">
-        <span class="row-delete-btn" onclick="removeProductRow(this)">X</span>
+      <div class="pb-4">
+        <a href="login.html" class="logout-btn">Logout</a>
       </div>
-    </div>
-
-    <div class="timestamp">Timestamp:</div>
-    <div class="rectangle-42"></div>
-    <div class="mm-dd-yyyy" id="datePlaceholder">mm/dd/yyyy</div>
-    <input id="timestampInput" type="date" onchange="handleDateChange()">
-
-    <div class="expected-date">Expected Date:</div>
-    <div class="expected-date-entry-box"></div>
-    <div class="mm-dd-yyyy2" id="expectedDatePlaceholder">mm/dd/yyyy</div>
-    <input id="expectedDateInput" type="date" onchange="handleExpectedDateChange()">
-
-    <div class="purchase-order-button" onclick="submitOrder()"></div>
-    <div class="add-purchase-order" onclick="submitOrder()">Add Purchase Order</div>
-    <div id="formError">Please fill in all required fields and add at least one product.</div>
-
-    <!-- SIDEBAR -->
-    <img class="rectangle-1" src="rectangle-10.svg" alt="">
-    <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo">
-
-    <div class="sidebar-nav">
-      <button class="nav-btn" type="button"
-        onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">
-        Full Inventory View
-      </button>
-
-      <button
-        class="nav-btn"
-        type="button"
-        onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-1/man-audit-1.html'">
-        Inventory Reconciliation
-      </button>
-
-      <button
-        class="nav-btn"
-        type="button"
-        onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-4/man-audit-4.html'">
-        Activity Log
-      </button>
-
-       <button
-        class="nav-btn"
-        type="button"
-        onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">
-          Dashboards &amp; Analytics
-      </button>
-
-      <button
-        class="nav-btn"
-        type="button"
-        onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
-        Predictive Reports
-      </button>
-
-      <button
-        class="nav-btn"
-        type="button"
-        onclick="window.location.href='/S2026_TEAM1/manage-users/MAN-AUDIT-5/user1.html'">
-        Manage Users
-      </button>
-
-      <button
-        class="nav-btn two-line active">
-        Purchase Order<br>Management
-      </button>
-    </div>
-
-    <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
-
-    <!-- SUPPLIER MODAL -->
+    </nav>
+ 
+    <!-- ══ MAIN CONTENT ══ -->
+    <main class="main-content-area">
+      <div class="content-container-centered">
+ 
+        <!-- Heading banner -->
+        <div class="rectangle-5 mb-5">
+          <h1 class="purchase-order-management">Purchase Order Management</h1>
+        </div>
+ 
+        <!-- Form card -->
+        <div class="form-card">
+ 
+          <h2 class="form-card-title">Create Purchase Order</h2>
+ 
+          <!-- ── Supplier ── -->
+          <div>
+            <div class="form-section-label">Supplier:</div>
+            <div class="supplier-row">
+              <select id="supplierSelect" onchange="onSupplierChange()">
+                <option value="" selected hidden>Supplier Name</option>
+                <option value="Kung Fu Tea HQ">Kung Fu Tea HQ</option>
+              </select>
+              <button class="btn-supplier" onclick="openSupplierModal('add')">+ Add Supplier</button>
+              <button class="btn-supplier" onclick="openSupplierModal('edit')">+ Edit Supplier</button>
+            </div>
+          </div>
+ 
+          <!-- ── Products ── -->
+          <div>
+            <div class="products-header">
+              <div class="form-section-label" style="margin-bottom:0">Products:</div>
+              <button class="btn-add-product" onclick="addProductRow()">+ Add Product</button>
+            </div>
+ 
+            <div id="productRowsContainer">
+              <!-- Row 1 -->
+              <div class="product-row">
+                <select class="product-select">
+                  <option value="" disabled>Product Name</option>
+                  <option selected>Tapioca Balls</option>
+                  <option>Black Tea</option><option>Chia Seeds</option>
+                  <option>Grass Jelly</option><option>Green Tea</option>
+                  <option>Hot Large Cups</option><option>Hot Med. Cups</option>
+                  <option>Jasmine Tea</option><option>Large Cups</option>
+                  <option>Lychee Jelly</option><option>Mango Bubbles</option>
+                  <option>Mango Syrup</option><option>Milk Powder</option>
+                  <option>Oolong Tea</option><option>Straws</option>
+                  <option>Taro Powder</option><option>Thai Powder</option>
+                </select>
+                <input type="number" class="product-qty-input" placeholder="Qty" value="64" min="1" />
+                <span class="row-delete-btn" onclick="removeProductRow(this)">X</span>
+              </div>
+              <!-- Row 2 -->
+              <div class="product-row">
+                <select class="product-select">
+                  <option value="" disabled selected>Product Name</option>
+                  <option>Black Tea</option><option>Chia Seeds</option>
+                  <option>Grass Jelly</option><option>Green Tea</option>
+                  <option>Hot Large Cups</option><option>Hot Med. Cups</option>
+                  <option>Jasmine Tea</option><option>Large Cups</option>
+                  <option>Lychee Jelly</option><option>Mango Bubbles</option>
+                  <option>Mango Syrup</option><option>Milk Powder</option>
+                  <option>Oolong Tea</option><option>Straws</option>
+                  <option>Tapioca Balls</option>
+                  <option>Taro Powder</option><option>Thai Powder</option>
+                </select>
+                <input type="number" class="product-qty-input" placeholder="Qty" min="1" />
+                <span class="row-delete-btn" onclick="removeProductRow(this)">X</span>
+              </div>
+            </div>
+          </div>
+ 
+          <!-- ── Timestamp + Expected Date ── -->
+          <div class="dates-row">
+            <div class="date-field">
+              <div class="form-section-label" style="margin-bottom:0">Timestamp:</div>
+              <input id="timestampInput" type="date" class="date-input"
+                onchange="handleDateChange()" />
+            </div>
+            <div class="date-field">
+              <div class="form-section-label" style="margin-bottom:0">Expected Date:</div>
+              <input id="expectedDateInput" type="date" class="date-input"
+                onchange="handleExpectedDateChange()" />
+            </div>
+          </div>
+ 
+          <!-- ── Error + Submit ── -->
+          <p class="form-error" id="formError">
+            Please fill in all required fields and add at least one product.
+          </p>
+ 
+          <div class="submit-row">
+            <button class="btn-submit-order" onclick="submitOrder()">Add Purchase Order</button>
+          </div>
+ 
+        </div><!-- end .form-card -->
+      </div><!-- end .content-container-centered -->
+    </main>
+ 
+    <!-- ══ SUPPLIER INFORMATION MODAL ══ -->
     <div id="supplierModalWrapper">
       <div id="supplierModalOverlay" onclick="closeSupplierModal()"></div>
-
-      <div class="add-new-supplier-main-rectangle"></div>
-      <div class="supplier-information2">Supplier Information</div>
-      <div class="x3" onclick="closeSupplierModal()">x</div>
-
-      <div class="anu-name">
-        <div class="supplier-name2">Supplier Name</div>
-        <div class="supplier-name-entry-box"></div>
+ 
+      <div class="supplier-modal-card">
+        <span class="supplier-modal-close" onclick="closeSupplierModal()">x</span>
+        <h3 class="supplier-modal-title">Supplier Information</h3>
+ 
+        <div class="supplier-modal-field">
+          <label for="inputSupplierName">Supplier Name</label>
+          <input id="inputSupplierName" type="text" placeholder="Type here…" />
+          <span id="supplierNameError">Name is required.</span>
+        </div>
+ 
+        <div class="supplier-modal-field">
+          <label for="inputSupplierAddress">Supplier Address</label>
+          <input id="inputSupplierAddress" type="text" placeholder="Type here…" />
+        </div>
+ 
+        <div class="supplier-modal-actions">
+          <button class="supplier-modal-cancel" onclick="closeSupplierModal()">Cancel</button>
+          <button class="btn-supplier-submit" id="supplierSubmitBtn" onclick="confirmSupplier()">
+            <span id="supplierSubmitLabel">Add Supplier</span>
+          </button>
+        </div>
       </div>
-
-      <div class="anu-phone">
-        <div class="supplier-address">Supplier Address</div>
-        <div class="supplier-address-entry-box"></div>
-      </div>
-
-      <div class="anu-role">
-        <div class="add-supplier-button"></div>
-      </div>
-
-      <div class="add-supplier2" id="supplierSubmitLabel">Add Supplier</div>
-
-      <input id="inputSupplierName" type="text" placeholder="Type here…">
-      <input id="inputSupplierAddress" type="text" placeholder="Type here…">
-      <div id="supplierSubmitOverlay" onclick="confirmSupplier()"></div>
-      <div id="supplierCancelLink" onclick="closeSupplierModal()">Cancel</div>
-      <div id="supplierNameError">Name is required.</div>
     </div>
-
-  </div>
-
+ 
+  </div><!-- end .container-fluid -->
+ 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    function handleLogout() {
-      window.location.href = '/S2026_TEAM1/index.html';
-    }
-
+ 
     function onSupplierChange() {
-      const sel = document.getElementById('supplierSelect');
-      const ph = document.getElementById('supplierPlaceholder');
-      ph.classList.toggle('hidden', !!sel.value);
+      /* Nothing visual to toggle — native select shows the chosen value */
     }
-
+ 
     function handleDateChange() {
-      const inp = document.getElementById('timestampInput');
-      const ph = document.getElementById('datePlaceholder');
-      if (inp.value) {
-        ph.style.display = 'none';
-        inp.classList.add('date-chosen');
-      } else {
-        ph.style.display = '';
-        inp.classList.remove('date-chosen');
-      }
+      /* Native date input shows value natively — no placeholder toggling needed */
     }
-
+ 
     function handleExpectedDateChange() {
-      const inp = document.getElementById('expectedDateInput');
-      const ph = document.getElementById('expectedDatePlaceholder');
-      if (inp.value) {
-        ph.style.display = 'none';
-        inp.classList.add('date-chosen');
-      } else {
-        ph.style.display = '';
-        inp.classList.remove('date-chosen');
-      }
+      /* Native date input shows value natively — no placeholder toggling needed */
     }
-
+ 
+    /* ── Product rows ── */
     const PRODUCTS = [
       'Black Tea','Chia Seeds','Grass Jelly','Green Tea',
       'Hot Large Cups','Hot Med. Cups','Jasmine Tea','Large Cups',
       'Lychee Jelly','Mango Bubbles','Mango Syrup','Milk Powder',
       'Oolong Tea','Straws','Tapioca Balls','Taro Powder','Thai Powder'
     ];
-
+ 
     function buildProductOptions(selected = '') {
       return `<option value="" disabled ${selected ? '' : 'selected'}>Product Name</option>`
         + PRODUCTS.map(p => `<option ${p === selected ? 'selected' : ''}>${p}</option>`).join('');
     }
-
+ 
     function addProductRow() {
-      const c = document.getElementById('productRowsContainer');
+      const c   = document.getElementById('productRowsContainer');
       const row = document.createElement('div');
       row.className = 'product-row';
       row.innerHTML = `
@@ -609,30 +198,29 @@
       c.appendChild(row);
       c.scrollTop = c.scrollHeight;
     }
-
-    function removeProductRow(btn) {
-      btn.closest('.product-row')?.remove();
-    }
-
-    let modalMode = 'add';
+ 
+    function removeProductRow(btn) { btn.closest('.product-row')?.remove(); }
+ 
+    /* ── Supplier modal ── */
+    let modalMode    = 'add';
     let editingValue = null;
-
+ 
     function openSupplierModal(mode) {
-      modalMode = mode;
+      modalMode    = mode;
       editingValue = null;
-
+ 
       const nameEl = document.getElementById('inputSupplierName');
       const addrEl = document.getElementById('inputSupplierAddress');
-      const errEl = document.getElementById('supplierNameError');
-      const label = document.getElementById('supplierSubmitLabel');
-      const sel = document.getElementById('supplierSelect');
+      const errEl  = document.getElementById('supplierNameError');
+      const label  = document.getElementById('supplierSubmitLabel');
+      const sel    = document.getElementById('supplierSelect');
       const curVal = sel.value;
-
+ 
       errEl.style.display = 'none';
       nameEl.classList.remove('input-error');
-
+ 
       if (mode === 'edit' && curVal) {
-        const opt = [...sel.options].find(o => o.value === curVal);
+        const opt    = [...sel.options].find(o => o.value === curVal);
         nameEl.value = opt ? opt.textContent.trim() : curVal;
         addrEl.value = opt?.dataset.address || '';
         editingValue = curVal;
@@ -643,34 +231,33 @@
         label.textContent = 'Add Supplier';
         if (mode === 'edit') modalMode = 'add';
       }
-
+ 
       document.getElementById('supplierModalWrapper').classList.add('modal-visible');
       nameEl.focus();
     }
-
+ 
     function closeSupplierModal() {
       document.getElementById('supplierModalWrapper').classList.remove('modal-visible');
     }
-
+ 
     function confirmSupplier() {
-      const nameEl = document.getElementById('inputSupplierName');
-      const addrEl = document.getElementById('inputSupplierAddress');
-      const errEl = document.getElementById('supplierNameError');
-      const name = nameEl.value.trim();
+      const nameEl  = document.getElementById('inputSupplierName');
+      const addrEl  = document.getElementById('inputSupplierAddress');
+      const errEl   = document.getElementById('supplierNameError');
+      const name    = nameEl.value.trim();
       const address = addrEl.value.trim();
-
+ 
       if (!name) {
         errEl.style.display = 'block';
         nameEl.classList.add('input-error');
         nameEl.focus();
         return;
       }
-
       errEl.style.display = 'none';
       nameEl.classList.remove('input-error');
-
+ 
       const sel = document.getElementById('supplierSelect');
-
+ 
       if (modalMode === 'edit' && editingValue) {
         const opt = [...sel.options].find(o => o.value === editingValue);
         if (opt) {
@@ -683,11 +270,10 @@
       } else {
         _addOption(sel, name, address);
       }
-
-      onSupplierChange();
+ 
       closeSupplierModal();
     }
-
+ 
     function _addOption(sel, name, address) {
       const opt = document.createElement('option');
       opt.value = opt.textContent = name;
@@ -695,62 +281,40 @@
       sel.appendChild(opt);
       sel.value = name;
     }
-
+ 
+    /* ── Submit order ── */
     function submitOrder() {
-      const errDiv = document.getElementById('formError');
+      const errEl    = document.getElementById('formError');
       const supplier = document.getElementById('supplierSelect').value;
       const timestamp = document.getElementById('timestampInput').value;
-
+ 
       const products = [];
       document.querySelectorAll('.product-row').forEach(row => {
         const n = row.querySelector('.product-select')?.value?.trim() || '';
         const q = row.querySelector('.product-qty-input')?.value?.trim() || '';
         if (n || q) products.push({ name: n, qty: q });
       });
-
+ 
       let ok = true;
-      const supEl = document.getElementById('supplierSelect');
+      const supEl  = document.getElementById('supplierSelect');
       const dateEl = document.getElementById('timestampInput');
-
-      if (!supplier) {
-        supEl.classList.add('input-error');
-        ok = false;
-      } else {
-        supEl.classList.remove('input-error');
-      }
-
-      if (!timestamp) {
-        dateEl.classList.add('input-error');
-        ok = false;
-      } else {
-        dateEl.classList.remove('input-error');
-      }
-
+      if (!supplier)      { supEl.classList.add('input-error');  ok = false; }
+      else                { supEl.classList.remove('input-error'); }
+      if (!timestamp)     { dateEl.classList.add('input-error'); ok = false; }
+      else                { dateEl.classList.remove('input-error'); }
       if (!products.length) ok = false;
-
-      if (!ok) {
-        errDiv.style.display = 'block';
-        return;
-      }
-
-      errDiv.style.display = 'none';
-
-      const existing = JSON.parse(sessionStorage.getItem('newOrders') || '[]');
-      const newId = 'po' + (4 + existing.length + 1);
+ 
+      if (!ok) { errEl.classList.add('visible'); return; }
+      errEl.classList.remove('visible');
+ 
+      const existing     = JSON.parse(sessionStorage.getItem('newOrders') || '[]');
+      const newId        = 'po' + (4 + existing.length + 1);
       const expectedDate = document.getElementById('expectedDateInput').value;
-
-      existing.push({
-        id: newId,
-        supplier,
-        date: timestamp,
-        expectedDate,
-        products,
-        status: 'Pending'
-      });
-
+      existing.push({ id: newId, supplier, date: timestamp, expectedDate, products, status: 'Pending' });
       sessionStorage.setItem('newOrders', JSON.stringify(existing));
       window.location.href = 'purchase_order_info.html';
     }
+ 
   </script>
 </body>
 </html>
