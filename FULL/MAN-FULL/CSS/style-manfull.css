@@ -330,6 +330,7 @@ body {
   font-family: "Inria Serif", serif;
   font-size: 24px;
   outline: none;
+  border: none;
 }
 
 .small-submit-btn {
