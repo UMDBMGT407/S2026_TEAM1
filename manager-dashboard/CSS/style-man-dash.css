@@ -1431,7 +1431,7 @@ body {
 }
 
 .table-grid-header div:nth-child(5) {
-  text-align: center;
+  text-align: left;
   padding-right: 10px; 
 }
 
