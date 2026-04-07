@@ -122,13 +122,13 @@ body {
 }
 
 .inventory-panel {
-  background: #d7ccc2;
+  background: #e9d9cc;
   border-radius: 20px;
   width: 100%;
 }
 
 .search-box {
-  background: #e9d9cc;
+  background: #fcefe4;
   border-radius: 30px;
   padding: 8px 20px; display: flex; align-items: center; gap: 10px;
   box-shadow: 0 4px 4px rgba(0,0,0,0.1);
@@ -154,7 +154,7 @@ body {
 }
 
 .outline-btn {
-  background: #e9d9cc;
+  background: #fcefe4;
   color: #964f4c; border:
   1.5px solid #b47b76;
 }
