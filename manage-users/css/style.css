@@ -13,6 +13,32 @@ body {
   font-family: "Inria Serif", serif;
 }
 
+.main-content-area {
+  margin-left: 270px;
+  background: #f0e6dd;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+}
+
+.sidebar-wrapper {
+  width: 270px;
+  height: 100vh;
+  background: #964f4c;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.content-container-centered {
+  width: 100%;
+  max-width: 1170px;
+  padding: 40px 20px;
+  position: relative;
+}
+
 
 /* Header Rectangle */
 .rectangle-5 {
