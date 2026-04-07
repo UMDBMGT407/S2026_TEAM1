@@ -2033,6 +2033,7 @@ body {
 .man5-manage-users {
   color: #000000;
   text-align: center;
+  font-family: "Inria Serif", serif;
   font-size: 34px;
   font-weight: 700;
   margin: 0;
