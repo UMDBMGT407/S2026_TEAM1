@@ -1292,3 +1292,721 @@ body {
   background: #9d5651;
   color: #f0e6dd;
 }
+
+/* ════════════════════════════════════════════════════════════
+   1–4.  PURCHASE ORDER INFO  (purchase_order_info.html)
+   ════════════════════════════════════════════════════════════ */
+
+/* ── 1. Orders card & top bar ─────────────────────────────── */
+
+.orders-card {
+  background: #e9d9cc;
+  border-radius: 30px;
+  min-height: 400px;
+  height: auto;
+  padding: 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.orders-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.orders-title {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.btn-create-order {
+  background: #964f4c;
+  color: #ffffff;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 28px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.15s ease;
+}
+
+.btn-create-order:hover {
+  opacity: 0.88;
+}
+
+
+/* ── 2. Search & filter row ───────────────────────────────── */
+
+.search-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-wrap input {
+  background: #f0e6dd;
+  border: none;
+  border-radius: 30px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15);
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #964f4c;
+  padding: 6px 16px 6px 36px;
+  width: 268px;
+  height: 37px;
+  outline: none;
+}
+
+.search-wrap input::placeholder {
+  color: #964f4c;
+  opacity: 0.7;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  font-size: 20px;
+  color: #964f4c;
+  pointer-events: none;
+}
+
+.filter-select {
+  background: #ffffff;
+  border: 1px solid #964f4c;
+  border-radius: 4px;
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 0 12px;
+  height: 37px;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  outline: none;
+}
+
+
+/* ── 3. Orders table ──────────────────────────────────────── */
+
+/* Shared grid: header + every data row use identical template
+   6 columns: Order No | Product | Qty | History | Status | X  */
+.table-grid-header,
+.order-row-flex {
+  display: grid;
+  grid-template-columns: 110px 130px 65px 195px 160px 30px;
+  gap: 33px;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  width: 100%;
+}
+
+.table-grid-header {
+  background: #964f4c;
+  border-radius: 8px;
+  min-height: 46px;
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.table-grid-header div:nth-child(5) {
+  text-align: center;
+  padding-right: 10px; 
+}
+
+#ordersScrollContainer {
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: #964f4c #f5ede8;
+}
+
+#ordersScrollContainer::-webkit-scrollbar { width: 6px; }
+#ordersScrollContainer::-webkit-scrollbar-track { background: #f5ede8; border-radius: 10px; }
+#ordersScrollContainer::-webkit-scrollbar-thumb { background: #964f4c; border-radius: 10px; }
+
+.order-row-flex {
+  min-height: 80px;
+  border-bottom: 1px solid rgba(150, 79, 76, 0.15);
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  color: #964f4c;
+  flex-shrink: 0;
+}
+
+.order-row-flex:last-child {
+  border-bottom: none;
+}
+
+.col-orderno { font-size: 18px; text-align: left; }
+.col-product  { font-size: 16px; text-align: left; line-height: 1.5; }
+.col-qty      { font-size: 16px; text-align: left; line-height: 1.5; }
+.col-history  { font-size: 13px; text-align: left; line-height: 1.6; }
+.col-status   { display: flex; align-items: center; justify-content: center; }
+
+.col-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.col-delete span {
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #000000;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.15s ease;
+}
+
+.col-delete span:hover {
+  opacity: 0.6;
+}
+
+.received-line {
+  color: #000000;
+}
+
+.order-divider {
+  width: 100%;
+  height: 1px;
+  background: #964f4c;
+  opacity: 0.3;
+  flex-shrink: 0;
+}
+
+.status-badge {
+  background: #fcefe4;
+  border-radius: 10px;
+  width: auto;
+  min-width: 120px;    
+  padding: 0 16px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  color: #964f4c;
+  position: relative;
+}
+
+.status-badge select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+
+/* ── 4. Delete confirmation modal ─────────────────────────── */
+
+#deleteModalWrapper {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+}
+
+#deleteModalWrapper.modal-visible {
+  display: block;
+}
+
+#deleteModalOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.40);
+}
+
+.delete-modal-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #e9d9cc;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  width: 455px;
+  height: 388px;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-modal-inner {
+  background: #fcefe4;
+  border-radius: 20px;
+  width: 396px;
+  padding: 32px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.delete-modal-inner p {
+  font-family: "Inria Serif", serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #964f4c;
+  text-align: center;
+  margin: 0;
+}
+
+.delete-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 20px;
+  font-family: "Inria Serif", serif;
+  font-size: 24px;
+  color: #964f4c;
+  cursor: pointer;
+}
+
+.delete-modal-close:hover {
+  opacity: 0.7;
+}
+
+.delete-modal-buttons {
+  display: flex;
+  gap: 24px;
+}
+
+.delete-modal-btn {
+  background: #964f4c;
+  color: #ffffff;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  border: none;
+  border-radius: 20px;
+  width: 146px;
+  height: 38px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.delete-modal-btn:hover {
+  opacity: 0.85;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   5–10.  CREATE PURCHASE ORDER  (create_purchase_order.html)
+   ════════════════════════════════════════════════════════════ */
+
+/* ── 5. Form card ────────────────────────────────────────── */
+
+.form-card {
+  background: #e9d9cc;
+  border-radius: 30px;
+  padding: 32px 40px 40px 40px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.form-card-title {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.form-section-label {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.form-error {
+  display: none;
+  color: #c0392b;
+  font-family: "Inria Serif", serif;
+  font-size: 15px;
+  text-align: center;
+  margin-top: -12px;
+}
+
+.form-error.visible {
+  display: block;
+}
+
+
+/* ── 6. Supplier row ─────────────────────────────────────── */
+
+.supplier-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+#supplierSelect {
+  flex: 1;
+  min-width: 200px;
+  height: 54px;
+  background: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  color: #964f4c;
+  padding: 0 16px;
+  cursor: pointer;
+  outline: none;
+  -webkit-appearance: auto;
+  appearance: auto;
+}
+
+.btn-supplier {
+  background: #964f4c;
+  color: #ffffff;
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  height: 44px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.15s ease;
+}
+
+.btn-supplier:hover {
+  opacity: 0.88;
+}
+
+
+/* ── 7. Products section ─────────────────────────────────── */
+
+.products-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.btn-add-product {
+  background: #964f4c;
+  color: #ffffff;
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  border: none;
+  border-radius: 30px;
+  padding: 6px 20px;
+  height: 36px;
+  cursor: pointer;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.15s ease;
+}
+
+.btn-add-product:hover {
+  opacity: 0.88;
+}
+
+#productRowsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #964f4c #f0e6dd;
+}
+
+#productRowsContainer::-webkit-scrollbar { width: 6px; }
+#productRowsContainer::-webkit-scrollbar-track { background: #f0e6dd; border-radius: 10px; }
+#productRowsContainer::-webkit-scrollbar-thumb { background: #964f4c; border-radius: 10px; }
+
+.product-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.product-select {
+  flex: 1;
+  height: 54px;
+  background: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  color: #964f4c;
+  padding: 0 16px;
+  cursor: pointer;
+  -webkit-appearance: auto;
+  appearance: auto;
+}
+
+.product-qty-input {
+  width: 160px;
+  height: 54px;
+  background: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  color: #964f4c;
+  padding: 0 16px;
+  text-align: center;
+  outline: none;
+}
+
+.row-delete-btn {
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #000000;
+  cursor: pointer;
+  padding: 0 8px;
+  user-select: none;
+  transition: opacity 0.15s ease;
+}
+
+.row-delete-btn:hover {
+  opacity: 0.6;
+}
+
+
+/* ── 8. Date fields ──────────────────────────────────────── */
+
+.dates-row {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.date-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 220px;
+}
+
+.date-input {
+  height: 54px;
+  background: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  color: #964f4c;
+  padding: 0 16px;
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+
+/* ── 9. Submit button ────────────────────────────────────── */
+
+.submit-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.btn-submit-order {
+  background: #964f4c;
+  color: #ffffff;
+  font-family: "Inria Serif", serif;
+  font-size: 26px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 60px;
+  cursor: pointer;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.15s ease;
+}
+
+.btn-submit-order:hover {
+  opacity: 0.88;
+}
+
+
+/* ── 10. Supplier information modal ───────────────────────── */
+
+#supplierModalWrapper {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+}
+
+#supplierModalWrapper.modal-visible {
+  display: block;
+}
+
+#supplierModalOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.40);
+}
+
+.supplier-modal-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #e9d9cc;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  width: 400px;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 28px 28px;
+  gap: 20px;
+}
+
+.supplier-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 20px;
+  font-family: "Inria Serif", serif;
+  font-size: 24px;
+  color: #964f4c;
+  cursor: pointer;
+}
+
+.supplier-modal-close:hover {
+  opacity: 0.7;
+}
+
+.supplier-modal-title {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+}
+
+.supplier-modal-field {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.supplier-modal-field label {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 16px;
+}
+
+.supplier-modal-field input {
+  width: 100%;
+  height: 40px;
+  background: #ffffff;
+  border: none;
+  border-radius: 20px;
+  font-family: "Inria Serif", serif;
+  font-size: 16px;
+  color: #964f4c;
+  padding: 0 14px;
+  outline: none;
+}
+
+.supplier-modal-field input:focus {
+  outline: 2px solid #964f4c;
+  border-radius: 20px;
+}
+
+.supplier-modal-field input.input-error {
+  outline: 2px solid #c0392b !important;
+}
+
+#supplierNameError {
+  color: #c0392b;
+  font-family: "Inria Serif", serif;
+  font-size: 12px;
+  display: none;
+  margin-top: -4px;
+}
+
+.supplier-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 4px;
+}
+
+.supplier-modal-cancel {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 17px;
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.supplier-modal-cancel:hover {
+  opacity: 0.7;
+}
+
+.btn-supplier-submit {
+  background: #964f4c;
+  color: #ffffff;
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  border: none;
+  border-radius: 20px;
+  width: 160px;
+  height: 40px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.btn-supplier-submit:hover {
+  opacity: 0.85;
+}
+
