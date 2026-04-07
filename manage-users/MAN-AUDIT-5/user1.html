@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../css/vars.css">
-  <link rel="stylesheet" href="/S2026_TEAM1/manager-dashboard/CSS/style-man-dash.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="../css/vars.css" />
+  <link rel="stylesheet" href="/S2026_TEAM1/manager-dashboard/CSS/style-man-dash.css" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
 
   <style>
     a,
@@ -27,7 +31,9 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    menu, ol, ul {
+    menu,
+    ol,
+    ul {
       list-style-type: none;
       margin: 0;
       padding: 0;
@@ -38,144 +44,191 @@
 </head>
 <body>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar-wrapper">
-    <div>
-      <img class="kft-logo" src="../Images/kft-logo0.png" alt="Kung Fu Tea Silver Spring logo">
+  <!-- PAGE WRAPPER -->
+  <div class="man5-manage-users-page">
 
-      <div class="sidebar-nav">
-        <button class="nav-btn" type="button"
-          onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">
-          Full Inventory View
-        </button>
+    <!-- SIDEBAR -->
+    <aside class="man5-sidebar-wrapper">
+      <div>
+        <img
+          class="man5-kft-logo"
+          src="../Images/kft-logo0.png"
+          alt="Kung Fu Tea Silver Spring logo"
+        />
 
-        <button class="nav-btn" type="button"
-          onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-1/man-audit-1.html'">
-          Inventory Reconciliation
-        </button>
+        <div class="man5-sidebar-nav">
+          <button
+            class="man5-nav-btn"
+            type="button"
+            onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'"
+          >
+            Full Inventory View
+          </button>
 
-        <button class="nav-btn" type="button"
-          onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-4/man-audit-4.html'">
-          Activity Log
-        </button>
+          <button
+            class="man5-nav-btn"
+            type="button"
+            onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-1/man-audit-1.html'"
+          >
+            Inventory Reconciliation
+          </button>
 
-        <button class="nav-btn" type="button"
-          onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">
-          Dashboards &amp; Analytics
-        </button>
+          <button
+            class="man5-nav-btn"
+            type="button"
+            onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-4/man-audit-4.html'"
+          >
+            Activity Log
+          </button>
 
-        <button class="nav-btn" type="button"
-          onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
-          Predictive Reports
-        </button>
+          <button
+            class="man5-nav-btn"
+            type="button"
+            onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'"
+          >
+            Dashboards &amp; Analytics
+          </button>
 
-        <button class="nav-btn active" type="button">Manage Users</button>
+          <button
+            class="man5-nav-btn"
+            type="button"
+            onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'"
+          >
+            Predictive Reports
+          </button>
 
-        <button class="nav-btn two-line" type="button"
-          onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
-          Purchase Order<br>Management
-        </button>
-      </div>
-    </div>
+          <button class="man5-nav-btn man5-active" type="button">
+            Manage Users
+          </button>
 
-    <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main class="main-content-area">
-    <div class="content-container-centered">
-
-      <div class="rectangle-5">
-        <h1 class="manage-users">Manage Users</h1>
-      </div>
-
-      <section class="main-rectangle">
-        <div class="manage-users-topbar">
-          <h2 class="manage-users2">Manage Users</h2>
-
-          <button class="add-new-user-rectangle add-new-user" id="openPopup" type="button">
-            + Add New User
+          <button
+            class="man5-nav-btn man5-two-line"
+            type="button"
+            onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'"
+          >
+            Purchase Order<br />
+            Management
           </button>
         </div>
+      </div>
 
-        <div class="search-row">
-          <div class="search-box2">
-            <span class="div-span2">⌕</span>
-            <input class="fakeSearch" type="text" placeholder="Name">
-          </div>
+      <a href="/S2026_TEAM1/index.html" class="man5-logout-btn">Logout</a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="man5-main-content-area">
+      <div class="man5-content-container-centered">
+
+        <div class="man5-rectangle-5">
+          <h1 class="man5-page-title">Manage Users</h1>
         </div>
 
-        <div class="inner-rec">
-          <div class="status-box">
-            <div class="frame-2">
-              <div class="name2">Name</div>
-              <div class="role">Role</div>
-              <div class="phone">Phone</div>
-              <div class="status">Status</div>
+        <section class="man5-main-rectangle">
+          <div class="man5-manage-users-topbar">
+            <h2 class="man5-manage-users-heading">Manage Users</h2>
+
+            <button
+              class="man5-add-new-user-rectangle man5-add-new-user"
+              id="openPopup"
+              type="button"
+            >
+              + Add New User
+            </button>
+          </div>
+
+          <div class="man5-search-row">
+            <div class="man5-search-box2">
+              <span class="man5-div-span2">⌕</span>
+              <input
+                class="man5-fakeSearch"
+                type="text"
+                placeholder="Name"
+              />
             </div>
           </div>
 
-          <div class="name-1">
-            <div class="frame-2">
-              <div class="toalima-t">Toalima T</div>
-              <div class="manager-role">Manager</div>
-              <div class="phone-text">(333)-801-2067</div>
-              <div class="active">Active</div>
+          <div class="man5-inner-rec">
+            <div class="man5-status-box">
+              <div class="man5-frame-2 man5-header-row">
+                <div class="man5-name2">Name</div>
+                <div class="man5-role">Role</div>
+                <div class="man5-phone">Phone</div>
+                <div class="man5-status">Status</div>
+              </div>
+            </div>
+
+            <div class="man5-name-1">
+              <div class="man5-frame-2">
+                <div class="man5-toalima-t">Toalima T</div>
+                <div class="man5-manager-role">Manager</div>
+                <div class="man5-phone-text">(333)-801-2067</div>
+                <div class="man5-active-text">Active</div>
+              </div>
+            </div>
+
+            <div class="man5-name-2">
+              <div class="man5-frame-2">
+                <div class="man5-medhar-p">Medhar P</div>
+                <div class="man5-shift-lead">Shift Lead</div>
+                <div class="man5-phone-text">(333)-801-2119</div>
+                <div class="man5-active-text">Active</div>
+              </div>
+            </div>
+
+            <div class="man5-name-3">
+              <div class="man5-frame-2">
+                <div class="man5-yinmin-l">Yinmin L</div>
+                <div class="man5-employee">Employee</div>
+                <div class="man5-phone-text">(333)-801-2297</div>
+                <div class="man5-active-text">Active</div>
+              </div>
+            </div>
+
+            <div class="man5-name-4" id="newUserRow" style="display: none;">
+              <div class="man5-frame-2">
+                <div id="newName"></div>
+                <div id="newRole"></div>
+                <div id="newPhone"></div>
+                <div id="newStatus"></div>
+              </div>
             </div>
           </div>
+        </section>
+      </div>
+    </main>
 
-          <div class="name-2">
-            <div class="frame-2">
-              <div class="medhar-p">Medhar P</div>
-              <div class="shift-lead">Shift Lead</div>
-              <div class="phone-text">(333)-801-2119</div>
-              <div class="active">Active</div>
-            </div>
-          </div>
+    <!-- POPUP -->
+    <div id="popupForm" class="man5-popupForm">
+      <div class="man5-popup-box">
+        <div id="closePopup" class="man5-closePopup">✕</div>
 
-          <div class="name-3">
-            <div class="frame-2">
-              <div class="yinmin-l">Yinmin L</div>
-              <div class="employee">Employee</div>
-              <div class="phone-text">(333)-801-2297</div>
-              <div class="active">Active</div>
-            </div>
-          </div>
+        <h4 class="man5-popup-title">Add New User</h4>
 
-          <div class="name-4" id="newUserRow" style="display:none;">
-            <div class="frame-2">
-              <div id="newName"></div>
-              <div id="newRole"></div>
-              <div id="newPhone"></div>
-              <div id="newStatus"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  </main>
+        <label class="man5-popup-label">Full Name</label>
+        <input
+          id="nameInput"
+          class="man5-popup-input"
+          placeholder="First, Last Initial"
+        />
 
-  <!-- POPUP -->
-  <div id="popupForm">
-    <div class="popup-box">
-      <div id="closePopup">✕</div>
+        <label class="man5-popup-label">Phone Number</label>
+        <input
+          id="phoneInput"
+          class="man5-popup-input"
+          placeholder="(333)-XXX-XXXX"
+        />
 
-      <h4>Add New User</h4>
+        <label class="man5-popup-label">Role</label>
+        <select id="roleInput" class="man5-popup-input">
+          <option>Employee</option>
+          <option>Shift Lead</option>
+          <option>Manager</option>
+        </select>
 
-      <label>Full Name</label>
-      <input id="nameInput" placeholder="First, Last Initial">
-
-      <label>Phone Number</label>
-      <input id="phoneInput" placeholder="(333)-XXX-XXXX">
-
-      <label>Role</label>
-      <select id="roleInput">
-        <option>Employee</option>
-        <option>Shift Lead</option>
-        <option>Manager</option>
-      </select>
-
-      <button id="addUser" type="button">Add User</button>
+        <button id="addUser" class="man5-addUserBtn" type="button">
+          Add User
+        </button>
+      </div>
     </div>
   </div>
 
