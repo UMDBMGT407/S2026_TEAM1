@@ -14,7 +14,7 @@ body {
   color: #111;
 }
 
-/* ===== SHARED SITE LAYOUT ===== */
+/* ===== SHARED LAYOUT ===== */
 
 .main-content-area {
   margin-left: 270px;
@@ -22,7 +22,6 @@ body {
   background: #f0e6dd;
   display: flex;
   justify-content: center;
-  overflow: visible;
 }
 
 .sidebar-wrapper {
@@ -30,8 +29,8 @@ body {
   height: 100vh;
   background: #964f4c;
   position: fixed;
-  top: 0;
   left: 0;
+  top: 0;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -43,75 +42,40 @@ body {
   max-width: 1170px;
   padding: 24px 24px 40px;
   position: relative;
-  box-sizing: border-box;
 }
 
 /* ===== HEADER ===== */
 
 .rectangle-5 {
-  width: 100%;
-  height: 112px;
   background: #e9d9cc;
   border-radius: 36px;
-  margin: 0 0 36px 0;
+  width: 100%;
+  height: 112px;
+  margin-bottom: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  z-index: 5;
 }
 
 .manage-users {
-  margin: 0;
   color: #000000;
   text-align: center;
-  font-family: "Inria Serif", serif;
   font-size: 34px;
   font-weight: 700;
-  position: static;
-  width: auto;
+  margin: 0;
 }
 
-/* ===== MAIN CARD ===== */
+/* ===== PAGE CARD ===== */
 
 .main-rectangle {
   width: 100%;
   max-width: 1011px;
-  min-height: 501px;
   margin: 0 auto;
   background: #d8c4b5;
   border: 1px solid rgba(0, 0, 0, 0.45);
   border-radius: 22px;
-  padding: 28px 32px 24px;
-  box-sizing: border-box;
-  position: relative;
-  object-fit: unset;
+  padding: 28px 28px 24px;
 }
-
-.inner-rec {
-  width: 100%;
-  min-height: 328px;
-  background: #f8efe6;
-  border-radius: 20px;
-  padding: 0;
-  box-sizing: border-box;
-  position: relative;
-  object-fit: unset;
-}
-
-.manage-users2 {
-  margin: 0;
-  color: #964f4c;
-  text-align: left;
-  font-family: "Inria Serif", serif;
-  font-size: 40px;
-  font-weight: 700;
-  position: static;
-  width: auto;
-  height: auto;
-}
-
-/* ===== TOP BAR ===== */
 
 .manage-users-topbar {
   display: flex;
@@ -122,6 +86,17 @@ body {
   flex-wrap: wrap;
 }
 
+.manage-users2 {
+  color: #964f4c;
+  font-size: 40px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.search-row {
+  margin-bottom: 16px;
+}
+
 .search-box2 {
   background: #fcefe4;
   border-radius: 30px;
@@ -129,27 +104,19 @@ body {
   max-width: 100%;
   height: 37px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  position: relative;
   display: flex;
   align-items: center;
   padding: 0 14px;
-  box-sizing: border-box;
 }
 
 .div-span2 {
-  position: static;
-  margin-right: 10px;
   font-size: 14px;
   color: #8b4a44;
-  line-height: 1;
-  display: flex;
-  align-items: center;
+  margin-right: 10px;
 }
 
 .fakeSearch {
-  position: static;
   width: 100%;
-  height: auto;
   background: transparent;
   border: none;
   outline: none;
@@ -160,8 +127,9 @@ body {
 
 .fakeSearch::placeholder {
   color: #8b4a44;
-  opacity: 0.85;
 }
+
+/* ===== ADD USER BUTTON ===== */
 
 .add-new-user-rectangle {
   background: #964f4c;
@@ -169,7 +137,6 @@ body {
   width: 293px;
   max-width: 100%;
   height: 49px;
-  position: static;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -181,43 +148,29 @@ body {
   font-family: "Inria Serif", serif;
   font-size: 24px;
   font-weight: 400;
-  position: static;
-  width: 100%;
-  height: 100%;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* ===== TABLE AREA ===== */
+/* ===== INNER TABLE CARD ===== */
 
-.lines {
-  display: none;
-}
-
-.rectangle-9 {
-  display: none;
+.inner-rec {
+  width: 100%;
+  background: #f8efe6;
+  border-radius: 18px;
+  overflow: hidden;
 }
 
 .status-box {
   background: #964f4c;
-  width: 100%;
-  height: auto;
-  min-height: 58px;
-  position: static;
   padding: 14px 20px;
-  box-sizing: border-box;
-  border-radius: 12px 12px 0 0;
-  margin-top: 12px;
 }
 
 .frame-2 {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr 0.9fr;
+  grid-template-columns: 1.3fr 1fr 1fr 0.9fr;
   align-items: center;
   width: 100%;
-  column-gap: 10px;
+  column-gap: 12px;
 }
 
 .name2,
@@ -226,43 +179,25 @@ body {
 .status {
   color: #ffffff;
   text-align: center;
-  font-family: "Inria Serif", serif;
   font-size: 24px;
   font-weight: 400;
-  position: relative;
 }
 
 .name2 {
   text-align: left;
 }
 
-/* ===== USER ROWS ===== */
-
 .name-1,
 .name-2,
 .name-3,
 .name-4 {
-  width: 100%;
-  min-height: 58px;
-  padding: 14px 20px;
-  box-sizing: border-box;
-  position: static;
-  display: flex;
-  align-items: center;
+  padding: 16px 20px;
   border-bottom: 1px solid #ddb3ae;
   background: #f8efe6;
 }
 
 .name-4 {
   border-bottom: none;
-  border-radius: 0 0 12px 12px;
-}
-
-.name-1 .frame-2,
-.name-2 .frame-2,
-.name-3 .frame-2,
-.name-4 .frame-2 {
-  width: 100%;
 }
 
 .toalima-t,
@@ -279,10 +214,8 @@ body {
 #newStatus {
   color: #964f4c;
   text-align: center;
-  font-family: "Inria Serif", serif;
   font-size: 24px;
   font-weight: 700;
-  position: relative;
 }
 
 .toalima-t,
@@ -306,7 +239,6 @@ body {
   justify-content: center;
   z-index: 9999;
   padding: 20px;
-  box-sizing: border-box;
 }
 
 .popup-box {
@@ -342,14 +274,12 @@ body {
   background: #f6efe8;
   margin-bottom: 12px;
   font-size: 14px;
-  box-sizing: border-box;
 }
 
 .popup-box button {
   width: 100%;
   background: #8b4a44;
   color: white;
-  border: none;
   padding: 10px;
   border-radius: 16px;
   font-size: 14px;
@@ -365,21 +295,13 @@ body {
   cursor: pointer;
 }
 
-/* ===== SIDEBAR / NAV ===== */
-
-.rectangle-1 {
-  display: none;
-}
+/* ===== SIDEBAR ===== */
 
 .kft-logo {
   width: 270px;
   height: 108px;
   object-fit: cover;
   display: block;
-  position: relative;
-  left: auto;
-  top: auto;
-  z-index: 30;
 }
 
 .sidebar-nav {
@@ -422,8 +344,6 @@ body {
   color: #964f4c;
 }
 
-/* ===== LOGOUT ===== */
-
 .logout-btn {
   width: 95px;
   height: 52px;
@@ -443,29 +363,19 @@ body {
   filter: brightness(0.98);
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== REMOVE OLD UNUSED Figma STUFF ===== */
 
-@media (max-width: 1200px) {
-  .content-container-centered {
-    max-width: 100%;
-  }
-
-  .main-rectangle {
-    max-width: 100%;
-  }
+.rectangle-1,
+.rectangle-9,
+.lines {
+  display: none !important;
 }
 
+/* ===== RESPONSIVE ===== */
+
 @media (max-width: 900px) {
-  .main-content-area {
-    margin-left: 270px;
-  }
-
   .manage-users2 {
-    font-size: 34px;
-  }
-
-  .frame-2 {
-    grid-template-columns: 1.2fr 1fr 1fr 0.9fr;
+    font-size: 32px;
   }
 
   .name2,
@@ -484,19 +394,18 @@ body {
   #newRole,
   #newPhone,
   #newStatus {
-    font-size: 20px;
+    font-size: 19px;
   }
 }
 
 @media (max-width: 768px) {
   .content-container-centered {
-    padding: 20px 16px 28px;
+    padding: 18px 14px 28px;
   }
 
   .rectangle-5 {
-    height: 96px;
+    height: 92px;
     border-radius: 28px;
-    margin-bottom: 24px;
   }
 
   .manage-users {
@@ -512,41 +421,16 @@ body {
     align-items: stretch;
   }
 
-  .search-box2,
   .add-new-user-rectangle {
     width: 100%;
   }
 
-  .status-box,
-  .name-1,
-  .name-2,
-  .name-3,
-  .name-4 {
-    padding-left: 14px;
-    padding-right: 14px;
-  }
-
   .frame-2 {
     grid-template-columns: 1.4fr 1fr 1fr 1fr;
-    column-gap: 8px;
   }
 
-  .name2,
-  .role,
-  .phone,
-  .status,
-  .toalima-t,
-  .manager-role,
-  .phone-text,
-  .active,
-  .medhar-p,
-  .shift-lead,
-  .yinmin-l,
-  .employee,
-  #newName,
-  #newRole,
-  #newPhone,
-  #newStatus {
-    font-size: 17px;
+  #popupForm {
+    left: 0;
+    width: 100%;
   }
 }
