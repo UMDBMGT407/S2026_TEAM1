@@ -939,7 +939,7 @@ body {
   border-right: none;
 }
 
-.man4-page-btn.active {
+.man4-page-btn.man5-active {
   background: #9d5651;
   color: #000000;
 }
@@ -2184,7 +2184,7 @@ body {
 .toalima-t,
 .manager-role,
 .phone-text,
-.active,
+.man5-active,
 .medhar-p,
 .shift-lead,
 .yinmin-l,
