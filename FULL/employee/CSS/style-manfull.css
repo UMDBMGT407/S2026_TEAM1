@@ -1,0 +1,597 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #f0e6dd;
+}
+
+.main-content-area {
+  margin-left: 270px;
+  background: #f0e6dd;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+}
+
+.content-container-centered {
+  width: 100%;
+  max-width: 1170px;
+  padding: 40px 20px;
+}
+
+/* header rectangle */
+.header-container {
+  background: #e9d9cc;
+  border-radius: 36px;
+  width: 100%;
+  height: 112px;
+  margin-top: 0px;
+  margin-bottom: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; 
+  z-index: 5;
+}
+
+.page-heading {
+  color: #000000;
+  font-family: "Inria Serif", serif;
+  font-size: 34px;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+}
+
+.kft-logo {
+  width: 270px;
+  height: 108px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  object-fit: cover;
+  z-index: 30;
+}
+
+.sidebar-wrapper {
+  width: 270px;
+  height: 100vh;
+  background: #964f4c;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.sidebar-nav {
+  margin-top: 120px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav-btn {
+  width: 242px;
+  min-height: 52px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 38px;
+  background: transparent;
+  color: #f0e6dd;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.nav-btn.two-line {
+  min-height: 74px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  align-items: flex-start;
+}
+
+.nav-btn.active,
+.nav-btn:hover {
+  background: #f0e6dd;
+  color: #964f4c;
+}
+
+.logout-btn {
+  width: 95px;
+  height: 52px;
+  background: #e9d9cc;
+  color: #964f4c;
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.inventory-panel {
+  background: #d7ccc2;
+  border-radius: 20px;
+  width: 100%;
+}
+
+.search-box {
+  background: #e9d9cc;
+  border-radius: 30px;
+  padding: 8px 20px; display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 4px 4px rgba(0,0,0,0.1);
+}
+
+.search-box input {
+  border: none !important;
+  outline: none !important;
+  background: transparent;
+  width: 100%;
+}
+
+.page-action-btn {
+  min-width: 160px; height: 45px;
+  border-radius: 28px; font-weight: 700;
+  transition: opacity 0.2s;
+}
+
+.solid-btn {
+  background: #964f4c;
+  color: #f0e6dd;
+  border: none
+}
+
+.outline-btn {
+  background: #e9d9cc;
+  color: #964f4c; border:
+  1.5px solid #b47b76;
+}
+
+.table-card-bg {
+  background: #fcefe4;
+  border-radius: 20px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.table-header-grid, 
+.inventory-row {
+  display: grid !important;
+  grid-template-columns: 50px 1.5fr 0.8fr 1.5fr;
+  align-items: center;
+  min-width: 600px;
+  width: 100%;
+}
+
+.table-header-grid {
+  background: #964f4c;
+  color: white;
+  padding: 15px 0;
+  font-weight: 700;
+  font-size: 22px;
+  border-radius: 20px 20px 0 0;
+  text-align: center;
+}
+
+.inventory-row {
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(150, 79, 76, 0.2);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.col-ingredient-name, 
+.col-last-updated {
+  text-align: left;
+  padding-left: 20px;
+  white-space: nowrap;
+}
+
+.col-system-qty {
+  text-align: center;
+}
+
+.col-last-updated, 
+.update-val {
+  text-align: center;
+  padding-right: 15px;
+}
+
+.inventory-scroll-area {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.ingredient-link { color: black; border: none; background: none; text-decoration: underline; }
+.ingredient-link:hover { color: #964f4c; }
+
+.edit-icon-btn {
+  background: transparent;
+  border: none;
+  margin: 0 10px;
+  color: #964f4c;
+  font-size: 22px;
+  cursor: pointer;
+  transition: transform 0.1s ease, color 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-icon-btn:hover {
+  color: #c48a86;
+  transform: scale(1.2);
+}
+
+.ingredient-name-text {
+  font-family: "Inria Serif", serif;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* POPUPS */
+.popup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popup-card {
+  width: 1011px;
+  min-height: 621px;
+  background: #e9d9cc;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
+  position: relative;
+  padding: 36px 40px 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.small-popup-card {
+  width: 540px;
+  min-height: 360px;
+  background: #e9d9cc;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  position: relative;
+  padding: 38px 36px 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.close-popup {
+  position: absolute;
+  right: 16px;
+  top: 6px;
+  font-size: 36px;
+  line-height: 1;
+  color: #964f4c;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  background: transparent;
+}
+
+.small-popup-title {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 34px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.small-popup-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.small-popup-form label {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 26px;
+  font-weight: 400;
+}
+
+.small-popup-form input,
+.small-popup-form select {
+  width: 100%;
+  height: 54px;
+  border-radius: 22px;
+  background: #ffffff;
+  padding: 0 18px;
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 24px;
+  outline: none;
+}
+
+.small-submit-btn {
+  width: 170px;
+  margin-top: 25px;
+  align-self: center;
+}
+
+/* Inventory update popup */
+.popup-ingredient-bar {
+  width: 100%;
+  max-width: 927px;
+  height: 61px;
+  background: #ffffff;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.popup-ingredient-bar span {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.popup-info-box {
+  width: 100%;
+  max-width: 927px;
+  height: 150px;
+  background: #ffffff;
+  border-radius: 20px;
+  position: relative;
+}
+
+.popup-info-top {
+  width: 100%;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+}
+
+.popup-stock {
+  font-family: "Inria Serif", serif;
+  font-size: 30px;
+  font-weight: 400;
+  color: #964f4c;
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.popup-divider {
+  width: 1px;
+  height: 42px;
+  background: #964f4c;
+  margin: 0 24px;
+  flex-shrink: 0;
+}
+
+.popup-updated {
+  font-family: "Inria Serif", serif;
+  font-size: 27px;
+  font-weight: 400;
+  color: #964f4c;
+  flex: 1;
+  text-align: right;
+  line-height: 1.15;
+  word-break: break-word;
+}
+
+.popup-info-box::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 68px;
+  width: 100%;
+  height: 1px;
+  background: #c79f99;
+}
+
+.popup-toggle-row {
+  position: relative;
+  width: 620px;
+  height: 60px;
+  margin: 16px auto 0;
+}
+
+.inventory-btn {
+  position: absolute;
+  top: 0;
+  height: 53px;
+  border-radius: 40px;
+  font-family: "Inria Serif", serif;
+  font-size: 24px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, z-index 0.18s ease;
+}
+
+.inventory-topbar {
+  margin-bottom: 25px;
+}
+
+.add-btn-pos {
+  width: 290px;
+  left: 0;
+}
+
+.subtract-btn-pos {
+  width: 310px;
+  left: 250px;
+}
+
+.selected-btn {
+  background: #964f4c;
+  color: #e9d9cc;
+  z-index: 2;
+}
+
+.unselected-btn {
+  background: #e9d9cc;
+  color: #964f4c;
+  z-index: 1;
+}
+
+.popup-entry-box {
+  width: 100%;
+  max-width: 927px;
+  height: 120px;
+  background: #ffffff;
+  border-radius: 20px;
+  position: relative;
+}
+
+.popup-entry-row {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.popup-label {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+#popupQuantity {
+  width: 330px;
+  height: 40px;
+  border-radius: 40px;
+  background: #e5dad0;
+  text-align: center;
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+  outline: none;
+}
+
+.popup-time-row {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 68px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+.timestamp-label {
+  min-width: 145px;
+}
+
+.submit-btn {
+  display: block;
+  width: 180px;
+  height: 48px;
+  border-radius: 40px;
+  background: #964f4c;
+  color: #ffffff;
+  font-family: "Inria Serif", serif;
+  font-size: 28px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* Toast */
+.toast-notification {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  background: #964f4c;
+  color: #f0e6dd;
+  font-family: "Inria Serif", serif;
+  font-size: 22px;
+  padding: 14px 24px;
+  border-radius: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 1200;
+  max-width: 700px;
+  text-align: center;
+}
+
+.toast-notification.show {
+  opacity: 1;
+}
+
+.inventory-popup {
+  display: none;
+  position: fixed;
+  z-index: 2000 !important;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+button:focus,
+input:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+#deleteIngredientSelect {
+  width: 100%;
+  height: 54px;
+  border-radius: 22px;
+  background: #ffffff;
+  padding: 0 18px;
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 24px;
+  border: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.close-popup {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  user-select: none;
+}
