@@ -1296,7 +1296,14 @@ body {
 /* ════════════════════════════════════════════════════════════
    1–4.  PURCHASE ORDER INFO  (purchase_order_info.html)
    ════════════════════════════════════════════════════════════ */
-
+.purchase-order-management {
+  color: #000000;
+  font-family: "Inria Serif", serif;
+  font-size: 34px;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+}
 /* ── 1. Orders card & top bar ─────────────────────────────── */
 
 .orders-card {
