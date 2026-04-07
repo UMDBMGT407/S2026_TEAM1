@@ -1,63 +1,8 @@
-html,
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  background: #f0e6dd;
-}
 
-body {
-  font-family: "Inria Serif", serif;
-  color: #111;
-}
 
 /* ===== SHARED LAYOUT ===== */
 
-.main-content-area {
-  margin-left: 270px;
-  min-height: 100vh;
-  background: #f0e6dd;
-  display: flex;
-  justify-content: center;
-}
-
-.sidebar-wrapper {
-  width: 270px;
-  height: 100vh;
-  background: #964f4c;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.content-container-centered {
-  width: 100%;
-  max-width: 1170px;
-  padding: 24px 24px 40px;
-  position: relative;
-}
-
-/* ===== HEADER ===== */
-
-.rectangle-5 {
-  background: #e9d9cc;
-  border-radius: 36px;
-  width: 100%;
-  height: 112px;
-  margin-bottom: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.manage-users {
+.man5-manage-users {
   color: #000000;
   text-align: center;
   font-size: 34px;
@@ -67,7 +12,7 @@ body {
 
 /* ===== PAGE CARD ===== */
 
-.main-rectangle {
+.man5-main-rectangle {
   width: 100%;
   max-width: 1011px;
   margin: 0 auto;
@@ -77,7 +22,7 @@ body {
   padding: 28px 28px 24px;
 }
 
-.manage-users-topbar {
+.man5-manage-users-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -86,18 +31,18 @@ body {
   flex-wrap: wrap;
 }
 
-.manage-users2 {
+.man5-manage-users2 {
   color: #964f4c;
   font-size: 40px;
   font-weight: 700;
   margin: 0;
 }
 
-.search-row {
+.man5-search-row {
   margin-bottom: 16px;
 }
 
-.search-box2 {
+.man5-search-box2 {
   background: #fcefe4;
   border-radius: 30px;
   width: 268px;
@@ -109,13 +54,13 @@ body {
   padding: 0 14px;
 }
 
-.div-span2 {
+.man5-div-span2 {
   font-size: 14px;
   color: #8b4a44;
   margin-right: 10px;
 }
 
-.fakeSearch {
+.man5-fakeSearch {
   width: 100%;
   background: transparent;
   border: none;
@@ -125,13 +70,13 @@ body {
   font-family: "Inria Serif", serif;
 }
 
-.fakeSearch::placeholder {
+.man5-fakeSearch::placeholder {
   color: #8b4a44;
 }
 
 /* ===== ADD USER BUTTON ===== */
 
-.add-new-user-rectangle {
+.man5-add-new-user-rectangle {
   background: #964f4c;
   border-radius: 30px;
   width: 293px;
@@ -142,7 +87,7 @@ body {
   justify-content: center;
 }
 
-.add-new-user {
+.man5-add-new-user {
   color: #ffffff;
   text-align: center;
   font-family: "Inria Serif", serif;
@@ -153,19 +98,19 @@ body {
 
 /* ===== INNER TABLE CARD ===== */
 
-.inner-rec {
+.man5-inner-rec {
   width: 100%;
   background: #f8efe6;
   border-radius: 18px;
   overflow: hidden;
 }
 
-.status-box {
+.man5-status-box {
   background: #964f4c;
   padding: 14px 20px;
 }
 
-.frame-2 {
+.man5-frame-2 {
   display: grid;
   grid-template-columns: 1.3fr 1fr 1fr 0.9fr;
   align-items: center;
@@ -173,30 +118,30 @@ body {
   column-gap: 12px;
 }
 
-.name2,
-.role,
-.phone,
-.status {
+.man5-name2,
+.man5-role,
+.man5-phone,
+.man5-status {
   color: #ffffff;
   text-align: center;
   font-size: 24px;
   font-weight: 400;
 }
 
-.name2 {
+.man5-name2 {
   text-align: left;
 }
 
-.name-1,
-.name-2,
-.name-3,
-.name-4 {
+.man5-name-1,
+.man5-name-2,
+.man5-name-3,
+.man5-name-4 {
   padding: 16px 20px;
   border-bottom: 1px solid #ddb3ae;
   background: #f8efe6;
 }
 
-.name-4 {
+.man5-name-4 {
   border-bottom: none;
 }
 
@@ -227,7 +172,7 @@ body {
 
 /* ===== POPUP ===== */
 
-#popupForm {
+#man5-popupForm {
   position: fixed;
   left: 270px;
   top: 0;
@@ -241,7 +186,7 @@ body {
   padding: 20px;
 }
 
-.popup-box {
+.man5-popup-box {
   background: #efe3d6;
   padding: 28px;
   border-radius: 18px;
@@ -252,21 +197,21 @@ body {
   font-family: "Inria Serif", serif;
 }
 
-.popup-box h4 {
+.man5-popup-box h4 {
   color: #8b4a44;
   font-weight: 600;
   margin-bottom: 18px;
 }
 
-.popup-box label {
+.man5-popup-box label {
   font-size: 14px;
   color: #8b4a44;
   margin-bottom: 4px;
   display: block;
 }
 
-.popup-box input,
-.popup-box select {
+.man5-popup-box input,
+.man5-popup-box select {
   width: 100%;
   padding: 10px 14px;
   border-radius: 16px;
@@ -276,7 +221,7 @@ body {
   font-size: 14px;
 }
 
-.popup-box button {
+.man5-popup-box button {
   width: 100%;
   background: #8b4a44;
   color: white;
@@ -286,7 +231,7 @@ body {
   cursor: pointer;
 }
 
-#closePopup {
+#man5-closePopup {
   position: absolute;
   top: 10px;
   right: 12px;
@@ -297,91 +242,21 @@ body {
 
 /* ===== SIDEBAR ===== */
 
-.kft-logo {
-  width: 270px;
-  height: 108px;
-  object-fit: cover;
-  display: block;
-}
-
-.sidebar-nav {
-  margin-top: 12px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.nav-btn {
-  width: 242px;
-  min-height: 52px;
-  padding: 0 18px;
-  border: none;
-  border-radius: 38px;
-  background: transparent;
-  color: #f0e6dd;
-  font-family: "Inria Serif", serif;
-  font-size: 20px;
-  cursor: pointer;
-  transition: background-color 0.18s ease, color 0.18s ease;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  text-align: left;
-}
-
-.nav-btn.two-line {
-  min-height: 74px;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  align-items: flex-start;
-}
-
-.nav-btn.active,
-.nav-btn:hover {
-  background: #f0e6dd;
-  color: #964f4c;
-}
-
-.logout-btn {
-  width: 95px;
-  height: 52px;
-  background: #e9d9cc;
-  color: #964f4c;
-  border-radius: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Inria Serif", serif;
-  font-size: 20px;
-  text-decoration: none;
-  margin: 20px auto 28px;
-}
-
-.logout-btn:hover {
-  filter: brightness(0.98);
-}
 
 /* ===== REMOVE OLD UNUSED Figma STUFF ===== */
 
-.rectangle-1,
-.rectangle-9,
-.lines {
-  display: none !important;
-}
 
 /* ===== RESPONSIVE ===== */
 
 @media (max-width: 900px) {
-  .manage-users2 {
+  .man5-manage-users2 {
     font-size: 32px;
   }
 
-  .name2,
-  .role,
-  .phone,
-  .status,
+  .man5-name2,
+  .man5-role,
+  .man5-phone,
+  .man5-status,
   .toalima-t,
   .manager-role,
   .phone-text,
@@ -408,28 +283,28 @@ body {
     border-radius: 28px;
   }
 
-  .manage-users {
+  .man5-manage-users {
     font-size: 28px;
   }
 
-  .main-rectangle {
+  .man5-main-rectangle {
     padding: 20px;
   }
 
-  .manage-users-topbar {
+  .man5-manage-users-topbar {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .add-new-user-rectangle {
+  .man5-add-new-user-rectangle {
     width: 100%;
   }
 
-  .frame-2 {
+  .man5-frame-2 {
     grid-template-columns: 1.4fr 1fr 1fr 1fr;
   }
 
-  #popupForm {
+  #man5-popupForm {
     left: 0;
     width: 100%;
   }
