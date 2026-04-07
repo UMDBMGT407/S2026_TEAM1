@@ -3,20 +3,23 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 100%;
-  overflow-y: auto;
+  min-height: 100%;
   overflow-x: hidden;
+  overflow-y: auto;
   background: #f0e6dd;
 }
 
 body {
   font-family: "Inria Serif", serif;
+  color: #111;
 }
+
+/* ===== SHARED SITE LAYOUT ===== */
 
 .main-content-area {
   margin-left: 270px;
-  background: #f0e6dd;
   min-height: 100vh;
+  background: #f0e6dd;
   display: flex;
   justify-content: center;
   overflow: visible;
@@ -27,104 +30,126 @@ body {
   height: 100vh;
   background: #964f4c;
   position: fixed;
-  left: 0;
   top: 0;
+  left: 0;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .content-container-centered {
   width: 100%;
   max-width: 1170px;
-  padding: 40px 20px;
+  padding: 24px 24px 40px;
   position: relative;
+  box-sizing: border-box;
 }
 
+/* ===== HEADER ===== */
 
-/* Header Rectangle */
 .rectangle-5 {
-  background: #e9d9cc;
-  border-radius: 36px;
   width: 100%;
   height: 112px;
-  margin-top: 0px;
-  margin-bottom: 50px;
+  background: #e9d9cc;
+  border-radius: 36px;
+  margin: 0 0 36px 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative; 
+  position: relative;
   z-index: 5;
 }
 
 .manage-users {
+  margin: 0;
   color: #000000;
   text-align: center;
   font-family: "Inria Serif", serif;
   font-size: 34px;
   font-weight: 700;
-  position: absolute;
-  left: 152px;
-  top: 62px;
-  width: 1240px;
+  position: static;
+  width: auto;
 }
 
-/* MAIN CONTENT */
+/* ===== MAIN CARD ===== */
+
 .main-rectangle {
-  width: 1011px;
-  height: 501px;
-  position: absolute;
-  left: 347px;
-  top: 175px;
-  object-fit: fill;
+  width: 100%;
+  max-width: 1011px;
+  min-height: 501px;
+  margin: 0 auto;
+  background: #d8c4b5;
+  border: 1px solid rgba(0, 0, 0, 0.45);
+  border-radius: 22px;
+  padding: 28px 32px 24px;
+  box-sizing: border-box;
+  position: relative;
+  object-fit: unset;
 }
 
 .inner-rec {
-  width: 810px;
-  height: 328px;
-  position: absolute;
-  left: 446px;
-  top: 303px;
-  object-fit: fill;
+  width: 100%;
+  min-height: 328px;
+  background: #f8efe6;
+  border-radius: 20px;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+  object-fit: unset;
 }
 
 .manage-users2 {
+  margin: 0;
   color: #964f4c;
-  text-align: center;
+  text-align: left;
   font-family: "Inria Serif", serif;
   font-size: 40px;
   font-weight: 700;
-  position: absolute;
-  left: 307px;
-  top: 222px;
-  width: 413px;
-  height: 73px;
+  position: static;
+  width: auto;
+  height: auto;
 }
 
-/* SEARCH */
+/* ===== TOP BAR ===== */
+
+.manage-users-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
 .search-box2 {
   background: #fcefe4;
   border-radius: 30px;
   width: 268px;
+  max-width: 100%;
   height: 37px;
-  position: absolute;
-  left: 457px;
-  top: 316px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  box-sizing: border-box;
 }
 
 .div-span2 {
-  position: absolute;
-  left: 18px;
-  top: 8px;
+  position: static;
+  margin-right: 10px;
   font-size: 14px;
   color: #8b4a44;
+  line-height: 1;
+  display: flex;
+  align-items: center;
 }
 
 .fakeSearch {
-  position: absolute;
-  left: 50px;
-  top: 8px;
-  width: 160px;
-  height: 20px;
+  position: static;
+  width: 100%;
+  height: auto;
   background: transparent;
   border: none;
   outline: none;
@@ -133,15 +158,21 @@ body {
   font-family: "Inria Serif", serif;
 }
 
-/* ADD USER BUTTON */
+.fakeSearch::placeholder {
+  color: #8b4a44;
+  opacity: 0.85;
+}
+
 .add-new-user-rectangle {
   background: #964f4c;
   border-radius: 30px;
   width: 293px;
+  max-width: 100%;
   height: 49px;
-  position: absolute;
-  left: 1045px;
-  top: 226px;
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .add-new-user {
@@ -150,57 +181,43 @@ body {
   font-family: "Inria Serif", serif;
   font-size: 24px;
   font-weight: 400;
-  position: absolute;
-  left: 1069px;
-  top: 235px;
-  width: 245px;
-  height: 41px;
+  position: static;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* TABLE AREA */
+/* ===== TABLE AREA ===== */
+
 .lines {
-  display: flex;
-  flex-direction: column;
-  gap: 50px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  width: 810px;
-  height: auto;
-  position: absolute;
-  left: 446px;
-  top: 367px;
-  object-fit: fill;
+  display: none;
 }
 
 .rectangle-9 {
-  background: rgba(216, 115, 111, 0.47);
-  width: 810px;
-  height: 50px;
-  position: absolute;
-  left: 446px;
-  top: 367px;
+  display: none;
 }
 
 .status-box {
   background: #964f4c;
-  padding: 10px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  width: 810px;
-  height: 58px;
-  position: absolute;
-  left: 446px;
-  top: 363px;
+  width: 100%;
+  height: auto;
+  min-height: 58px;
+  position: static;
+  padding: 14px 20px;
+  box-sizing: border-box;
+  border-radius: 12px 12px 0 0;
+  margin-top: 12px;
 }
 
-.frame-2{
-display:grid;
-grid-template-columns: 25% 25% 25% 25%;
-align-items:center;
-width:100%;
+.frame-2 {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 0.9fr;
+  align-items: center;
+  width: 100%;
+  column-gap: 10px;
 }
 
 .name2,
@@ -215,36 +232,37 @@ width:100%;
   position: relative;
 }
 
-/* USER ROWS */
+.name2 {
+  text-align: left;
+}
+
+/* ===== USER ROWS ===== */
+
 .name-1,
 .name-2,
 .name-3,
 .name-4 {
-  padding: 10px 20px;
+  width: 100%;
+  min-height: 58px;
+  padding: 14px 20px;
+  box-sizing: border-box;
+  position: static;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  width: 810px;
-  height: 58px;
-  position: absolute;
-  left: 446px;
-}
-
-.name-1 {
-  top: 417px;
-}
-
-.name-2 {
-  top: 467px;
-}
-
-.name-3 {
-  top: 517px;
+  align-items: center;
+  border-bottom: 1px solid #ddb3ae;
+  background: #f8efe6;
 }
 
 .name-4 {
-  top: 567px;
+  border-bottom: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.name-1 .frame-2,
+.name-2 .frame-2,
+.name-3 .frame-2,
+.name-4 .frame-2 {
+  width: 100%;
 }
 
 .toalima-t,
@@ -267,19 +285,28 @@ width:100%;
   position: relative;
 }
 
-/* POPUP FIX */
-#popupForm{
-position:absolute;
-left:270px;   /* exclude sidebar width */
-top:0;
-width:calc(100% - 270px);
-height:100%;
-background:rgba(0,0,0,0.25);
+.toalima-t,
+.medhar-p,
+.yinmin-l,
+#newName {
+  text-align: left;
+}
 
-display:none;
-align-items:center;
-justify-content:center;
-z-index:9999;
+/* ===== POPUP ===== */
+
+#popupForm {
+  position: fixed;
+  left: 270px;
+  top: 0;
+  width: calc(100% - 270px);
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.25);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .popup-box {
@@ -287,9 +314,10 @@ z-index:9999;
   padding: 28px;
   border-radius: 18px;
   width: 320px;
+  max-width: 100%;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
   position: relative;
-  font-family: sans-serif;
+  font-family: "Inria Serif", serif;
 }
 
 .popup-box h4 {
@@ -314,6 +342,7 @@ z-index:9999;
   background: #f6efe8;
   margin-bottom: 12px;
   font-size: 14px;
+  box-sizing: border-box;
 }
 
 .popup-box button {
@@ -336,37 +365,34 @@ z-index:9999;
   cursor: pointer;
 }
 
-/* SIDEBAR */
+/* ===== SIDEBAR / NAV ===== */
+
 .rectangle-1 {
-  width: 270px;
-  height: 1024px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  object-fit: fill;
+  display: none;
 }
 
 .kft-logo {
   width: 270px;
   height: 108px;
-  position: absolute;
-  left: 0;
-  top: 0;
   object-fit: cover;
+  display: block;
+  position: relative;
+  left: auto;
+  top: auto;
   z-index: 30;
 }
 
-/* NAVBAR */
 .sidebar-nav {
- margin-top: 120px;
+  margin-top: 12px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 10px;
 }
 
 .nav-btn {
-   width: 242px;
+  width: 242px;
   min-height: 52px;
   padding: 0 18px;
   border: none;
@@ -379,8 +405,8 @@ z-index:9999;
   transition: background-color 0.18s ease, color 0.18s ease;
   display: flex;
   align-items: center;
-  text-align: left;
   justify-content: flex-start;
+  text-align: left;
 }
 
 .nav-btn.two-line {
@@ -396,10 +422,10 @@ z-index:9999;
   color: #964f4c;
 }
 
+/* ===== LOGOUT ===== */
 
-/* LOGOUT */
 .logout-btn {
- width: 95px;
+  width: 95px;
   height: 52px;
   background: #e9d9cc;
   color: #964f4c;
@@ -410,8 +436,117 @@ z-index:9999;
   font-family: "Inria Serif", serif;
   font-size: 20px;
   text-decoration: none;
+  margin: 20px auto 28px;
 }
 
 .logout-btn:hover {
   filter: brightness(0.98);
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1200px) {
+  .content-container-centered {
+    max-width: 100%;
+  }
+
+  .main-rectangle {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-content-area {
+    margin-left: 270px;
+  }
+
+  .manage-users2 {
+    font-size: 34px;
+  }
+
+  .frame-2 {
+    grid-template-columns: 1.2fr 1fr 1fr 0.9fr;
+  }
+
+  .name2,
+  .role,
+  .phone,
+  .status,
+  .toalima-t,
+  .manager-role,
+  .phone-text,
+  .active,
+  .medhar-p,
+  .shift-lead,
+  .yinmin-l,
+  .employee,
+  #newName,
+  #newRole,
+  #newPhone,
+  #newStatus {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-container-centered {
+    padding: 20px 16px 28px;
+  }
+
+  .rectangle-5 {
+    height: 96px;
+    border-radius: 28px;
+    margin-bottom: 24px;
+  }
+
+  .manage-users {
+    font-size: 28px;
+  }
+
+  .main-rectangle {
+    padding: 20px;
+  }
+
+  .manage-users-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box2,
+  .add-new-user-rectangle {
+    width: 100%;
+  }
+
+  .status-box,
+  .name-1,
+  .name-2,
+  .name-3,
+  .name-4 {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .frame-2 {
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    column-gap: 8px;
+  }
+
+  .name2,
+  .role,
+  .phone,
+  .status,
+  .toalima-t,
+  .manager-role,
+  .phone-text,
+  .active,
+  .medhar-p,
+  .shift-lead,
+  .yinmin-l,
+  .employee,
+  #newName,
+  #newRole,
+  #newPhone,
+  #newStatus {
+    font-size: 17px;
+  }
 }
