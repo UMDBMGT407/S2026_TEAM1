@@ -1,10 +1,9 @@
 :root {
-  --design-width: 1440;
-  --design-height: 1024;
-  --scale: min(
-    calc(100vw / (var(--design-width) * 1px)),
-    calc(100vh / (var(--design-height) * 1px))
-  );
+  --sidebar-width: 270px;
+  --page-bg: #f0e6dd;
+  --panel-bg: #e9d9cc;
+  --brand: #964f4c;
+  --brand-dark: #874946;
 }
 
 html,
@@ -13,30 +12,42 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 body {
-  background: #f0e6dd;
+  background: var(--page-bg);
   font-family: "Inria Serif", serif;
 }
 
+.predictive-page,
 .manager-seventh-page-predictive-reports,
 .manager-seventh-page-predictive-reports * {
   box-sizing: border-box;
 }
 
+.main-content-area {
+  margin-left: 270px;
+  background: var(--page-bg);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+}
+
+.content-container-centered {
+  width: 100%;
+  max-width: 1170px;
+  padding: 40px 20px;
+  margin: 0 auto;
+  position: relative;
+}
+
 .manager-seventh-page-predictive-reports {
-  background: #f0e6dd;
-  border: 1px solid #000000;
-  width: 1440px;
-  height: 1024px;
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  overflow: hidden;
-  transform: translate(-50%, -50%) scale(var(--scale));
-  transform-origin: center center;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
 }
 
 .manager-seventh-page-predictive-reports button {
@@ -44,468 +55,14 @@ body {
   -webkit-appearance: none;
 }
 
-/* HEADER */
-.frame-34 {
-  width: 1240px;
-  height: 112px;
-  position: absolute;
-  left: 152px;
-  top: 21px;
-}
-
-.rectangle-5 {
-  background: #e9d9cc;
-  border-radius: 36px;
-  width: 1240px;
-  height: 112px;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.predictive-reports-title {
-  color: #000000;
-  text-align: center;
-  font-family: "Inria Serif", serif;
-  font-size: 34px;
-  font-weight: 700;
-  position: absolute;
-  left: 152px;
-  top: 62px;
-  width: 1240px;
-}
-
-/* MAIN TABLE AREA */
-.frame-16 {
-  display: flex;
-  flex-direction: column;
-  gap: 70px;
-  align-items: flex-end;
-  justify-content: flex-start;
-  width: 1055px;
-  height: auto;
-  position: absolute;
-  left: 327px;
-  top: 316px;
-  overflow: visible;
-}
-
-.frame-10 {
-  background: #ffffff;
-  border: 1px solid #964f4c;
-  padding: 0 14px;
-  display: flex;
-  flex-direction: row;
-  gap: 0;
-  align-items: center;
-  justify-content: flex-start;
-  width: 227px;
-  height: 40px;
-  position: absolute;
-  left: 291px;
-  top: 577px;
-  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
-}
-
-.frame-10:focus-within {
-  outline: 2px solid #e9d9cc;
-  outline-offset: 2px;
-}
-
-.dropdown-arrow {
-  color: #000000;
-  text-align: center;
-  font-family: "InriaSerif-Bold", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-.category-select {
-  color: #000000;
-  text-align: left;
-  font-family: "InriaSerif-Bold", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  position: relative;
-  width: 100%;
-  padding-right: 28px;
-  border: none;
-  background: transparent;
-  appearance: none;
-  -webkit-appearance: none;
-  outline: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.frame-32 {
-  width: 1055px;
-  height: 371px;
-  position: absolute;
-  left: 327px;
-  top: 160px;
-}
-
-.main-rectangle {
-  border-radius: 0;
-  width: 1055px;
-  height: 371px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  overflow: visible;
-}
-
-.line-10 {
-  margin-top: -1px;
-  border-style: solid;
-  border-color: #964f4c;
-  border-width: 1px 0 0 0;
-  width: 1055px;
-  height: 0;
-  position: absolute;
-  left: 0;
-  top: 86px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  transform-origin: 0 0;
-}
-
-.frame-24 {
-  display: flex;
-  flex-direction: row;
-  gap: 78px;
-  align-items: center;
-  justify-content: flex-start;
-  width: 1052px;
-  position: absolute;
-  left: 3px;
-  top: 89px;
-}
-
-.frame-14 {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  align-items: center;
-  justify-content: flex-start;
-  flex-shrink: 0;
-  width: 330px;
-  position: relative;
-}
-
-.tapioca-pearls,
-.black-tea,
-.mango-syrup,
-.large-cups {
-  color: #000000;
-  text-align: center;
-  font-family: "InriaSerif-Bold", sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  position: relative;
-  -webkit-text-stroke: 1px #e9d9cc;
-}
-
-.frame-13 {
-  display: flex;
-  flex-direction: column;
-  gap: 31px;
-  align-items: center;
-  justify-content: flex-start;
-  flex-shrink: 0;
-  width: 70px;
-  position: relative;
-}
-
-._10,
-._6,
-._5,
-._20 {
-  color: #000000;
-  text-align: center;
-  font-family: "InriaSerif-Bold", sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  position: relative;
-  align-self: stretch;
-  -webkit-text-stroke: 1px #e9d9cc;
-}
-
-.frame-11 {
-  display: flex;
-  flex-direction: column;
-  gap: 17px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  flex-shrink: 0;
-  width: 217px;
-  height: 271px;
-  position: relative;
-}
-
-._3,
-._10-00-am-3-7,
-._12-30-pm-3-8,
-._2-00-pm-3-14 {
-  color: #000000;
-  text-align: center;
-  font-family: "InriaSerif-Bold", sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  position: absolute;
-  -webkit-text-stroke: 1px #e9d9cc;
-}
-
-._3 { left: 27.33px; top: 10px; }
-._10-00-am-3-7 { left: 19.33px; top: 81px; }
-._12-30-pm-3-8 { left: 19.33px; top: 152px; }
-._2-00-pm-3-14 { left: 19.33px; top: 223.5px; }
-
-.frame-12 {
-  display: flex;
-  flex-direction: column;
-  gap: 17px;
-  align-items: flex-end;
-  justify-content: flex-start;
-  flex-shrink: 0;
-  width: 216px;
-  height: 271px;
-  position: relative;
-}
-
-.critical,
-.low,
-.low2,
-.in-stock {
-  text-align: center;
-  font-family: "InriaSerif-Bold", sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-text-stroke: 1px #e9d9cc;
-}
-
-.critical { color: #964f4c; left: 17px; top: 9px; }
-.low { color: #000000; left: 38px; top: 81px; }
-.low2 { color: #000000; left: 38px; top: 153px; }
-.in-stock { color: #000000; left: 7px; top: 221px; }
-
-.frame-25 {
-  background: #964f4c;
-  border-radius: 20px 20px 0 0;
-  border: 1px solid #000000;
-  padding: 16px 72px 30px 86px;
-  display: flex;
-  flex-direction: row;
-  gap: 65px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  width: 1055px;
-  height: 86px;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.ingredient,
-.system-qty,
-.out-by-date,
-.status {
-  color: #fffafa;
-  font-family: "InriaSerif-Bold", sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  position: relative;
-  height: 59px;
-  display: flex;
-  align-items: center;
-}
-
-.ingredient {
-  text-align: center;
-  justify-content: center;
-  width: 158px;
-}
-
-.system-qty {
-  text-align: right;
-  justify-content: flex-end;
-  width: 210px;
-}
-
-.out-by-date {
-  text-align: left;
-  justify-content: flex-start;
-  width: 203px;
-}
-
-.status {
-  text-align: center;
-  justify-content: center;
-  width: 133px;
-}
-
-.frame-23 {
-  display: flex;
-  flex-direction: column;
-  gap: 70px;
-  align-items: flex-end;
-  justify-content: flex-start;
-  width: 1055px;
-  height: 285px;
-  position: absolute;
-  left: 0;
-  top: 86px;
-  overflow: visible;
-}
-
-/* RECOMMENDED ORDER CARD */
-.frame-33 {
-  width: 433px;
-  height: 438px;
-  position: absolute;
-  left: 961px;
-  top: 559px;
-}
-
-.main-rectangle2 {
-  border-radius: 0;
-  width: 433px;
-  height: 438px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  overflow: visible;
-}
-
-.frame-22 {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  width: 408px;
-  position: absolute;
-  left: 15px;
-  top: 75px;
-}
-
-.product-tapioca-pearls,
-.quantity-64,
-.order-date-3-3-2026-9-00-am,
-.est-receipt-3-7-2026-10-30-am {
-  color: #000000;
-  text-align: left;
-  font-family: "InriaSerif-Bold", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  position: relative;
-  align-self: stretch;
-  height: 38px;
-}
-
-.product-tapioca-pearls-span,
-.quantity-64-span,
-.order-date-3-3-2026-9-00-am-span,
-.est-receipt-3-7-2026-10-30-am-span {
-  text-decoration: underline;
-}
-
-.frame-35 {
-  width: 189px;
-  height: 51px;
-  position: absolute;
-  left: 122px;
-  top: 363px;
-}
-
-.action-btn {
-  background: #964f4c;
-  border-radius: 50px;
-  color: #ffffff;
-  font-family: "InriaSerif-Bold", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  transition: background-color 0.18s ease, transform 0.18s ease;
-}
-
-.action-btn:hover {
-  background: #874946;
-}
-
-.recommended-order {
-  color: #000000;
-  text-align: center;
-  font-family: "InriaSerif-Regular", sans-serif;
-  font-size: 32px;
-  font-weight: 400;
-  position: absolute;
-  left: 37px;
-  top: 12px;
-  width: 363px;
-  height: 54px;
-  -webkit-text-stroke: 1px #000000;
-}
-
-.line-9 {
-  width: 156px;
-  height: 0;
-  position: absolute;
-  left: 139px;
-  top: 63px;
-  transform: translate(-4px, -0.5px);
-  overflow: visible;
-}
-
-.frame-36 {
-  width: 189px;
-  height: 51px;
-  position: absolute;
-  left: 542px;
-  top: 571px;
-}
-
-.frame-37 {
-  width: 189px;
-  height: 51px;
-  position: absolute;
-  left: 751px;
-  top: 571px;
-}
-
-.kpi-dashboard-1 {
-  border-radius: 4px;
-  width: 630px;
-  height: 347px;
-  position: absolute;
-  left: 299px;
-  top: 650px;
-  object-fit: cover;
-}
-
-/* SIDEBAR */
-.rectangle-1 {
+.sidebar-wrapper {
   width: 270px;
-  height: 1024px;
-  position: absolute;
+  height: 100vh;
+  background: var(--brand);
+  position: fixed;
   left: 0;
   top: 0;
-  object-fit: fill;
+  z-index: 1000;
 }
 
 .kft-logo {
@@ -515,32 +72,32 @@ body {
   left: 0;
   top: 0;
   object-fit: cover;
+  z-index: 30;
 }
 
 .sidebar-nav {
-  position: absolute;
-  left: 14px;
-  top: 170px;
-  width: 242px;
+  margin-top: 120px;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  align-items: center;
 }
 
 .nav-btn {
   width: 242px;
-  min-height: 62px;
+  max-width: 100%;
+  min-height: 52px;
   padding: 0 18px;
   border-radius: 38px;
   background: transparent;
   color: #f0e6dd;
-  text-align: left;
   font-family: "Inria Serif", serif;
   font-size: 20px;
   font-weight: 400;
-  line-height: 1.15;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  text-align: left;
   cursor: pointer;
   transition: background-color 0.18s ease, color 0.18s ease;
 }
@@ -554,21 +111,16 @@ body {
 
 .nav-btn:hover,
 .nav-btn.active {
-  background: #f0e6dd;
-  color: #964f4c;
+  background: var(--page-bg);
+  color: var(--brand);
 }
 
-/* LOGOUT */
 .logout-btn {
-  position: absolute;
-  left: 88px;
-  top: 951px;
   width: 95px;
   height: 52px;
-  border: none;
   border-radius: 28px;
-  background: #e9d9cc;
-  color: #964f4c;
+  background: var(--panel-bg);
+  color: var(--brand);
   font-family: "Inria Serif", serif;
   font-size: 20px;
   cursor: pointer;
@@ -583,31 +135,282 @@ body {
   filter: brightness(0.98);
 }
 
-/* FOCUS STATES */
-.action-btn:focus-visible,
-.nav-btn:focus-visible,
-.logout-btn:focus-visible {
-  outline: 2px solid #e9d9cc;
+.frame-34 {
+  position: relative;
+  min-height: 112px;
+}
+
+.rectangle-5 {
+  width: 100%;
+  min-height: 112px;
+  height: 100%;
+  background: var(--panel-bg);
+  border-radius: 36px;
+}
+
+.predictive-reports-title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  text-align: center;
+  font-family: "Inria Serif", serif;
+  font-size: 34px;
+  font-weight: 700;
+  padding: 1rem;
+}
+
+.controls-section {
+  margin: 0 0 1rem;
+}
+
+.controls-actions {
+  flex-wrap: nowrap;
+}
+
+.frame-10 {
+  position: relative;
+  width: 227px;
+  max-width: 100%;
+  min-height: 40px;
+  background: #ffffff;
+  border: 1px solid var(--brand);
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+}
+
+.frame-10:focus-within {
+  outline: 2px solid var(--panel-bg);
   outline-offset: 2px;
 }
 
-/* HIDE OLD NAV WRAPPER */
-.rectangle-6 {
+.category-select {
+  width: 100%;
+  color: #000000;
+  font-family: "InriaSerif-Bold", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  padding-right: 28px;
+  border: none;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.dropdown-arrow {
+  color: #000000;
+  font-family: "InriaSerif-Bold", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.action-btn {
+  background: var(--brand);
+  border-radius: 50px;
+  color: #ffffff;
+  font-family: "InriaSerif-Bold", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+
+.action-btn:hover {
+  background: var(--brand-dark);
+}
+
+.frame-35,
+.frame-36,
+.frame-37 {
+  width: 189px;
+  max-width: 100%;
+  min-height: 51px;
+  padding: 0.5rem 1rem;
+}
+
+.frame-32 {
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.12);
+}
+
+.table-responsive {
+  border-radius: 20px;
+}
+
+.predictive-table {
+  margin: 0;
+  min-width: 840px;
+}
+
+.frame-25 tr {
+  background: var(--brand);
+}
+
+.frame-25 th {
+  color: #fffafa;
+  font-family: "InriaSerif-Bold", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #000000;
+  vertical-align: middle;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.frame-24 td {
+  color: #000000;
+  font-family: "InriaSerif-Bold", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  padding: 1.25rem 1.5rem;
+  vertical-align: middle;
+  border-top: 1px solid var(--brand);
+  background: #ffffff;
+  -webkit-text-stroke: 1px #e9d9cc;
+}
+
+.ingredient,
+.predictive-name {
+  text-align: center;
+  width: 36%;
+}
+
+.system-qty,
+.predictive-qty {
+  text-align: center;
+  width: 16%;
+}
+
+.out-by-date,
+.predictive-date {
+  text-align: center;
+  width: 26%;
+}
+
+.status,
+.predictive-status {
+  text-align: center;
+  width: 22%;
+}
+
+.predictive-status-critical {
+  color: var(--brand) !important;
+}
+
+.predictive-bottom-row {
+  margin: 0;
+}
+
+.predictive-kpi-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-card {
+  display: block;
+}
+
+.kpi-dashboard-1 {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+}
+
+.frame-33 {
+  height: 100%;
+  background: var(--panel-bg);
+  border-radius: 20px;
+  padding: 1rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.12);
+}
+
+.recommended-order {
+  color: #000000;
+  text-align: center;
+  font-family: "InriaSerif-Regular", sans-serif;
+  font-size: 32px;
+  font-weight: 400;
+  -webkit-text-stroke: 1px #000000;
+}
+
+.line-9 {
+  width: 156px;
+  height: 1px;
+  background: #000000;
+  margin: 0.25rem auto 0;
+}
+
+.frame-22 {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex: 1;
+}
+
+.product-tapioca-pearls,
+.quantity-64,
+.order-date-3-3-2026-9-00-am,
+.est-receipt-3-7-2026-10-30-am {
+  color: #000000;
+  text-align: left;
+  font-family: "InriaSerif-Bold", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.product-tapioca-pearls-span,
+.quantity-64-span,
+.order-date-3-3-2026-9-00-am-span,
+.est-receipt-3-7-2026-10-30-am-span {
+  text-decoration: underline;
+}
+
+.frame-35 {
+  align-self: center;
+  margin-top: 1.5rem;
+}
+
+.rectangle-6,
+.frame-16,
+.main-rectangle,
+.line-10,
+.frame-23,
+.main-rectangle2 {
   display: none;
 }
 
-/* MODAL OVERLAY - EXCLUDES SIDEBAR */
 .recipe-modal-overlay {
-  position: absolute;
-  left: 270px;
-  top: 0;
-  width: calc(100% - 270px);
-  height: 100%;
+  position: fixed;
+  inset: 0;
   background: rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 20;
+  padding: 1rem;
+  z-index: 1050;
 }
 
 .recipe-modal-overlay.hidden {
@@ -615,61 +418,164 @@ body {
 }
 
 .recipe-popup {
-  width: 1011px;
-  height: 775px;
+  position: relative;
+  width: min(1011px, 100%);
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  background: var(--panel-bg);
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.recipe-popup-main-rectangle,
+.recipe-popup-inner-rec,
+.recipe-popup-drink-bg,
+.recipe-popup-add-product-bg,
+.recipe-popup-update-bg {
+  display: none;
+}
+
+.recipe-popup-header {
+  order: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.recipe-popup-title {
+  color: var(--brand);
+  text-align: center;
+  font-family: "InriaSerif-Bold", sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  flex: 1;
+}
+
+.recipe-popup-close {
+  width: 2rem;
+  height: 2rem;
+  color: #000000;
+  text-align: center;
+  font-family: "InstrumentSans-Bold", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.recipe-popup-drink-field {
+  order: 2;
   position: relative;
 }
 
-.recipe-popup-main-rectangle {
-  border-radius: 0;
-  width: 1011px;
-  height: 775px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  overflow: visible;
-}
-
-.recipe-popup-inner-rec {
-  width: 909px;
-  height: 673px;
-  position: absolute;
-  left: 51px;
-  top: 82px;
-  overflow: visible;
-}
-
-.recipe-popup-products {
-  width: 843px;
-  height: 392px;
-  position: static;
-}
-
-.recipe-popup-products-title {
-  color: #964f4c;
-  text-align: center;
+.recipe-popup-drink-label {
+  color: var(--brand);
   font-family: "InriaSerif-Bold", sans-serif;
   font-size: 32px;
   font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.recipe-popup-drink-input {
+  width: 100%;
+  height: 64px;
+  padding: 0 3rem 0 24px;
+  border: none;
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--brand);
+  text-align: center;
+  font-family: "InriaSerif-Regular", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  outline: none;
+}
+
+.recipe-popup-drink-input::placeholder {
+  color: #8f8f8f;
+  opacity: 1;
+}
+
+.recipe-popup-drink-trigger {
   position: absolute;
-  left: 68px;
-  top: 235px;
+  top: 84px;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  color: #000000;
+  font-family: "Abel-Regular", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  background: transparent;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.recipe-popup-drink-menu {
+  position: relative;
+  width: 100%;
+  margin-top: 0.5rem;
+  background: #ffffff;
+  border: 1px solid var(--brand);
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+  z-index: 2;
+}
+
+.recipe-popup-drink-menu.hidden,
+.recipe-popup-drink-option.hidden {
+  display: none;
+}
+
+.recipe-popup-drink-option {
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 24px;
+  background: #ffffff;
+  color: var(--brand);
+  text-align: center;
+  font-family: "InriaSerif-Regular", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.recipe-popup-drink-option:hover {
+  background: #f5ede7;
+}
+
+.recipe-popup-products {
+  order: 5;
+  margin-top: 1rem;
+}
+
+.recipe-popup-products-title {
+  color: var(--brand);
+  text-align: left;
+  font-family: "InriaSerif-Bold", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 1rem;
 }
 
 .recipe-popup-rows {
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  align-items: flex-end;
-  justify-content: flex-start;
-  width: 861px;
+  gap: 1rem;
   max-height: 320px;
-  padding-right: 64px;
   overflow-y: auto;
   overflow-x: hidden;
-  position: absolute;
-  left: 70px;
-  top: 289px;
+  padding-right: 0.5rem;
 }
 
 .recipe-popup-rows::-webkit-scrollbar {
@@ -687,59 +593,56 @@ body {
 }
 
 .recipe-popup-row {
-  align-self: stretch;
-  flex-shrink: 0;
-  height: 74px;
-  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px auto;
+  gap: 1rem;
+  align-items: center;
 }
 
-.recipe-popup-remove {
-  color: #000000;
-  text-align: center;
-  font-family: "InstrumentSans-Bold", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  position: absolute;
-  left: 826px;
-  top: 26px;
-  background: transparent;
-  cursor: pointer;
+.recipe-popup-name-wrap,
+.recipe-popup-qty-wrap {
+  position: relative;
+  height: 70px;
+}
+
+.recipe-popup-name-wrap {
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .recipe-popup-qty-wrap {
-  width: 230px;
-  height: 71px;
-  position: absolute;
-  left: 565px;
-  top: 3px;
+  grid-column: 2;
+  grid-row: 1;
 }
 
+.recipe-popup-name-bg,
 .recipe-popup-qty-bg {
+  position: absolute;
+  inset: 0;
   background: #ffffff;
   border-radius: 10px;
-  width: 230px;
-  height: 71px;
-  position: absolute;
-  left: 0;
-  top: 0;
 }
 
+.recipe-popup-name-select,
 .recipe-popup-qty-input {
-  color: #964f4c;
-  text-align: center;
-  font-family: "InriaSerif-Regular", sans-serif;
-  font-size: 24px;
-  font-weight: 400;
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 230px;
-  height: 71px;
-  padding: 0 16px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0 42px 0 24px;
   border: none;
   border-radius: 10px;
   background: transparent;
+  color: var(--brand);
+  font-family: "InriaSerif-Regular", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
   outline: none;
+}
+
+.recipe-popup-qty-input {
+  text-align: center;
+  padding: 0 16px;
 }
 
 .recipe-popup-qty-input::placeholder {
@@ -758,24 +661,6 @@ body {
   -moz-appearance: textfield;
 }
 
-.recipe-popup-name-wrap {
-  width: 534px;
-  height: 70px;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.recipe-popup-name-bg {
-  background: #ffffff;
-  border-radius: 10px;
-  width: 534px;
-  height: 70px;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
 .recipe-popup-name-caret {
   color: #000000;
   text-align: center;
@@ -783,30 +668,17 @@ body {
   font-size: 16px;
   font-weight: 400;
   position: absolute;
-  left: 500px;
-  top: 24px;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
   pointer-events: none;
 }
 
 .recipe-popup-name-select {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 534px;
-  height: 70px;
-  padding: 0 42px 0 24px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  color: #964f4c;
   text-align: center;
   text-align-last: center;
-  font-family: "InriaSerif-Regular", sans-serif;
-  font-size: 24px;
-  font-weight: 400;
   appearance: none;
   -webkit-appearance: none;
-  outline: none;
   cursor: pointer;
 }
 
@@ -818,24 +690,34 @@ body {
   color: #8f8f8f;
 }
 
-.recipe-popup-add-product-wrap {
-  flex-shrink: 0;
-  width: 230px;
-  height: 33px;
-  position: relative;
+.recipe-popup-remove {
+  grid-column: 3;
+  grid-row: 1;
+  color: #000000;
+  text-align: center;
+  font-family: "InstrumentSans-Bold", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
   background: transparent;
   cursor: pointer;
+  width: 1.5rem;
 }
 
-.recipe-popup-add-product-bg {
-  background: #964f4c;
-  border-radius: 30px;
+.recipe-popup-add-product-wrap,
+.recipe-popup-update-wrap {
+  background: var(--brand);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.recipe-popup-add-product-wrap {
   width: 230px;
-  height: 32px;
-  position: absolute;
-  left: -45px;
-  top: 6px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  min-height: 40px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .recipe-popup-add-product-text {
@@ -844,166 +726,18 @@ body {
   font-family: "InriaSerif-Regular", sans-serif;
   font-size: 24px;
   font-weight: 400;
-  position: absolute;
-  left: -45px;
-  top: 6px;
-  width: 230px;
-  height: 33px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.recipe-popup-header {
-  display: flex;
-  flex-direction: row;
-  gap: 410px;
-  align-items: center;
-  justify-content: flex-start;
-  position: absolute;
-  left: -51px;
-  top: 20px;
-}
-
-.recipe-popup-title {
-  color: #964f4c;
-  text-align: center;
-  font-family: "InriaSerif-Bold", sans-serif;
-  font-size: 40px;
-  font-weight: 700;
-  position: relative;
-  width: 598px;
-  height: 41px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.recipe-popup-close {
-  color: #000000;
-  text-align: center;
-  font-family: "InstrumentSans-Bold", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  position: relative;
-  width: 15px;
-  height: 13px;
-  background: transparent;
-  cursor: pointer;
-}
-
-.recipe-popup-drink-label {
-  color: #964f4c;
-  text-align: center;
-  font-family: "InriaSerif-Bold", sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  position: absolute;
-  left: 73px;
-  top: 100px;
-}
-
-.recipe-popup-drink-bg {
-  background: #ffffff;
-  border-radius: 10px;
-  width: 795px;
-  height: 64px;
-  position: absolute;
-  left: 70px;
-  top: 151px;
-}
-
-.recipe-popup-drink-input {
-  color: #964f4c;
-  text-align: center;
-  font-family: "InriaSerif-Regular", sans-serif;
-  font-size: 24px;
-  font-weight: 400;
-  position: absolute;
-  left: 70px;
-  top: 151px;
-  width: 795px;
-  height: 64px;
-  padding: 0 44px 0 24px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  outline: none;
-  cursor: text;
-}
-
-.recipe-popup-drink-input::placeholder {
-  color: #8f8f8f;
-  opacity: 1;
-}
-
-.recipe-popup-drink-trigger {
-  color: #000000;
-  text-align: center;
-  font-family: "Abel-Regular", sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  position: absolute;
-  left: 836px;
-  top: 175px;
-  background: transparent;
-  cursor: pointer;
-}
-
-.recipe-popup-drink-menu {
-  position: absolute;
-  left: 70px;
-  top: 220px;
-  width: 795px;
-  background: #ffffff;
-  border: 1px solid #964f4c;
-  border-radius: 10px;
-  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.16);
-  overflow: hidden;
-  z-index: 2;
-}
-
-.recipe-popup-drink-menu.hidden,
-.recipe-popup-drink-option.hidden {
-  display: none;
-}
-
-.recipe-popup-drink-option {
-  width: 100%;
-  min-height: 56px;
-  padding: 14px 24px;
-  background: #ffffff;
-  color: #964f4c;
-  text-align: center;
-  font-family: "InriaSerif-Regular", sans-serif;
-  font-size: 24px;
-  font-weight: 400;
-  cursor: pointer;
-}
-
-.recipe-popup-drink-option:hover {
-  background: #f5ede7;
 }
 
 .recipe-popup-update-wrap {
-  width: 324px;
-  height: 64px;
-  position: absolute;
-  left: 175px;
-  top: 647px;
-  background: transparent;
-  cursor: pointer;
-}
-
-.recipe-popup-update-bg {
-  background: #964f4c;
+  order: 6;
+  width: min(324px, 100%);
+  min-height: 64px;
   border-radius: 10px;
-  width: 324px;
-  height: 64px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  margin: 1.5rem auto 0;
 }
 
 .recipe-popup-update-text {
@@ -1012,11 +746,11 @@ body {
   font-family: "InriaSerif-Bold", sans-serif;
   font-size: 32px;
   font-weight: 700;
-  position: absolute;
-  left: 55px;
-  top: 13px;
 }
 
+.action-btn:focus-visible,
+.nav-btn:focus-visible,
+.logout-btn:focus-visible,
 .recipe-popup-close:focus-visible,
 .recipe-popup-add-product-wrap:focus-visible,
 .recipe-popup-update-wrap:focus-visible,
@@ -1026,6 +760,109 @@ body {
 .recipe-popup-drink-input:focus-visible,
 .recipe-popup-drink-trigger:focus-visible,
 .recipe-popup-drink-option:focus-visible {
-  outline: 2px solid #964f4c;
+  outline: 2px solid var(--panel-bg);
   outline-offset: 2px;
+}
+
+.recipe-popup-qty-input:focus-visible,
+.recipe-popup-name-select:focus-visible,
+.recipe-popup-drink-input:focus-visible,
+.recipe-popup-drink-trigger:focus-visible,
+.recipe-popup-drink-option:focus-visible,
+.recipe-popup-close:focus-visible,
+.recipe-popup-add-product-wrap:focus-visible,
+.recipe-popup-update-wrap:focus-visible,
+.recipe-popup-remove:focus-visible {
+  outline-color: var(--brand);
+}
+
+.kpi-dashboard-1 {
+  min-height: 280px;
+}
+
+@media (max-width: 767.98px) {
+  .manager-seventh-page-predictive-reports {
+    gap: 1.25rem;
+  }
+
+  .frame-34,
+  .rectangle-5 {
+    min-height: 90px;
+  }
+
+  .predictive-reports-title {
+    font-size: 28px;
+  }
+
+  .category-select {
+    font-size: 20px;
+  }
+
+  .action-btn {
+    font-size: 20px;
+  }
+
+  .frame-25 th,
+  .frame-24 td {
+    font-size: 24px;
+    padding: 1rem;
+  }
+
+  .recommended-order {
+    font-size: 28px;
+  }
+
+  .product-tapioca-pearls,
+  .quantity-64,
+  .order-date-3-3-2026-9-00-am,
+  .est-receipt-3-7-2026-10-30-am {
+    font-size: 20px;
+  }
+
+  .recipe-popup {
+    padding: 1rem;
+  }
+
+  .recipe-popup-title {
+    font-size: 30px;
+    text-align: left;
+  }
+
+  .recipe-popup-drink-label,
+  .recipe-popup-products-title {
+    font-size: 26px;
+  }
+
+  .recipe-popup-drink-input,
+  .recipe-popup-name-select,
+  .recipe-popup-qty-input,
+  .recipe-popup-drink-option,
+  .recipe-popup-add-product-text,
+  .recipe-popup-update-text {
+    font-size: 20px;
+  }
+
+  .recipe-popup-drink-trigger {
+    top: 73px;
+    right: 1.5rem;
+  }
+
+  .recipe-popup-row {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-popup-name-wrap,
+  .recipe-popup-qty-wrap,
+  .recipe-popup-remove {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .recipe-popup-qty-wrap {
+    width: min(230px, 100%);
+  }
+
+  .recipe-popup-remove {
+    justify-self: end;
+  }
 }
