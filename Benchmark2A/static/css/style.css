@@ -26,7 +26,7 @@ body {
   height: 100vh;
   position: relative;
   overflow: hidden;
-  background: url("/S2026_TEAM1/audit/LOGIN/login-page.png") center center / cover no-repeat;
+  background: url("/static/images/login-page.png") center center / cover no-repeat;
 }
 
 /* ========= TITLE ========= */
@@ -357,6 +357,7 @@ body {
   align-items: center;
   text-align: left;
   justify-content: flex-start;
+  text-decoration: none;
 }
 
 .nav-btn.two-line {
