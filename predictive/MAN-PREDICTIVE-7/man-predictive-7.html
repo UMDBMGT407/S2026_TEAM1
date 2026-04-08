@@ -4,220 +4,165 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./vars.css">
-  <link rel="stylesheet" href="../CSS/style-man7.css">
+  <link rel="stylesheet" href="../../manager-dashboard/CSS/style-man-dash.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <style>
-    a,
-    button,
-    input,
-    select,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      border: none;
-      text-decoration: none;
-      background: none;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    menu, ol, ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-  </style>
   <title>Predictive Reports</title>
 </head>
-<body>
-  <div class="container-fluid p-0 predictive-page">
-      <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
-        <div class="w-100">
-          <img class="kft-logo" src="kft-logo0.png" alt="Kung Fu Tea Silver Spring logo" />
+<body class="predictive-page">
+  <div class="container-fluid p-0 predictive-page-shell">
+    <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
+      <div class="w-100">
+        <img class="kft-logo" src="../../manager-dashboard/Images/kft-logo0.png" alt="Kung Fu Tea Silver Spring logo" />
 
-          <div class="sidebar-nav d-flex flex-column gap-2">
-            <button class="nav-btn" type="button" onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">Full Inventory View</button>
-            <button class="nav-btn" type="button" onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-1/man-audit-1.html'">Inventory Reconciliation</button>
-            <button class="nav-btn" type="button" onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-4/man-audit-4.html'">Activity Log</button>
-            <button class="nav-btn" type="button" onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">Dashboards &amp; Analytics</button>
-            <button class="nav-btn active" type="button">Predictive Reports</button>
-            <button class="nav-btn" type="button" onclick="window.location.href='/S2026_TEAM1/manage-users/MAN-AUDIT-5/user1.html'">Manage Users</button>
-            <button class="nav-btn two-line" type="button" onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">Purchase Order Management</button>
+        <div class="sidebar-nav d-flex flex-column gap-2">
+          <button class="nav-btn" type="button" onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">Full Inventory View</button>
+          <button class="nav-btn" type="button" onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-1/man-audit-1.html'">Inventory Reconciliation</button>
+          <button class="nav-btn" type="button" onclick="window.location.href='/S2026_TEAM1/audit/MAN-AUDIT-4/man-audit-4.html'">Activity Log</button>
+          <button class="nav-btn" type="button" onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">Dashboards &amp; Analytics</button>
+          <button class="nav-btn active" type="button">Predictive Reports</button>
+          <button class="nav-btn" type="button" onclick="window.location.href='/S2026_TEAM1/manage-users/MAN-AUDIT-5/user1.html'">Manage Users</button>
+          <button class="nav-btn two-line" type="button" onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">Purchase Order Management</button>
+        </div>
+      </div>
+
+      <div class="pb-4">
+        <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
+      </div>
+    </nav>
+
+    <main class="col main-content-area">
+      <div class="content-container-centered predictive-layout">
+        <div class="rectangle-5 mb-5">
+          <h1 class="dashboard-analytics predictive-page-title">Predictive Reports</h1>
+        </div>
+
+        <input
+          id="upload-data-input"
+          type="file"
+          accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          hidden
+        />
+
+        <section class="dashboard-card predictive-table-card">
+          <div class="table-responsive predictive-table-wrapper">
+            <table class="predictive-table table mb-0 align-middle">
+              <thead>
+                <tr>
+                  <th scope="col">Ingredient</th>
+                  <th scope="col">System Qty</th>
+                  <th scope="col">Out By Date</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Tapioca Pearls</td>
+                  <td>10</td>
+                  <td>1:00pm 3/3</td>
+                  <td class="predictive-status predictive-status-critical">Critical</td>
+                </tr>
+                <tr>
+                  <td>Black Tea</td>
+                  <td>6</td>
+                  <td>10:00am 3/7</td>
+                  <td class="predictive-status predictive-status-low">Low</td>
+                </tr>
+                <tr>
+                  <td>Mango Syrup</td>
+                  <td>5</td>
+                  <td>12:30pm 3/8</td>
+                  <td class="predictive-status predictive-status-low">Low</td>
+                </tr>
+                <tr>
+                  <td>Large Cups</td>
+                  <td>20</td>
+                  <td>2:00pm 3/14</td>
+                  <td class="predictive-status predictive-status-ok">In Stock</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="row g-4 predictive-bottom-row align-items-stretch">
+          <div class="col-12 col-xl-7">
+            <section class="dashboard-card predictive-analytics-card h-100">
+              <div class="controls-row predictive-controls-row">
+                <select class="dropdown-box predictive-filter-select" aria-label="Filter by category">
+                  <option value="all" selected>Category: All</option>
+                  <option value="toppings">Toppings</option>
+                  <option value="syrups">Syrups</option>
+                  <option value="tea">Tea</option>
+                  <option value="dairy">Dairy</option>
+                </select>
+
+                <div class="predictive-actions">
+                  <button class="btn-create-order predictive-toolbar-btn" id="add-recipe-btn" type="button">Add Recipe</button>
+                  <button class="btn-create-order predictive-toolbar-btn predictive-secondary-btn" id="upload-data-btn" type="button">Upload Data</button>
+                </div>
+              </div>
+
+              <div class="predictive-chart-card">
+                <img class="predictive-chart-image img-fluid" src="kpi-dashboard-10.png" alt="Predictive dashboard chart" />
+              </div>
+            </section>
+          </div>
+
+          <div class="col-12 col-xl-5">
+            <section class="dashboard-card predictive-order-card h-100">
+              <h2 class="predictive-section-title">Recommended Order</h2>
+              <div class="predictive-order-divider" aria-hidden="true"></div>
+
+              <div class="predictive-order-details">
+                <p class="predictive-detail-item"><span class="predictive-detail-label">Product:</span> Tapioca Pearls</p>
+                <p class="predictive-detail-item"><span class="predictive-detail-label">Quantity:</span> 64</p>
+                <p class="predictive-detail-item"><span class="predictive-detail-label">Order Date:</span> 3/3/2026 9:00AM</p>
+                <p class="predictive-detail-item"><span class="predictive-detail-label">Est. Receipt:</span> 3/7/2026 10:30AM</p>
+              </div>
+
+              <button
+                class="btn-create-order predictive-create-order-btn"
+                type="button"
+                onclick="window.location.href='../../Purchase Order Management/create_purchase_order.html'">
+                Create Order
+              </button>
+            </section>
           </div>
         </div>
 
-        <div class="pb-4">
-          <a href="/S2026_TEAM1/index.html" class="logout-btn">Logout</a>
-        </div>
-      </nav>
+        <div class="recipe-modal-overlay hidden" id="recipe-modal-overlay" aria-hidden="true">
+            <div class="form-card predictive-modal-card" role="dialog" aria-modal="true" aria-labelledby="recipe-modal-title">
+              <button
+                class="form-close-btn predictive-modal-close"
+                id="recipe-modal-close"
+                type="button"
+                aria-label="Close add recipe popup">
+                X
+              </button>
 
-      <main class="main-content-area">
-        <div class="content-container-centered">
-          <div class="manager-seventh-page-predictive-reports">
-            <div class="frame-34">
-              <div class="rectangle-5"></div>
-              <div class="predictive-reports-title">Predictive Reports</div>
-            </div>
+              <h2 class="form-card-title predictive-modal-title" id="recipe-modal-title">Add or Modify Recipe</h2>
 
-            <input
-              id="upload-data-input"
-              type="file"
-              accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-              hidden
-            />
+              <section class="predictive-modal-section">
+                <label class="form-section-label predictive-modal-label" for="recipe-popup-drink-input">Drink</label>
 
-            <div class="frame-32">
-              <div class="table-responsive">
-                <table class="predictive-table table mb-0 align-middle">
-                  <thead class="frame-25">
-                    <tr>
-                      <th class="ingredient" scope="col">Ingredient</th>
-                      <th class="system-qty" scope="col">System Qty</th>
-                      <th class="out-by-date" scope="col">Out By Date</th>
-                      <th class="status" scope="col">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody class="frame-24">
-                    <tr>
-                      <td class="predictive-name">Tapioca Pearls</td>
-                      <td class="predictive-qty">10</td>
-                      <td class="predictive-date">1:00pm 3/3</td>
-                      <td class="predictive-status predictive-status-critical">Critical</td>
-                    </tr>
-                    <tr>
-                      <td class="predictive-name">Black Tea</td>
-                      <td class="predictive-qty">6</td>
-                      <td class="predictive-date">10:00am 3/7</td>
-                      <td class="predictive-status">Low</td>
-                    </tr>
-                    <tr>
-                      <td class="predictive-name">Mango Syrup</td>
-                      <td class="predictive-qty">5</td>
-                      <td class="predictive-date">12:30pm 3/8</td>
-                      <td class="predictive-status">Low</td>
-                    </tr>
-                    <tr>
-                      <td class="predictive-name">Large cups</td>
-                      <td class="predictive-qty">20</td>
-                      <td class="predictive-date">2:00pm 3/14</td>
-                      <td class="predictive-status">In Stock</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="row g-4 predictive-bottom-row align-items-stretch">
-              <div class="col-12 col-xl-7 predictive-kpi-column">
-                <div class="controls-section d-flex gap-3 flex-wrap align-items-center">
-                  <div class="controls-item">
-                    <div class="frame-10">
-                      <select class="category-select" aria-label="Filter by category">
-                        <option value="all" selected>Category: All</option>
-                      </select>
-                      <span class="dropdown-arrow" aria-hidden="true">▼</span>
-                    </div>
-                  </div>
-
-                  <div class="controls-actions d-flex gap-3 align-items-center">
-                    <button class="frame-36 action-btn" id="add-recipe-btn" type="button">Add Recipe</button>
-                    <button class="frame-37 action-btn" id="upload-data-btn" type="button">Upload Data</button>
-                  </div>
-                </div>
-
-                <div class="kpi-card">
-                  <img class="kpi-dashboard-1 img-fluid" src="kpi-dashboard-10.png" alt="Predictive dashboard chart" />
-                </div>
-              </div>
-
-              <div class="col-12 col-xl-5">
-                <div class="frame-33 h-100">
-                  <div class="recommended-order">Recommended Order</div>
-                  <div class="line-9" aria-hidden="true"></div>
-
-                  <div class="frame-22">
-                    <div class="product-tapioca-pearls">
-                      <span>
-                        <span class="product-tapioca-pearls-span">Product:</span>
-                        <span class="product-tapioca-pearls-span2">Tapioca Pearls</span>
-                      </span>
-                    </div>
-
-                    <div class="quantity-64">
-                      <span>
-                        <span class="quantity-64-span">Quantity:</span>
-                        <span class="quantity-64-span2">64</span>
-                      </span>
-                    </div>
-
-                    <div class="order-date-3-3-2026-9-00-am">
-                      <span>
-                        <span class="order-date-3-3-2026-9-00-am-span">Order Date:</span>
-                        <span class="order-date-3-3-2026-9-00-am-span2">3/3/2026 9:00AM</span>
-                      </span>
-                    </div>
-
-                    <div class="est-receipt-3-7-2026-10-30-am">
-                      <span>
-                        <span class="est-receipt-3-7-2026-10-30-am-span">Est. Receipt:</span>
-                        <span class="est-receipt-3-7-2026-10-30-am-span2">3/7/2026 10:30AM</span>
-                      </span>
-                    </div>
-                  </div>
+                <div class="predictive-drink-field">
+                  <input
+                    class="predictive-modal-input"
+                    id="recipe-popup-drink-input"
+                    type="text"
+                    placeholder="Drink Name"
+                    aria-label="Drink selection"
+                    autocomplete="off"
+                  />
 
                   <button
-                    class="frame-35 action-btn"
+                    class="predictive-drink-trigger"
+                    id="recipe-popup-drink-trigger"
                     type="button"
-                    onclick="window.location.href='../../Purchase Order Management/create_purchase_order.html'">
-                    Create Order
+                    aria-label="Show drink suggestions">
+                    ▼
                   </button>
                 </div>
-              </div>
-            </div>
-
-            <div class="recipe-modal-overlay hidden" id="recipe-modal-overlay" aria-hidden="true">
-            <div class="recipe-popup" role="dialog" aria-modal="true" aria-labelledby="recipe-modal-title">
-              <img class="recipe-popup-main-rectangle" src="main-rectangle2.svg" alt="" />
-              <img class="recipe-popup-inner-rec" src="inner-rec0.svg" alt="" />
-
-              <div class="recipe-popup-header">
-                <div class="recipe-popup-title" id="recipe-modal-title">Add or Modify Recipe</div>
-                <button
-                  class="recipe-popup-close"
-                  id="recipe-modal-close"
-                  type="button"
-                  aria-label="Close add recipe popup">
-                  X
-                </button>
-              </div>
-
-              <div class="recipe-popup-drink-field">
-                <div class="recipe-popup-drink-label">Drink:</div>
-                <div class="recipe-popup-drink-bg"></div>
-
-                <input
-                  class="recipe-popup-drink-input"
-                  id="recipe-popup-drink-input"
-                  type="text"
-                  placeholder="Drink Name"
-                  aria-label="Drink selection"
-                  autocomplete="off"
-                />
-
-                <button
-                  class="recipe-popup-drink-trigger"
-                  id="recipe-popup-drink-trigger"
-                  type="button"
-                  aria-label="Show drink suggestions">
-                  ▼
-                </button>
 
                 <div class="recipe-popup-drink-menu hidden" id="recipe-popup-drink-menu">
                   <button
@@ -227,83 +172,59 @@
                     Winter Melon Milk Tea
                   </button>
                 </div>
-              </div>
+              </section>
 
-              <div class="recipe-popup-products">
-                <div class="recipe-popup-products-title">Products:</div>
-
-                <div class="recipe-popup-rows" id="recipe-popup-rows">
-                  <div class="recipe-popup-row">
-                    <button class="recipe-popup-remove" type="button" aria-label="Remove product">X</button>
-
-                    <div class="recipe-popup-qty-wrap">
-                      <div class="recipe-popup-qty-bg"></div>
-                      <input class="recipe-popup-qty-input" type="number" value="64" min="0" aria-label="Quantity for product 1" />
-                    </div>
-
-                    <div class="recipe-popup-name-wrap">
-                      <div class="recipe-popup-name-bg"></div>
-                      <select class="recipe-popup-name-select" aria-label="Product selection 1">
-                        <option value="" disabled>Product Name</option>
-                        <option value="tapioca-pearls" selected>Tapioca Pearls</option>
-                        <option value="black-tea">Black Tea</option>
-                      </select>
-                      <div class="recipe-popup-name-caret">▼</div>
-                    </div>
-                  </div>
-
-                  <div class="recipe-popup-row">
-                    <button class="recipe-popup-remove" type="button" aria-label="Remove product">X</button>
-
-                    <div class="recipe-popup-qty-wrap">
-                      <div class="recipe-popup-qty-bg"></div>
-                      <input class="recipe-popup-qty-input" type="number" min="0" placeholder="Quantity" aria-label="Quantity for product 2" />
-                    </div>
-
-                    <div class="recipe-popup-name-wrap">
-                      <div class="recipe-popup-name-bg"></div>
-                      <select class="recipe-popup-name-select" aria-label="Product selection 2">
-                        <option value="" selected disabled>Product Name</option>
-                        <option value="tapioca-pearls">Tapioca Pearls</option>
-                        <option value="black-tea">Black Tea</option>
-                      </select>
-                      <div class="recipe-popup-name-caret">▼</div>
-                    </div>
-                  </div>
-
-                  <div class="recipe-popup-row">
-                    <button class="recipe-popup-remove" type="button" aria-label="Remove product">X</button>
-
-                    <div class="recipe-popup-qty-wrap">
-                      <div class="recipe-popup-qty-bg"></div>
-                      <input class="recipe-popup-qty-input" type="number" value="64" min="0" aria-label="Quantity for product 3" />
-                    </div>
-
-                    <div class="recipe-popup-name-wrap">
-                      <div class="recipe-popup-name-bg"></div>
-                      <select class="recipe-popup-name-select" aria-label="Product selection 3">
-                        <option value="tapioca-pearls" selected>Tapioca Pearls</option>
-                        <option value="black-tea">Black Tea</option>
-                      </select>
-                      <div class="recipe-popup-name-caret">▼</div>
-                    </div>
-                  </div>
-
-                  <button class="recipe-popup-add-product-wrap" id="recipe-popup-add-product" type="button">
-                    <div class="recipe-popup-add-product-bg"></div>
-                    <div class="recipe-popup-add-product-text">Add Product</div>
-                  </button>
+              <section class="predictive-modal-section">
+                <div class="predictive-products-header">
+                  <div class="form-section-label predictive-modal-label mb-0">Products</div>
+                  <button class="btn-add-product recipe-popup-add-product-wrap" id="recipe-popup-add-product" type="button">Add Product</button>
                 </div>
-              </div>
 
-              <button class="recipe-popup-update-wrap" type="button">
-                <div class="recipe-popup-update-bg"></div>
-                <div class="recipe-popup-update-text">Update Recipe</div>
-              </button>
+                <div class="predictive-products-list" id="recipe-popup-rows">
+                  <div class="recipe-popup-row">
+                    <select class="product-select recipe-popup-name-select" aria-label="Product selection 1">
+                      <option value="" disabled>Product Name</option>
+                      <option value="tapioca-pearls" selected>Tapioca Pearls</option>
+                      <option value="black-tea">Black Tea</option>
+                    </select>
+
+                    <input class="product-qty-input recipe-popup-qty-input" type="number" value="64" min="0" aria-label="Quantity for product 1" />
+
+                    <button class="row-delete-btn recipe-popup-remove" type="button" aria-label="Remove product">X</button>
+                  </div>
+
+                  <div class="recipe-popup-row">
+                    <select class="product-select recipe-popup-name-select" aria-label="Product selection 2">
+                      <option value="" selected disabled>Product Name</option>
+                      <option value="tapioca-pearls">Tapioca Pearls</option>
+                      <option value="black-tea">Black Tea</option>
+                    </select>
+
+                    <input class="product-qty-input recipe-popup-qty-input" type="number" min="0" placeholder="Quantity" aria-label="Quantity for product 2" />
+
+                    <button class="row-delete-btn recipe-popup-remove" type="button" aria-label="Remove product">X</button>
+                  </div>
+
+                  <div class="recipe-popup-row">
+                    <select class="product-select recipe-popup-name-select" aria-label="Product selection 3">
+                      <option value="tapioca-pearls" selected>Tapioca Pearls</option>
+                      <option value="black-tea">Black Tea</option>
+                    </select>
+
+                    <input class="product-qty-input recipe-popup-qty-input" type="number" value="64" min="0" aria-label="Quantity for product 3" />
+
+                    <button class="row-delete-btn recipe-popup-remove" type="button" aria-label="Remove product">X</button>
+                  </div>
+                </div>
+              </section>
+
+              <div class="submit-row predictive-modal-actions">
+                <button class="btn-submit-order recipe-popup-update-wrap" type="button">Update Recipe</button>
+              </div>
             </div>
-          </div>
         </div>
-      </main>
+      </div>
+    </main>
   </div>
 
   <script>
@@ -343,20 +264,13 @@
       const rowElement = document.createElement('div');
       rowElement.className = 'recipe-popup-row';
       rowElement.innerHTML = `
-        <button class="recipe-popup-remove" type="button" aria-label="Remove product">X</button>
-        <div class="recipe-popup-qty-wrap">
-          <div class="recipe-popup-qty-bg"></div>
-          <input class="recipe-popup-qty-input" type="number" min="0" placeholder="Quantity" aria-label="Quantity for product ${rowCount}" />
-        </div>
-        <div class="recipe-popup-name-wrap">
-          <div class="recipe-popup-name-bg"></div>
-          <select class="recipe-popup-name-select" aria-label="Product selection ${rowCount}">
-            <option value="" selected disabled>Product Name</option>
-            <option value="tapioca-pearls">Tapioca Pearls</option>
-            <option value="black-tea">Black Tea</option>
-          </select>
-          <div class="recipe-popup-name-caret">▼</div>
-        </div>
+        <select class="product-select recipe-popup-name-select" aria-label="Product selection ${rowCount}">
+          <option value="" selected disabled>Product Name</option>
+          <option value="tapioca-pearls">Tapioca Pearls</option>
+          <option value="black-tea">Black Tea</option>
+        </select>
+        <input class="product-qty-input recipe-popup-qty-input" type="number" min="0" placeholder="Quantity" aria-label="Quantity for product ${rowCount}" />
+        <button class="row-delete-btn recipe-popup-remove" type="button" aria-label="Remove product">X</button>
       `;
       const newSelect = rowElement.querySelector('.recipe-popup-name-select');
       if (newSelect) {
@@ -368,7 +282,7 @@
     if (recipePopupRows && recipePopupAddProduct) {
       recipePopupAddProduct.addEventListener('click', () => {
         const newRow = createRecipePopupRow();
-        recipePopupRows.insertBefore(newRow, recipePopupAddProduct);
+        recipePopupRows.appendChild(newRow);
       });
 
       recipePopupRows.addEventListener('click', (event) => {
