@@ -500,11 +500,11 @@ def fmt_date(d):
 def home():
     if current_user.is_authenticated:
         if current_user.role == 'Manager':
-            return redirect(url_for('man_audit_1'))
+            return redirect(url_for('inventory'))
         elif current_user.role == 'ShiftLead':
-            return redirect(url_for('sl_audit_1'))
+            return redirect(url_for('inventory'))
         elif current_user.role == 'Employee':
-            return redirect(url_for('employee_home'))
+            return redirect(url_for('inventory'))
 
     return redirect(url_for('login'))
 
@@ -737,13 +737,21 @@ def sl_audit_3():
 
 
 # =========================
-# EMPLOYEE PLACEHOLDER
+# FULL INVENTORY VIEW
 # =========================
-@app.route('/employee-home')
+
+@app.route('/inventory')
 @login_required
-@role_required('Employee')
-def employee_home():
-    return '<h1>Employee home placeholder</h1>'
+def inventory():
+
+    cur = mysql.connection.cursor()
+    
+    cur.execute("SELECT item_name, system_qty, created_at FROM inventory_items")
+    inventory_data = cur.fetchall()
+    
+    cur.close()
+
+    return render_template('man-full.html', inventory=inventory_data)
 
 
 # =========================
