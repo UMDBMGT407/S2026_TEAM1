@@ -95,16 +95,10 @@
               <!-- Row 2 -->
               <div class="product-row">
                 <select class="product-select">
-                  <option value="" disabled selected>Product Name</option>
-                  <option>Black Tea</option><option>Chia Seeds</option>
-                  <option>Grass Jelly</option><option>Green Tea</option>
-                  <option>Hot Large Cups</option><option>Hot Med. Cups</option>
-                  <option>Jasmine Tea</option><option>Large Cups</option>
-                  <option>Lychee Jelly</option><option>Mango Bubbles</option>
-                  <option>Mango Syrup</option><option>Milk Powder</option>
-                  <option>Oolong Tea</option><option>Straws</option>
-                  <option>Tapioca Balls</option>
-                  <option>Taro Powder</option><option>Thai Powder</option>
+                    <option value="" disabled selected>Product Name</option>
+                    {% for p in products %}
+                        <option value="{{ p.id }}">{{ p.name }}</option>
+                    {% endfor %}
                 </select>
                 <input type="number" class="product-qty-input" placeholder="Qty" min="1" />
                 <span class="row-delete-btn" onclick="removeProductRow(this)">X</span>
