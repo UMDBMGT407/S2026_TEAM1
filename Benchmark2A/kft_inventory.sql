@@ -158,3 +158,145 @@ SELECT * FROM inventory_items;
 SELECT * FROM audits;
 SELECT * FROM audit_items;
 SELECT * FROM inventory_updates;
+
+-- *PURCHASE ORDERS* --
+CREATE DATABASE kft_inventory_management;
+
+USE kft_inventory_management;
+
+CREATE TABLE Suppliers (
+    supplierID INT PRIMARY KEY AUTO_INCREMENT,
+    supplierName VARCHAR(100) NOT NULL,
+    supplierAddress VARCHAR(255)
+);
+
+CREATE TABLE purchaseOrders (
+	orderID INT PRIMARY KEY AUTO_INCREMENT,
+    supplierID INT,
+    orderDate DATE NOT NULL,
+    expectedDate DATE,
+    receivedDate DATE,
+    orderStatus VARCHAR(50) DEFAULT 'Pending',
+    FOREIGN KEY (supplierID) REFERENCES Suppliers(supplierID)
+);
+
+CREATE TABLE Products (
+	productID INT PRIMARY KEY AUTO_INCREMENT,
+    productName VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE orderItems (
+	orderItemID INT PRIMARY KEY AUTO_INCREMENT,
+    orderID INT,
+    productID INT,
+    quantity INT NOT NULL,
+    FOREIGN KEY (orderID) REFERENCES PurchaseOrders(orderID),
+    FOREIGN KEY (productID) REFERENCES Products(productID)
+);
+
+INSERT INTO Suppliers (supplierID, supplierName, supplierAddress)
+VALUES ('1', 'Kung Fu Tea HQ', '589 8th Ave, 17th Floor, New York, NY 10018');
+
+INSERT INTO Products (productID, productName) VALUES
+(1, 'Aloe Vera'),
+(2, 'Assam Black Tea Leaves'),
+(3, 'Black Sugar Syrup'),
+(4, 'Brown Sugar Syrup'),
+(5, 'Bubble Tea Cups (Large)'),
+(6, 'Bubble Tea Cups (Medium)'),
+(7, 'Bubble Tea Lids'),
+(8, 'Bubble Tea Straws'),
+(9, 'Cane Sugar'),
+(10, 'Cheese Milk Foam Powder'),
+(11, 'Cheese Milk Foam Premix'),
+(12, 'Chia Seeds'),
+(13, 'Coconut Jelly'),
+(14, 'Coffee Jelly'),
+(15, 'Creamer Powder'),
+(16, 'Crystal Boba'),
+(17, 'Earl Grey Tea Leaves'),
+(18, 'Fresh Milk (Whole)'),
+(19, 'Fruit Jam – Grape'),
+(20, 'Fruit Jam – Mango'),
+(21, 'Fruit Jam – Passion Fruit'),
+(22, 'Fruit Jam – Peach'),
+(23, 'Fruit Jam – Strawberry'),
+(24, 'Grass Jelly'),
+(25, 'Green Tea Leaves'),
+(26, 'Honey'),
+(27, 'Ice (Bagged)'),
+(28, 'Jasmine Green Tea Leaves'),
+(29, 'Lychee Jelly'),
+(30, 'Matcha Powder'),
+(31, 'Milk Powder (Non-Dairy)'),
+(32, 'Oolong Tea Leaves'),
+(33, 'Oreo Crumble'),
+(34, 'Passion Fruit Syrup'),
+(35, 'Pineapple Syrup'),
+(36, 'Pudding Mix'),
+(37, 'Red Bean'),
+(38, 'Roasted Oolong Tea Leaves'),
+(39, 'Salted Cream Foam Powder'),
+(40, 'Simple Syrup'),
+(41, 'Tapioca Pearls (Boba)'),
+(42, 'Thai Tea Leaves'),
+(43, 'Tiramisu Powder'),
+(44, 'Wintermelon Syrup'),
+(45, 'Yakult');
+
+INSERT INTO purchaseOrders (orderID, supplierID, orderDate, expectedDate, receivedDate, orderStatus) VALUES
+(1, 1, '2026-02-18', '2026-02-24', '2026-02-24', 'Received'),
+(2, 1, '2026-02-24', '2026-03-01', '2026-03-01', 'Received'),
+(3, 1, '2026-02-28', '2026-03-04', '2026-03-05', 'Received'),
+(4, 1, '2026-03-05', '2026-03-11', NULL, 'Pending');
+
+-- orderItems
+-- order 1
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 1, productID, 6 FROM Products WHERE productName = 'Lychee Jelly';
+
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 1, productID, 10 FROM Products WHERE productName = 'Fresh Milk (Whole';
+
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 1, productID, 5 FROM Products WHERE productName = 'Oolong Tea Leaves';
+
+
+-- PO2
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 2, productID, 5 FROM Products WHERE productName = 'Black Sugar Syrup';
+
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 2, productID, 5 FROM Products WHERE productName = 'Green Tea Leaves';
+
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 2, productID, 4 FROM Products WHERE productName = 'Bubble Tea Cups (Large)';
+
+
+-- PO3
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 3, productID, 5 FROM Products WHERE productName = 'Chia Seeds';
+
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 3, productID, 10 FROM Products WHERE productName = 'Milk Powder (Non-Dairy)';
+
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 3, productID, 4 FROM Products WHERE productName = 'Bubble Tea Cups (Medium)';
+
+
+-- PO4
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 4, productID, 6 FROM Products WHERE productName = 'Tiramisu Powder';
+
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 4, productID, 9 FROM Products WHERE productName = 'Simple Syrup';
+
+INSERT INTO orderItems (orderID, productID, quantity)
+SELECT 4, productID, 8 FROM Products WHERE productName = 'Matcha Powder';
+
+SELECT * FROM Products;
+
+SELECT * FROM Suppliers;
+
+SELECT * FROM purchaseOrders;
+
