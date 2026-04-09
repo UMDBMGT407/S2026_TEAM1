@@ -818,25 +818,30 @@ def purchaseOrders():
     cur = mysql.connection.cursor()
  
     cur.execute("""
-    SELECT
-        po.orderID,
-        s.supplierName,
-        po.orderDate,
-        po.expectedDate,
-        po.receivedDate,
-        po.orderStatus
-    FROM purchaseOrders po
-    JOIN Suppliers s ON po.supplierID = s.supplierID
-    ORDER BY po.orderID DESC
-""")
+        SELECT
+            po.id,
+            s.supplier_name,
+            po.order_date,
+            po.expected_date,
+            po.received_date,
+            po.order_status
+        FROM purchase_orders po
+        JOIN suppliers s
+            ON po.supplier_id = s.id
+        ORDER BY po.id DESC
+    """)
     orders_raw = cur.fetchall()
  
     cur.execute("""
-    SELECT oi.orderID, p.productName, oi.quantity
-    FROM orderItems oi
-    JOIN Products p ON oi.productID = p.productID
-    ORDER BY oi.orderItemID ASC
-""")
+        SELECT
+            poi.purchase_order_id,
+            ii.item_name,
+            poi.quantity
+        FROM purchase_order_items poi
+        JOIN inventory_items ii
+            ON poi.inventory_item_id = ii.id
+        ORDER BY poi.id ASC
+    """)
     items_raw = cur.fetchall()
     cur.close()
  
@@ -882,15 +887,17 @@ def update_order_status(order_id):
     cur = mysql.connection.cursor()
     if new_status == 'Received':
         cur.execute("""
-            UPDATE purchaseOrders
-            SET orderStatus = %s, receivedDate = CURDATE()
-            WHERE orderID = %s
+            UPDATE purchase_orders
+            SET order_status = %s,
+                received_date = CURDATE()
+            WHERE id = %s
         """, (new_status, order_id))
     else:
         cur.execute("""
-            UPDATE purchaseOrders
-            SET orderStatus = %s, receivedDate = NULL
-            WHERE orderID = %s
+            UPDATE purchase_orders
+            SET order_status = %s,
+                received_date = NULL
+            WHERE id = %s
         """, (new_status, order_id))
     mysql.connection.commit()
     cur.close()
@@ -906,8 +913,8 @@ def update_order_status(order_id):
 @app.route('/purchase-orders/<int:order_id>', methods=['DELETE'])
 def delete_purchase_order(order_id):
     cur = mysql.connection.cursor()
-    cur.execute("DELETE FROM orderItems WHERE orderID = %s", (order_id,))
-    cur.execute("DELETE FROM purchaseOrders WHERE orderID = %s", (order_id,))
+    cur.execute("DELETE FROM purchase_order_items WHERE purchase_order_id = %s", (order_id,))
+    cur.execute("DELETE FROM purchase_orders WHERE id = %s", (order_id,))
     mysql.connection.commit()
     cur.close()
     return jsonify(message='Order deleted'), 200
@@ -923,11 +930,25 @@ def delete_purchase_order(order_id):
 def create_purchase_order_page():
     cur = mysql.connection.cursor()
  
-    cur.execute("SELECT supplierID, supplierName FROM Suppliers ORDER BY supplierName")
-    suppliers = [{'id': row[0], 'name': row[1]} for row in cur.fetchall()]
+    cur.execute("""
+        SELECT id, supplier_name, supplier_address
+        FROM suppliers
+        ORDER BY supplier_name
+    """)
+    suppliers = [
+        {'id': row[0], 'name': row[1], 'address': row[2]}
+        for row in cur.fetchall()
+    ]
  
-    cur.execute("SELECT productID, productName FROM Products ORDER BY productName")
-    products = [{'id': row[0], 'name': row[1]} for row in cur.fetchall()] 
+    cur.execute("""
+        SELECT id, item_name
+        FROM inventory_items
+        ORDER BY item_name
+    """)
+    products = [
+        {'id': row[0], 'name': row[1]}
+        for row in cur.fetchall()
+    ]
     
     # If no products exist yet, fall back to the default list
     if not products:
@@ -967,21 +988,21 @@ def submit_purchase_order():
     cur = mysql.connection.cursor()
  
     cur.execute("""
-        INSERT INTO purchaseOrders (supplierID, orderDate, expectedDate, orderStatus)
+        INSERT INTO purchase_orders (supplier_id, order_date, expected_date, order_status)
         VALUES (%s, %s, %s, 'Pending')
     """, (supplier_id, order_date, expected_date))
  
     new_order_id = cur.lastrowid
  
     for item in products_list:
-        product_id = item.get('product_id')
+        inventory_item_id = item.get('product_id')
         qty = item.get('qty', 0)
 
-        if product_id:
+        if inventory_item_id and qty:
             cur.execute("""
-              INSERT INTO orderItems (orderID, productID, quantity)
-              VALUES (%s, %s, %s)
-        """, (new_order_id, product_id, qty))
+                INSERT INTO purchase_order_items (purchase_order_id, inventory_item_id, quantity)
+                VALUES (%s, %s, %s)
+            """, (new_order_id, inventory_item_id, qty))
  
     # Fetch the supplier name to return to the frontend
     cur.execute("SELECT name FROM suppliers WHERE id = %s", (supplier_id,))
@@ -1013,10 +1034,11 @@ def add_supplier():
     address = data.get('address')
 
     cursor = mysql.connection.cursor()
-    cursor.execute(
-        "INSERT INTO suppliers (name, address) VALUES (%s, %s)",
-        (name, address)
-    )
+    cur.execute("""
+        INSERT INTO suppliers (supplier_name, supplier_address)
+        VALUES (%s, %s)
+    """, (name, address))
+
     mysql.connection.commit()
 
     new_id = cursor.lastrowid
@@ -1038,15 +1060,16 @@ def edit_supplier(id):
     address = data.get('address')
 
     cursor = mysql.connection.cursor()
-    cursor.execute(
-        "UPDATE suppliers SET name=%s, address=%s WHERE id=%s",
-        (name, address, id)
-    )
+    cur.execute("""
+        UPDATE suppliers
+        SET supplier_name = %s,
+            supplier_address = %s
+        WHERE id = %s
+    """, (name, address, supplier_id))
     mysql.connection.commit()
     cursor.close()
 
     return jsonify({"message": "updated"})
-
 # =========================
 Nathan's Part END
 # =========================
