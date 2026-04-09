@@ -793,7 +793,7 @@ def predictive_reports():
 Nathan's Part
 # =========================
 @app.route('/')
-def home():
+def purchase_order_page():
     return redirect(url_for('purchaseOrders'))
 
 # ── Helper: Python date → 'm/d/yyyy' string ─────────────────
