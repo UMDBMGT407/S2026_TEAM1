@@ -755,6 +755,30 @@ def inventory():
 
 
 # =========================
+# DASHBOARD
+# =========================
+
+@app.route('/dashboard')
+@login_required
+@role_required('Manager')
+def dashboard():
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT item_name, system_qty FROM inventory_items")
+    all_inventory = cur.fetchall()
+
+    cur.execute("SELECT item_name, system_qty FROM inventory_items WHERE system_qty < 10")
+    restock_items = cur.fetchall()
+
+    cur.close()
+
+    return render_template('man-dash.html', 
+                           inventory=all_inventory, 
+                           alerts=restock_items)
+
+
+# =========================
 # MICHELLE PART
 # =========================
 @app.route('/manage-users')
