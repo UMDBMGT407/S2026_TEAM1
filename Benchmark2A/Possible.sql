@@ -1,13 +1,17 @@
 CREATE DATABASE IF NOT EXISTS kft_inventory;
 USE kft_inventory;
 
--- Drop in dependency order
+-- Drop tables in dependency order
+DROP TABLE IF EXISTS drink_product;
+DROP TABLE IF EXISTS pos_transactions;
+DROP TABLE IF EXISTS order_predictions;
 DROP TABLE IF EXISTS purchase_order_items;
 DROP TABLE IF EXISTS purchase_orders;
 DROP TABLE IF EXISTS suppliers;
 DROP TABLE IF EXISTS inventory_updates;
 DROP TABLE IF EXISTS audit_items;
 DROP TABLE IF EXISTS audits;
+DROP TABLE IF EXISTS drinks;
 DROP TABLE IF EXISTS inventory_items;
 DROP TABLE IF EXISTS users;
 
@@ -22,11 +26,11 @@ CREATE TABLE users (
     role ENUM('Manager', 'ShiftLead', 'Employee') NOT NULL,
     phone VARCHAR(15),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB;
 
 -- =========================
 -- INVENTORY ITEMS
--- Master list of all inventory products/items
+-- Single master list for all ingredients / stock items
 -- =========================
 CREATE TABLE inventory_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -34,7 +38,16 @@ CREATE TABLE inventory_items (
     category VARCHAR(50) NOT NULL,
     system_qty INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB;
+
+-- =========================
+-- DRINKS
+-- Finished menu items
+-- =========================
+CREATE TABLE drinks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    drink_name VARCHAR(150) NOT NULL UNIQUE
+) ENGINE=InnoDB;
 
 -- =========================
 -- AUDITS
@@ -55,11 +68,11 @@ CREATE TABLE audits (
         FOREIGN KEY (approved_by) REFERENCES users(id)
         ON UPDATE CASCADE
         ON DELETE SET NULL
-);
+) ENGINE=InnoDB;
 
 -- =========================
 -- AUDIT ITEMS
--- Stores snapshot of each item during an audit
+-- Snapshot of each inventory item during an audit
 -- =========================
 CREATE TABLE audit_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -76,7 +89,7 @@ CREATE TABLE audit_items (
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
     CONSTRAINT uq_audit_item UNIQUE (audit_id, inventory_item_id)
-);
+) ENGINE=InnoDB;
 
 -- =========================
 -- INVENTORY UPDATES / ACTIVITY LOG
@@ -103,7 +116,7 @@ CREATE TABLE inventory_updates (
         FOREIGN KEY (audit_id) REFERENCES audits(id)
         ON UPDATE CASCADE
         ON DELETE SET NULL
-);
+) ENGINE=InnoDB;
 
 -- =========================
 -- SUPPLIERS
@@ -112,10 +125,11 @@ CREATE TABLE suppliers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     supplier_name VARCHAR(100) NOT NULL,
     supplier_address VARCHAR(255)
-);
+) ENGINE=InnoDB;
 
 -- =========================
 -- PURCHASE ORDERS
+-- Header table
 -- =========================
 CREATE TABLE purchase_orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -123,16 +137,16 @@ CREATE TABLE purchase_orders (
     order_date DATE NOT NULL,
     expected_date DATE,
     received_date DATE,
-    order_status ENUM('Pending', 'Received', 'Cancelled') DEFAULT 'Pending',
+    order_status ENUM('Pending', 'Ordered', 'Received', 'Cancelled') DEFAULT 'Pending',
     CONSTRAINT fk_purchase_orders_supplier
         FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
-);
+) ENGINE=InnoDB;
 
 -- =========================
 -- PURCHASE ORDER ITEMS
--- Links purchase orders to inventory items
+-- Each order can have multiple inventory items
 -- =========================
 CREATE TABLE purchase_order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -147,7 +161,57 @@ CREATE TABLE purchase_order_items (
         FOREIGN KEY (inventory_item_id) REFERENCES inventory_items(id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
-);
+) ENGINE=InnoDB;
+
+-- =========================
+-- ORDER PREDICTIONS
+-- Predicted reorder amounts for inventory items
+-- =========================
+CREATE TABLE order_predictions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    inventory_item_id INT NOT NULL,
+    prediction_quantity INT NOT NULL,
+    prediction_order_by_date DATE NOT NULL,
+    prediction_date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_order_predictions_inventory
+        FOREIGN KEY (inventory_item_id) REFERENCES inventory_items(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+-- =========================
+-- POS TRANSACTIONS
+-- Sales transactions for drinks
+-- =========================
+CREATE TABLE pos_transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_date DATETIME NOT NULL,
+    transaction_amount DECIMAL(10,2) NOT NULL,
+    drink_id INT NOT NULL,
+    CONSTRAINT fk_pos_transactions_drink
+        FOREIGN KEY (drink_id) REFERENCES drinks(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+-- =========================
+-- DRINK_PRODUCT
+-- Recipe / mapping table:
+-- which inventory items are used in each drink
+-- =========================
+CREATE TABLE drink_product (
+    drink_id INT NOT NULL,
+    inventory_item_id INT NOT NULL,
+    PRIMARY KEY (drink_id, inventory_item_id),
+    CONSTRAINT fk_drink_product_drink
+        FOREIGN KEY (drink_id) REFERENCES drinks(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT fk_drink_product_inventory
+        FOREIGN KEY (inventory_item_id) REFERENCES inventory_items(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
 
 -- =========================
 -- USERS DATA
@@ -177,7 +241,7 @@ INSERT INTO users (name, email, password, role, phone) VALUES
 
 -- =========================
 -- INVENTORY ITEMS DATA
--- Includes both current inventory + orderable items
+-- Includes current inventory + orderable items
 -- =========================
 INSERT INTO inventory_items (item_name, category, system_qty) VALUES
 ('Tapioca Pearls', 'Toppings', 10),
@@ -206,11 +270,11 @@ INSERT INTO inventory_items (item_name, category, system_qty) VALUES
 ('Crystal Boba', 'Toppings', 0),
 ('Earl Grey Tea Leaves', 'Tea', 0),
 ('Fresh Milk (Whole)', 'Dairy', 0),
-('Fruit Jam – Grape', 'Jam', 0),
-('Fruit Jam – Mango', 'Jam', 0),
-('Fruit Jam – Passion Fruit', 'Jam', 0),
-('Fruit Jam – Peach', 'Jam', 0),
-('Fruit Jam – Strawberry', 'Jam', 0),
+('Fruit Jam - Grape', 'Jam', 0),
+('Fruit Jam - Mango', 'Jam', 0),
+('Fruit Jam - Passion Fruit', 'Jam', 0),
+('Fruit Jam - Peach', 'Jam', 0),
+('Fruit Jam - Strawberry', 'Jam', 0),
 ('Grass Jelly', 'Toppings', 0),
 ('Green Tea Leaves', 'Tea', 0),
 ('Honey', 'Sweetener', 0),
@@ -232,6 +296,13 @@ INSERT INTO inventory_items (item_name, category, system_qty) VALUES
 ('Tiramisu Powder', 'Powder', 0),
 ('Wintermelon Syrup', 'Syrup', 0),
 ('Yakult', 'Dairy', 0);
+
+-- =========================
+-- DRINKS DATA
+-- =========================
+INSERT INTO drinks (drink_name) VALUES
+('Winter Melon Milk Tea'),
+('Brown Sugar Boba Latte');
 
 -- =========================
 -- SUPPLIER DATA
@@ -357,13 +428,79 @@ FROM inventory_items
 WHERE item_name = 'Matcha Powder';
 
 -- =========================
+-- ORDER PREDICTIONS DATA
+-- =========================
+INSERT INTO order_predictions (
+    inventory_item_id,
+    prediction_quantity,
+    prediction_order_by_date,
+    prediction_date_created
+) VALUES
+(
+    (SELECT id FROM inventory_items WHERE item_name = 'Tapioca Pearls'),
+    64,
+    '2026-04-09',
+    '2026-04-08 09:00:00'
+),
+(
+    (SELECT id FROM inventory_items WHERE item_name = 'Black Tea'),
+    30,
+    '2026-04-10',
+    '2026-04-08 09:30:00'
+);
+
+-- =========================
+-- POS TRANSACTIONS DATA
+-- =========================
+INSERT INTO pos_transactions (
+    transaction_date,
+    transaction_amount,
+    drink_id
+) VALUES
+(
+    '2026-04-08 10:15:00',
+    6.75,
+    (SELECT id FROM drinks WHERE drink_name = 'Winter Melon Milk Tea')
+),
+(
+    '2026-04-08 14:40:00',
+    7.25,
+    (SELECT id FROM drinks WHERE drink_name = 'Brown Sugar Boba Latte')
+);
+
+-- =========================
+-- DRINK / PRODUCT MAPPING DATA
+-- =========================
+INSERT INTO drink_product (drink_id, inventory_item_id) VALUES
+(
+    (SELECT id FROM drinks WHERE drink_name = 'Winter Melon Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Black Tea')
+),
+(
+    (SELECT id FROM drinks WHERE drink_name = 'Winter Melon Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Wintermelon Syrup')
+),
+(
+    (SELECT id FROM drinks WHERE drink_name = 'Brown Sugar Boba Latte'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Tapioca Pearls')
+),
+(
+    (SELECT id FROM drinks WHERE drink_name = 'Brown Sugar Boba Latte'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Brown Sugar Syrup')
+);
+
+-- =========================
 -- CHECK DATA
 -- =========================
 SELECT * FROM users;
 SELECT * FROM inventory_items;
+SELECT * FROM drinks;
 SELECT * FROM audits;
 SELECT * FROM audit_items;
 SELECT * FROM inventory_updates;
 SELECT * FROM suppliers;
 SELECT * FROM purchase_orders;
 SELECT * FROM purchase_order_items;
+SELECT * FROM order_predictions;
+SELECT * FROM pos_transactions;
+SELECT * FROM drink_product;
