@@ -786,7 +786,7 @@ def dashboard():
 @role_required('Manager')
 def manage_users():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT name, role, phone FROM users ORDER BY name ASC")
+    cur.execute("SELECT id, name, role, phone FROM users ORDER BY name ASC")
     users = cur.fetchall()
     cur.close()
 
@@ -841,6 +841,45 @@ def add_user():
 
     except Exception as e:
         print("ERROR:", e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/user/<int:id>', methods=['DELETE'])
+@login_required
+@role_required('Manager')
+def delete_user(id):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM users WHERE id = %s", (id,))
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({"message": "Deleted"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/user/<int:id>', methods=['PUT'])
+@login_required
+@role_required('Manager')
+def update_user(id):
+    try:
+        data = request.get_json()
+
+        name = data.get('name')
+        role = data.get('role')
+        phone = data.get('phone')
+
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            UPDATE users
+            SET name=%s, role=%s, phone=%s
+            WHERE id=%s
+        """, (name, role, phone, id))
+
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({"message": "Updated"})
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
