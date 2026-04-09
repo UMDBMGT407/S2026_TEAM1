@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    a,
+    button,
+    input,
+    select,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border: none;
+      text-decoration: none;
+      background: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    menu,
+    ol,
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <title>Login</title>
+</head>
+<body>
+  <div class="login-page">
+    <div class="content-wrapper container-fluid">
+
+      <div class="frame-1 d-flex align-items-center justify-content-center">
+        <h1 class="welcome-to-kung-fu-tea-silver-spring-inventory-management-system mb-0">
+          WELCOME TO KUNG FU TEA SILVER SPRING INVENTORY MANAGEMENT SYSTEM
+        </h1>
+      </div>
+
+      <div class="login-card-wrapper position-relative">
+        <img
+          class="rectangle-1"
+          src="{{ url_for('static', filename='images/rectangle-10-login.svg') }}"
+          alt="Login card background"
+        />
+
+        <div class="login-card-content position-absolute d-flex flex-column align-items-center">
+          <div class="login-user">LOGIN USER</div>
+
+          {% if error %}
+            <div class="alert alert-danger w-100 text-center mb-3">
+              {{ error }}
+            </div>
+          {% endif %}
+
+          <form
+            class="login-form w-100 d-flex flex-column align-items-center"
+            method="POST"
+            action="{{ url_for('login') }}"
+          >
+            <input
+              class="login-input form-control"
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter your email"
+              aria-label="Enter your email"
+              required
+            />
+
+            <input
+              class="login-input form-control"
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              aria-label="Enter your password"
+              required
+            />
+
+            <button type="submit" class="login-btn">Login</button>
+          </form>
+
+          <div class="new-member-contact-your-manager-to-set-up-an-account">
+            <span>
+              <span class="new-member-contact-your-manager-to-set-up-an-account-span">
+                Forgot password? New member?
+              </span>
+              <span class="new-member-contact-your-manager-to-set-up-an-account-span2">
+                <br />
+                Contact your manager to set up an account.
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-image-wrapper">
+        <img
+          class="kft-quality-image-1"
+          src="{{ url_for('static', filename='images/kft-quality-image-10.png') }}"
+          alt="Kung Fu Tea drinks"
+        />
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

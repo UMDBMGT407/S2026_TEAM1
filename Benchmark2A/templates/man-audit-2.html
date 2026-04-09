@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Reconciliation - Physical Count</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container-fluid p-0">
+  <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
+    <div class="w-100">
+      <img class="kft-logo" src="{{ url_for('static', filename='images/kft-logo0.png') }}" alt="Kung Fu Tea logo">
+
+      <div class="sidebar-nav d-flex flex-column gap-2">
+        <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/FULL/MAN-FULL/man-full.html'">
+          Full Inventory View
+        </button>
+        <button class="nav-btn active">Inventory Reconciliation</button>
+        <button class="nav-btn" onclick="window.location.href='{{ url_for('man_audit_4') }}'">
+          Activity Log
+        </button>
+        <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">
+          Dashboards & Analytics
+        </button>
+        <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
+          Predictive Reports
+        </button>
+        <button class="nav-btn" onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">
+          Manage Users
+        </button>
+
+        <button class="nav-btn two-line"
+                onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
+          Purchase Order<br>Management
+        </button>
+      </div>
+    </div>
+
+    <div class="pb-4">
+      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </div>
+  </nav>
+
+  <main class="col main-content-area">
+    <div class="content-container-centered">
+
+      <div class="rectangle-5 mb-5">
+        <h1 class="page-title">Inventory Reconciliation - Physical Count</h1>
+      </div>
+
+      <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <form method="GET" action="{{ url_for('man_audit_2') }}">
+          <input type="hidden" name="audit_id" value="{{ audit.id }}">
+          <select class="man2-category-filter" name="category" onchange="this.form.submit()">
+            <option value="all" {% if selected_category == 'all' %}selected{% endif %}>Category: All</option>
+            <option value="Powder" {% if selected_category|lower == 'powder' %}selected{% endif %}>Category: Powder</option>
+            <option value="Syrup" {% if selected_category|lower == 'syrup' %}selected{% endif %}>Category: Syrup</option>
+            <option value="Tea" {% if selected_category|lower == 'tea' %}selected{% endif %}>Category: Tea</option>
+            <option value="Packaging" {% if selected_category|lower == 'packaging' %}selected{% endif %}>Category: Packaging</option>
+            <option value="Toppings" {% if selected_category|lower == 'toppings' %}selected{% endif %}>Category: Toppings</option>
+          </select>
+        </form>
+
+        <div class="section-sub">
+          Audit ID: {{ audit.id }} | Status: {{ audit.status }}
+        </div>
+      </div>
+
+      <form method="POST" action="{{ url_for('man_audit_2', audit_id=audit.id, category=selected_category) }}">
+        <input type="hidden" name="audit_id" value="{{ audit.id }}">
+
+        <div class="man2-table-card p-4">
+          <div class="man2-table-header">
+            <div class="man2-col-ingredient">Ingredient</div>
+            <div class="man2-col-center">System Qty</div>
+            <div class="man2-col-center">Physical Count</div>
+            <div class="man2-col-center">Difference</div>
+          </div>
+
+          {% for item in inventory_items %}
+          {% set diff = item.physical_count - item.system_qty %}
+          <div class="man2-table-row">
+            <div class="man2-col-ingredient">{{ item.item_name }}</div>
+            <div class="man2-col-center">{{ item.system_qty }}</div>
+            <div class="man2-col-center">
+              <input
+                class="man2-count-input"
+                name="physical_count_{{ item.inventory_item_id }}"
+                type="number"
+                step="1"
+                value="{{ item.physical_count }}"
+              >
+            </div>
+            <div class="man2-col-center {% if diff != 0 %}text-danger{% endif %}">
+              {{ diff }}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="d-flex justify-content-end gap-3 mt-4">
+          <button class="man2-resume-btn" type="submit" name="action" value="save">
+            Save Draft
+          </button>
+          <button class="man2-start-btn" type="submit" name="action" value="submit">
+            Submit Audit
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </main>
+
+</div>
+</body>
+</html>
