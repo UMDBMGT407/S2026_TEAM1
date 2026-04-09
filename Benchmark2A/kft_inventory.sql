@@ -160,9 +160,6 @@ SELECT * FROM audit_items;
 SELECT * FROM inventory_updates;
 
 -- *PURCHASE ORDERS* --
-CREATE DATABASE kft_inventory_management;
-
-USE kft_inventory_management;
 
 CREATE TABLE Suppliers (
     supplierID INT PRIMARY KEY AUTO_INCREMENT,
