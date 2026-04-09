@@ -350,10 +350,11 @@ body {
 }
 
 .inventory-row {
-  padding: 15px 0;
+  padding: 10px 0;
   border-bottom: 1px solid rgba(150, 79, 76, 0.2);
   font-size: 20px;
   font-weight: 700;
+  min-height: 50px;
 }
 
 .col-ingredient-name, 
@@ -370,11 +371,11 @@ body {
 .col-last-updated, 
 .update-val {
   text-align: center;
-  padding-right: 15px;
+  margin-right: 15px;
 }
 
 .inventory-scroll-area {
-  max-height: 500px;
+  height: calc(100vh - 420px);
   overflow-y: auto;
   overflow-x: hidden;
   width: 100%;
