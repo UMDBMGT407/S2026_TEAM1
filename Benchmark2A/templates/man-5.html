@@ -20,29 +20,56 @@
 <div class="container-fluid p-0">
 
   <!-- SIDEBAR -->
-  <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
-    <div class="w-100">
-      <img class="kft-logo"
-        src="{{ url_for('static', filename='images/kft-logo0.png') }}"
-        alt="Kung Fu Tea logo"
-      />
+ <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
+  <div class="w-100">
+    <img class="kft-logo"
+      src="{{ url_for('static', filename='images/kft-logo0.png') }}"
+      alt="Kung Fu Tea logo"
+    />
 
-      <div class="sidebar-nav d-flex flex-column gap-2">
-        <button class="nav-btn">Full Inventory View</button>
-        <button class="nav-btn">Inventory Reconciliation</button>
-        <button class="nav-btn">Activity Log</button>
-        <button class="nav-btn">Dashboards & Analytics</button>
-        <button class="nav-btn">Predictive Reports</button>
-        <button class="nav-btn active">Manage Users</button>
-        <button class="nav-btn two-line">Purchase Order<br>Management</button>
-      </div>
+    <div class="sidebar-nav d-flex flex-column gap-2">
+      <button class="nav-btn" type="button"
+        onclick="window.location.href=''">
+        Full Inventory View
+      </button>
+
+      <button class="nav-btn" type="button"
+        onclick="window.location.href='{{ url_for('man_audit_1') }}'">
+        Inventory Reconciliation
+      </button>
+
+      <button class="nav-btn" type="button"
+        onclick="window.location.href='{{ url_for('man_audit_4') }}'">
+        Activity Log
+      </button>
+
+      <button class="nav-btn" type="button"
+        onclick="window.location.href=''">
+        Dashboards & Analytics
+      </button>
+
+      <button class="nav-btn" type="button"
+        onclick="window.location.href='{{ url_for('predictive_reports') }}'">
+        Predictive Reports
+      </button>
+
+      <button class="nav-btn active" type="button"
+        onclick="window.location.href='{{ url_for('manage_users') }}'">
+        Manage Users
+      </button>
+
+      <button class="nav-btn two-line" type="button"
+        onclick="window.location.href='{{ url_for('purchase_order_page') }}'">
+        Purchase Order<br>Management
+      </button>
     </div>
+  </div>
 
-    <div class="pb-4">
-      <a href="#" class="logout-btn">Logout</a>
-    </div>
-  </nav>
-
+  <div class="pb-4">
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+  </div>
+</nav>
+  
   <!-- MAIN -->
   <main class="col main-content-area">
     <div class="content-container-centered">
