@@ -28,20 +28,20 @@
           Activity Log
         </button>
 
-        <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/manager-dashboard/man-dash.html'">
+        <button class="nav-btn" onclick="window.location.href='{{ url_for('N/A') }}'">
           Dashboards &amp; Analytics
         </button>
 
-        <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/predictive/MAN-PREDICTIVE-7/man-predictive-7.html'">
+        <button class="nav-btn" onclick="window.location.href='{{ url_for('predictive_reports') }}'">
           Predictive Reports
         </button>
 
-        <button class="nav-btn" onclick="window.location.href='../../manage-users/MAN-AUDIT-5/user1.html'">
+        <button class="nav-btn" onclick="window.location.href='{{ url_for('manage_users') }}'">
           Manage Users
         </button>
 
         <button class="nav-btn two-line"
-          onclick="window.location.href='/S2026_TEAM1/Purchase%20Order%20Management/purchase_order_info.html'">
+          onclick="window.location.href='{{ url_for('N/A') }}'">
           Purchase Order<br>Management
         </button>
       </div>
