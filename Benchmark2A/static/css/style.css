@@ -2613,6 +2613,17 @@ select:focus {
   color: #8b4a44;
 }
 
+/*==== white box making transparent ====*/
+.man5-search-box2 input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 16px;
+  color: #8b4a44;
+  font-family: "Inria Serif", serif;
+}
+
 /* ===== ADD USER BUTTON ===== */
 
 .man5-add-new-user-rectangle {
