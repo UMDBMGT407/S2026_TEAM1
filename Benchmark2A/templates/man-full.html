@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Full Inventory View</title>
+</head>
+<body>
+  
+  <div class="container-fluid p-0">
+
+    <!-- navigation bar -->
+    <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
+      <div class="w-100">
+        <img class="kft-logo" src="{{ url_for('static', filename='images/kft-logo0.png') }}" alt="Logo">
+        <div class="sidebar-nav d-flex flex-column gap-2">
+          <button class="nav-btn active">Full Inventory View</button>
+          {% if current_user.role in ['ShiftLead'] %}
+          <button class="nav-btn" onclick="window.location.href='{{ url_for('sl_audit_1') }}'">Inventory Reconciliation</button>
+          {% endif %}
+          {% if current_user.role in ['Manager'] %}
+          <button class="nav-btn" onclick="window.location.href='{{ url_for('man_audit_1') }}'">Inventory Reconciliation</button>
+          <button class="nav-btn" onclick="window.location.href='{{ url_for('man_audit_4') }}'">Activity Log</button>
+          <button class="nav-btn" onclick="window.location.href='{{ url_for('dashboard') }}'">Dashboards &amp; Analytics</button>
+          <button class="nav-btn" onclick="window.location.href='{{ url_for('predictive_reports') }}'">Predictive Reports</button>
+          <button class="nav-btn" onclick="window.location.href='{{ url_for('manage_users') }}'">Manage Users</button>
+          <button class="nav-btn two-line" onclick="window.location.href='{{ url_for('purchase_order_page') }}'">Purchase Order<br>Management</button>
+          {% endif %}
+        </div>
+      </div>
+      <div class="pb-4">
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+      </div>
+    </nav>
+
+    <!-- main content of page -->
+    <main class="main-content-area">
+      <div class="content-container-centered">
+        
+        <div class="header-container mb-5">
+          <h1 class="page-heading">Full Inventory View</h1>
+        </div>
+
+        <div class="inventory-panel p-4">
+
+          <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div class="search-box">
+              <!--<span class="search-icon">⌕</span>-->
+              <input type="text" placeholder="Search ingredients..." id="inventorySearch">
+            </div>
+            {% if current_user.role in ['Manager', 'ShiftLead'] %}
+            <div class="inventory-action-buttons d-flex gap-3">
+              <button class="page-action-btn solid-btn" onclick="openAddIngredientPopup()">Add Ingredient</button>
+              <button class="page-action-btn outline-btn" onclick="openDeleteIngredientPopup()">Delete Ingredient</button>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="inven-table-card-bg">
+            <div class="table-header-grid">
+              <div class="col-edit"></div>
+              <div class="col-ingredient-name">Ingredient</div>
+              <div class="col-system-qty">System Qty</div>
+              <div class="col-last-updated">Last Updated</div>
+            </div>
+            
+            <div class="inventory-scroll-area" id="inventoryRows">
+
+              {% for item in inventory %}
+              <div class="inventory-row" id="row-{{ loop.index }}">
+                  <div class="col-edit">
+                      <button class="edit-icon-btn" onclick="openPopup('{{ item.item_name }}', '{{ item.system_qty }}', '{{ item.created_at }}', '{{ loop.index }}')">✎</button>
+                  </div>
+                  <div class="col-ingredient-name">
+                      <span class="ingredient-name-text">{{ item.item_name }}</span>
+                  </div>
+                  <div class="col-system-qty" id="qty-{{ loop.index }}">{{ item.system_qty }}</div>
+                  <div class="col-last-updated" id="updated-{{ loop.index }}">
+                      {{ item.created_at.strftime('%m/%d/%y, %I:%M%p') if item.created_at else 'N/A' }}
+                  </div>
+              </div>
+              {% endfor %}
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="inventoryPopup" class="inventory-popup">
+    <div class="popup-card">
+      <button class="close-popup" onclick="closePopup()">&times;</button>
+      <div class="popup-ingredient-bar"><span id="popupIngredientName"></span></div>
+      <div class="popup-info-box">
+        <div class="popup-info-top">
+          <div id="popupStock" class="popup-stock"></div>
+          <div class="popup-divider"></div>
+          <div id="popupUpdated" class="popup-updated"></div>
+        </div>
+      </div>
+      <div class="popup-toggle-row">
+        <button id="addBtn" class="inventory-btn add-btn-pos selected-btn" onclick="setMode('add')">Add</button>
+        <button id="subtractBtn" class="inventory-btn subtract-btn-pos unselected-btn" onclick="setMode('subtract')">Subtract</button>
+      </div>
+      <div class="popup-entry-box">
+        <div class="popup-entry-row">
+          <span class="popup-label">Quantity:</span>
+          <input type="number" id="popupQuantity" value="1">
+        </div>
+        <div class="popup-time-row">
+          <span id="popupDate"></span> | <span id="popupTime"></span>
+        </div>
+      </div>
+      <button class="submit-btn" onclick="submitInventoryUpdate()">Submit</button>
+    </div>
+  </div>
+  
+  <div id="addIngredientPopup" class="inventory-popup">
+    <div class="small-popup-card">
+      <button class="close-popup" onclick="closeAddIngredientPopup()">&times;</button>
+      <h2 class="small-popup-title">Add New Ingredient</h2>
+      <div class="small-popup-form">
+        <label>Name:</label>
+        <input type="text" id="newIngredientName" placeholder="Enter ingredient name">
+        <label>Starting Qty:</label>
+        <input type="number" id="newIngredientQty" placeholder="Enter quantity">
+      </div>
+      <button class="page-action-btn solid-btn small-submit-btn" onclick="submitAddIngredient()">Add</button>
+    </div>
+  </div>
+  
+  <div id="deleteIngredientPopup" class="inventory-popup">
+    <div class="small-popup-card">
+      <button class="close-popup" onclick="closeDeleteIngredientPopup()">&times;</button>
+      <h2 class="small-popup-title">Delete Ingredient</h2>
+      <div class="small-popup-form">
+        <label>Select Ingredient:</label>
+        <select id="deleteIngredientSelect"></select>
+      </div>
+      <button class="page-action-btn solid-btn small-submit-btn" onclick="submitDeleteIngredient()">Delete</button>
+    </div>
+  </div>
+  
+  <div id="toastNotification" class="toast-notification"></div>
+
+  <script>
+    let currentIngredientKey = "";
+    let currentStock = 0;
+    let currentMode = "add";
+    let ingredientCounter = 0;
+
+    function getNowParts() {
+      const now = new Date();
+      const formattedDate = `${String(now.getMonth() + 1).padStart(2, "0")}/${String(now.getDate()).padStart(2, "0")}/${now.getFullYear()}`;
+      const hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const ampm = hours >= 12 ? "PM" : "AM";
+      const displayHour = hours % 12 === 0 ? 12 : hours % 12;
+      const formattedTime = `${displayHour}:${minutes} ${ampm}`;
+      return { formattedDate, formattedTime };
+    }
+
+    function openPopup(name, stock, updated, key) {
+      currentIngredientKey = key;
+      currentStock = Number(stock);
+      currentMode = "add";
+
+      const { formattedDate, formattedTime } = getNowParts();
+
+      document.getElementById("popupIngredientName").innerText = name;
+      document.getElementById("popupStock").innerText = `Current Stocks: ${currentStock} Units`;
+      document.getElementById("popupUpdated").innerText = `Last Updated: ${updated}`;
+      document.getElementById("popupQuantity").value = 1;
+      document.getElementById("popupDate").innerText = formattedDate;
+      document.getElementById("popupTime").innerText = formattedTime;
+
+      setMode("add");
+      document.getElementById("inventoryPopup").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("inventoryPopup").style.display = "none";
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+
+      const addBtn = document.getElementById("addBtn");
+      const subtractBtn = document.getElementById("subtractBtn");
+
+      if (mode === "add") {
+        addBtn.className = "inventory-btn add-btn-pos selected-btn";
+        subtractBtn.className = "inventory-btn subtract-btn-pos unselected-btn";
+      } else {
+        addBtn.className = "inventory-btn add-btn-pos unselected-btn";
+        subtractBtn.className = "inventory-btn subtract-btn-pos selected-btn";
+      }
+    }
+
+    function submitInventoryUpdate() {
+      const qtyInput = document.getElementById("popupQuantity");
+      const changeAmount = Number(qtyInput.value);
+
+      if (!changeAmount || changeAmount <= 0) {
+        showToast("Please enter a valid quantity.");
+        return;
+      }
+
+      let newStock = currentStock;
+
+      if (currentMode === "add") {
+        newStock = currentStock + changeAmount;
+      } else {
+        newStock = currentStock - changeAmount;
+
+        if (newStock < 0) {
+          showToast("Not enough inventory to subtract that amount.");
+          return;
+        }
+      }
+
+      currentStock = newStock;
+
+      const popupDate = document.getElementById("popupDate").innerText;
+      const popupTime = document.getElementById("popupTime").innerText;
+      const updatedText = `${popupDate}, ${popupTime.toLowerCase()}`;
+
+      document.getElementById("popupStock").innerText = `Current Stocks: ${currentStock} Units`;
+      document.getElementById(`qty-${currentIngredientKey}`).innerText = currentStock;
+      document.getElementById(`updated-${currentIngredientKey}`).innerText = updatedText;
+      document.getElementById("popupUpdated").innerText = `Last Updated: ${updatedText}`;
+
+      const ingredientName = document.getElementById("popupIngredientName").innerText;
+      const actionText = currentMode === "add" ? "added to" : "subtracted from";
+      showToast(`${changeAmount} units ${actionText} ${ingredientName}. New stock: ${currentStock}.`);
+
+      closePopup();
+    }
+
+    function openAddIngredientPopup() {
+      document.getElementById("newIngredientName").value = "";
+      document.getElementById("newIngredientQty").value = "";
+      document.getElementById("addIngredientPopup").style.display = "flex";
+    }
+
+    function closeAddIngredientPopup() {
+      document.getElementById("addIngredientPopup").style.display = "none";
+    }
+
+    function submitAddIngredient() {
+      const name = document.getElementById("newIngredientName").value.trim();
+      const qty = Number(document.getElementById("newIngredientQty").value);
+
+      if (!name) {
+        showToast("Please enter an ingredient name.");
+        return;
+      }
+
+      if (isNaN(qty) || qty < 0) {
+        showToast("Please enter a valid starting quantity.");
+        return;
+      }
+
+      const key = "custom" + ingredientCounter++;
+      const { formattedDate, formattedTime } = getNowParts();
+      const updatedText = `${formattedDate}, ${formattedTime.toLowerCase()}`;
+
+      const row = document.createElement("div");
+      row.className = "inventory-row";
+      row.id = `row-${key}`;
+      row.innerHTML = `
+        <div class="col-edit text-center">
+          <button class="edit-icon-btn" type="button" onclick="openPopup('${name.replace(/'/g, "\\'")}', ${qty}, '${updatedText}', '${key}')">
+            ✎
+          </button>
+        </div>
+        <div class="col-ingredient-name">
+          <span class="ingredient-name-text">${name}</span>
+        </div>
+        <div class="col-system-qty" id="qty-${key}">${qty}</div>
+        <div class="col-last-updated" id="updated-${key}">${updatedText}</div>
+      `;
+
+      document.getElementById("inventoryRows").appendChild(row);
+      updateDeleteIngredientOptions();
+      showToast(`${name} was added to inventory.`);
+      closeAddIngredientPopup();
+    }
+
+    function openDeleteIngredientPopup() {
+      updateDeleteIngredientOptions();
+      document.getElementById("deleteIngredientPopup").style.display = "flex";
+    }
+
+    function closeDeleteIngredientPopup() {
+      document.getElementById("deleteIngredientPopup").style.display = "none";
+    }
+
+    function updateDeleteIngredientOptions() {
+      const select = document.getElementById("deleteIngredientSelect");
+      select.innerHTML = '<option value="" disabled selected>Select an ingredient</option>';
+
+      const rows = document.querySelectorAll(".inventory-row");
+      rows.forEach((row) => {
+        // Look for the span containing the name
+        const nameSpan = row.querySelector(".ingredient-name-text");
+        if (nameSpan) {
+          const option = document.createElement("option");
+          option.value = row.id;
+          option.textContent = nameSpan.textContent.trim();
+          select.appendChild(option);
+        }
+      });
+    }
+
+    function submitDeleteIngredient() {
+      const select = document.getElementById("deleteIngredientSelect");
+      const rowId = select.value;
+
+      if (!rowId) {
+        showToast("Please select an ingredient to delete.");
+        return;
+      }
+
+      const row = document.getElementById(rowId);
+      const nameSpan = row.querySelector(".ingredient-name-text");
+      const ingredientName = nameSpan ? nameSpan.textContent.trim() : "Ingredient";
+
+      row.remove();
+      showToast(`${ingredientName} was deleted from inventory.`);
+      closeDeleteIngredientPopup();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toastNotification");
+      toast.innerText = message;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2500);
+    }
+
+    window.onclick = function (event) {
+      if (event.target === document.getElementById("inventoryPopup")) {
+        closePopup();
+      }
+      if (event.target === document.getElementById("addIngredientPopup")) {
+        closeAddIngredientPopup();
+      }
+      if (event.target === document.getElementById("deleteIngredientPopup")) {
+        closeDeleteIngredientPopup();
+      }
+    };
+  </script>
+</body>
+</html>
