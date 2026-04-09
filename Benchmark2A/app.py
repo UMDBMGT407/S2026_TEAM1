@@ -794,10 +794,22 @@ def predictive_reports():
 # =========================
 
 # ── Helper: Python date → 'm/d/yyyy' string ─────────────────
+from datetime import datetime
+
 def fmt_date(d):
-    if d is None:
+    if not d:
         return None
-    return f"{d.month}/{d.day}/{d.year}"
+
+    # If it's already a date object
+    if hasattr(d, 'month'):
+        return f"{d.month}/{d.day}/{d.year}"
+
+    # If it's a string
+    try:
+        parsed = datetime.strptime(d, "%Y-%m-%d")
+        return f"{parsed.month}/{parsed.day}/{parsed.year}"
+    except:
+        return d  # fallback (won’t crash)
  
  
 # ============================================================
