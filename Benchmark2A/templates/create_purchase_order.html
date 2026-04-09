@@ -18,20 +18,21 @@
         <img class="kft-logo" src="{{ url_for('static', filename='/images/kft-logo0.png') }}" />
 
         <div class="sidebar-nav d-flex flex-column gap-2">
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-full.html'">Full Inventory View</button>
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-audit-1.html'">Inventory Reconciliation</button>
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-audit-4.html'">Activity Log</button>
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-dash.html'">Dashboards & Analytics</button>
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-predictive-7.html'">Predictive Reports</button>
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-5.html'">Manage Users</button>
-          <button class="nav-btn active two-line">Purchase Order Management</button>
+          <a class="nav-btn" href="{{ url_for('home') }}">Full Inventory View</a>
+          <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Inventory Reconciliation</a>
+          <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Activity Log</a>
+          <a class="nav-btn" href="{{ url_for('home') }}">Dashboards &amp; Analytics</a>
+          <a class="nav-btn" href" href="{{ url_for('predictive_reports') }}">Predictive Reports</a>
+          <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
+          <a class="nav-btn active two-line" href="{{ url_for('purchaseOrders') }}">Purchase Order Management</a>
           
       </div>
     </div>
 
     <div class="pb-4">
-      <a href="/S2026_TEAM1/Benchmark2A/templates/loginhtml" class="logout-btn">Logout</a>
+      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
     </div>
+
 
   </nav>
 
