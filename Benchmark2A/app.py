@@ -392,8 +392,7 @@ def approve_audit(audit_id, manager_id):
     items = get_audit_items(audit_id)
     cur = mysql.connection.cursor()
 
-    # This is the key fix:
-    # use the audit conductor for the activity log
+    
     log_user_id = audit['conducted_by']
 
     for item in items:
