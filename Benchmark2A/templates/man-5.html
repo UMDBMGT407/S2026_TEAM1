@@ -59,7 +59,7 @@
       </button>
 
       <button class="nav-btn two-line" type="button"
-        onclick="window.location.href='{{ url_for('purchase_order_page') }}'">
+        onclick="window.location.href='{{ url_for('purchaseOrders') }}'">
         Purchase Order<br>Management
       </button>
     </div>
@@ -119,9 +119,9 @@
               {% for user in users %}
               <div class="man5-name-1">
                 <div class="man5-frame-2">
-                  <div>{{ user[0] }}</div>
-                  <div>{{ user[1] }}</div>
-                  <div>{{ user[2] }}</div>
+                  <div>{{ user['name'] }}</div>
+                  <div>{{ user['role'] }}</div>
+                  <div>{{ user['phone'] }}</div>
                   <div>Active</div>
                 </div>
               </div>
