@@ -1071,7 +1071,7 @@ def edit_supplier(id):
 
     return jsonify({"message": "updated"})
 # =========================
-Nathan's Part END
+#Nathan's Part END
 # =========================
 
 # =========================
