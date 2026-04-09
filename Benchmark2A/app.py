@@ -741,6 +741,48 @@ def sl_audit_3():
 @role_required('Employee')
 def employee_home():
     return '<h1>Employee home placeholder</h1>'
+# =========================
+# Michelle Part start
+# =========================
+@app.route('/manage-users')
+def manage_users():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT name, role, phone FROM users")
+    users = cur.fetchall()
+    cur.close()
+
+    return render_template('man-5.html', users=users)
+
+
+# =========================
+# ADD USER (POST)
+# =========================
+@app.route('/user', methods=['POST'])
+def add_user():
+    try:
+        data = request.get_json()
+
+        name = data.get('name')
+        role = data.get('role')
+        phone = data.get('phone')
+
+        cur = mysql.connection.cursor()
+        cur.execute(
+            "INSERT INTO users (name, role, phone) VALUES (%s, %s, %s)",
+            (name, role, phone)
+        )
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({"message": "User added successfully"})
+
+    except Exception as e:
+        print("ERROR:", e)  # 👈 this shows error in terminal
+        return jsonify({"error": str(e)}), 500
+# =========================
+# Michelle Part end
+# =========================
+
 
 
 # =========================
