@@ -926,6 +926,8 @@ def delete_purchase_order(order_id):
 # ============================================================
  
 @app.route('/purchase-orders/new', methods=['GET', 'POST'])
+@login_required
+@role_required('Manager')
 def create_purchase_order_page():
     cur = mysql.connection.cursor()
  
