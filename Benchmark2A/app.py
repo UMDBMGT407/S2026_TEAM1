@@ -783,7 +783,11 @@ def add_user():
 # Michelle Part end
 # =========================
 
-
+@app.route("/predictive")
+@login_required
+@role_required('Manager')
+def predictive_reports():
+    return render_template("man-predictive-7.html")
 
 # =========================
 # RUN APP
