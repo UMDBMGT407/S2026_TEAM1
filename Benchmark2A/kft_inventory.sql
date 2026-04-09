@@ -14,7 +14,7 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role ENUM('Manager', 'ShiftLead', 'Employee') NOT NULL,
-    phone_number VARCHAR(15),
+    phone VARCHAR(15),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
