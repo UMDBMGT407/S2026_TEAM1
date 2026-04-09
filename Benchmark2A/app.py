@@ -789,6 +789,269 @@ def add_user():
 def predictive_reports():
     return render_template("man-predictive-7.html")
 
+
+# =========================
+Nathan's Part
+# =========================
+@app.route('/')
+def home():
+    return redirect(url_for('purchaseOrders'))
+
+# ── Helper: Python date → 'm/d/yyyy' string ─────────────────
+def fmt_date(d):
+    if d is None:
+        return None
+    return f"{d.month}/{d.day}/{d.year}"
+ 
+ 
+# ============================================================
+# PAGE: Purchase Order Info
+# GET /purchase-orders
+# Reads all orders + items + suppliers from SQL,
+# renders purchase_order_info.html with live data.
+# ============================================================
+
+# ─────────────────────────────────────────────
+# VIEW PURCHASE ORDERS
+# ─────────────────────────────────────────────
+@app.route('/purchase-orders', methods=['GET', 'POST'])
+def purchaseOrders():
+    cur = mysql.connection.cursor()
+ 
+    cur.execute("""
+    SELECT
+        po.orderID,
+        s.supplierName,
+        po.orderDate,
+        po.expectedDate,
+        po.receivedDate,
+        po.orderStatus
+    FROM purchaseOrders po
+    JOIN Suppliers s ON po.supplierID = s.supplierID
+    ORDER BY po.orderID DESC
+""")
+    orders_raw = cur.fetchall()
+ 
+    cur.execute("""
+    SELECT oi.orderID, p.productName, oi.quantity
+    FROM orderItems oi
+    JOIN Products p ON oi.productID = p.productID
+    ORDER BY oi.orderItemID ASC
+""")
+    items_raw = cur.fetchall()
+    cur.close()
+ 
+    # Group items by order id  →  {1: [{name, qty}, ...], ...}
+    items_by_order = {}
+    for order_id, product_name, quantity in items_raw:
+        items_by_order.setdefault(order_id, []).append({
+            'name': product_name,
+            'qty':  quantity
+        })
+ 
+    orders = []
+    for row in orders_raw:
+        oid, supplier, order_date, expected_date, received_date, status = row
+        orders.append({
+            'id':            oid,
+            'supplier':      supplier,
+            'order_date':    fmt_date(order_date),
+            'expected_date': fmt_date(expected_date),
+            'received_date': fmt_date(received_date),
+            'status':        status,
+            'items':         items_by_order.get(oid, [])
+        })
+ 
+    return render_template('purchase_order_info.html', orders=orders)
+ 
+ 
+# ============================================================
+# API: Update order status
+# PATCH /purchase-orders/<id>/status
+# Body JSON: { "status": "Received" }
+# ============================================================
+ 
+@app.route('/purchase-orders/<int:order_id>/status', methods=['PATCH'])
+def update_order_status(order_id):
+    if not request.is_json:
+        return jsonify(error='JSON required'), 400
+ 
+    new_status = request.get_json().get('status')
+    if new_status not in ('Pending', 'Received'):
+        return jsonify(error='Invalid status'), 400
+ 
+    cur = mysql.connection.cursor()
+    if new_status == 'Received':
+        cur.execute("""
+            UPDATE purchaseOrders
+            SET orderStatus = %s, receivedDate = CURDATE()
+            WHERE orderID = %s
+        """, (new_status, order_id))
+    else:
+        cur.execute("""
+            UPDATE purchaseOrders
+            SET orderStatus = %s, receivedDate = NULL
+            WHERE orderID = %s
+        """, (new_status, order_id))
+    mysql.connection.commit()
+    cur.close()
+ 
+    return jsonify(message='Status updated', received_date=fmt_date(__import__('datetime').date.today()) if new_status == 'Received' else None), 200
+ 
+ 
+# ============================================================
+# API: Delete a purchase order
+# DELETE /purchase-orders/<id>
+# ============================================================
+ 
+@app.route('/purchase-orders/<int:order_id>', methods=['DELETE'])
+def delete_purchase_order(order_id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM orderItems WHERE orderID = %s", (order_id,))
+    cur.execute("DELETE FROM purchaseOrders WHERE orderID = %s", (order_id,))
+    mysql.connection.commit()
+    cur.close()
+    return jsonify(message='Order deleted'), 200
+ 
+ 
+# ============================================================
+# PAGE: Create Purchase Order
+# GET /purchase-orders/new
+# Reads suppliers and products from SQL for the dropdowns.
+# ============================================================
+ 
+@app.route('/purchase-orders/new', methods=['GET', 'POST'])
+def create_purchase_order_page():
+    cur = mysql.connection.cursor()
+ 
+    cur.execute("SELECT supplierID, supplierName FROM Suppliers ORDER BY supplierName")
+    suppliers = [{'id': row[0], 'name': row[1]} for row in cur.fetchall()]
+ 
+    cur.execute("SELECT productID, productName FROM Products ORDER BY productName")
+    products = [{'id': row[0], 'name': row[1]} for row in cur.fetchall()] 
+    
+    # If no products exist yet, fall back to the default list
+    if not products:
+        products = [
+            'Black Tea', 'Chia Seeds', 'Grass Jelly', 'Green Tea',
+            'Hot Large Cups', 'Hot Med. Cups', 'Jasmine Tea', 'Large Cups',
+            'Lychee Jelly', 'Mango Bubbles', 'Mango Syrup', 'Milk Powder',
+            'Oolong Tea', 'Straws', 'Tapioca Balls', 'Taro Powder', 'Thai Powder'
+        ]
+ 
+    cur.close()
+    return render_template('create_purchase_order.html',
+                           suppliers=suppliers,
+                           products=products)
+ 
+ 
+# ============================================================
+# API: Submit new purchase order
+# POST /purchase-orders
+# Body JSON: { supplier_id, date, expectedDate, products:[{name,qty}] }
+# ============================================================
+ 
+@app.route('/purchase-orders', methods=['POST'])
+def submit_purchase_order():
+    if not request.is_json:
+        return jsonify(error='JSON required'), 400
+ 
+    data          = request.get_json()
+    supplier_id   = data.get('supplier_id')
+    order_date    = data.get('date')
+    expected_date = data.get('expectedDate') or None
+    products_list = data.get('products', [])
+ 
+    if not supplier_id or not order_date or not products_list:
+        return jsonify(error='Supplier, date, and at least one product are required'), 400
+ 
+    cur = mysql.connection.cursor()
+ 
+    cur.execute("""
+        INSERT INTO purchaseOrders (supplierID, orderDate, expectedDate, orderStatus)
+        VALUES (%s, %s, %s, 'Pending')
+    """, (supplier_id, order_date, expected_date))
+ 
+    new_order_id = cur.lastrowid
+ 
+    for item in products_list:
+        product_id = item.get('product_id')
+        qty = item.get('qty', 0)
+
+        if product_id:
+            cur.execute("""
+              INSERT INTO orderItems (orderID, productID, quantity)
+              VALUES (%s, %s, %s)
+        """, (new_order_id, product_id, qty))
+ 
+    # Fetch the supplier name to return to the frontend
+    cur.execute("SELECT name FROM suppliers WHERE id = %s", (supplier_id,))
+    supplier_row  = cur.fetchone()
+    supplier_name = supplier_row[0] if supplier_row else ''
+ 
+    mysql.connection.commit()
+    cur.close()
+ 
+    return jsonify(
+        message='Order created',
+        order_id=new_order_id,
+        supplier=supplier_name,
+        order_date=order_date,
+        expected_date=expected_date
+    ), 201
+ 
+ 
+# ============================================================
+# API: Add new supplier
+# POST /suppliers
+# Body JSON: { "name": "...", "address": "..." }
+# ============================================================
+ 
+@app.route('/suppliers', methods=['POST'])
+def add_supplier():
+    data = request.get_json()
+    name = data.get('name')
+    address = data.get('address')
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "INSERT INTO suppliers (name, address) VALUES (%s, %s)",
+        (name, address)
+    )
+    mysql.connection.commit()
+
+    new_id = cursor.lastrowid
+    cursor.close()
+
+    return jsonify(message='Supplier updated', name=name, address=address), 200
+ 
+ 
+# ============================================================
+# API: Edit existing supplier
+# PATCH /suppliers/<id>
+# Body JSON: { "name": "...", "address": "..." }
+# ============================================================
+ 
+@app.route('/suppliers/<int:id>', methods=['PATCH'])
+def edit_supplier(id):
+    data = request.get_json()
+    name = data.get('name')
+    address = data.get('address')
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "UPDATE suppliers SET name=%s, address=%s WHERE id=%s",
+        (name, address, id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+    return jsonify({"message": "updated"})
+
+# =========================
+Nathan's Part END
+# =========================
+
 # =========================
 # RUN APP
 # =========================
