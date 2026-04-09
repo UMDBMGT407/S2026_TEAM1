@@ -792,9 +792,6 @@ def predictive_reports():
 # =========================
 # Nathan's Part
 # =========================
-@app.route('/')
-def purchase_order_page():
-    return redirect(url_for('purchaseOrders'))
 
 # ── Helper: Python date → 'm/d/yyyy' string ─────────────────
 def fmt_date(d):
@@ -814,6 +811,8 @@ def fmt_date(d):
 # VIEW PURCHASE ORDERS
 # ─────────────────────────────────────────────
 @app.route('/purchase-orders', methods=['GET', 'POST'])
+@login_required
+@role_required('Manager')
 def purchaseOrders():
     cur = mysql.connection.cursor()
  
