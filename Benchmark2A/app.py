@@ -1,13 +1,11 @@
-
 # =========================
 # FELICIA PART OF APP.PY
 # =========================
 
-
 # =========================
 # IMPORTS
 # =========================
-from flask import Flask, request, render_template, redirect, url_for, abort
+from flask import Flask, request, render_template, redirect, url_for, abort, jsonify
 from flask_mysqldb import MySQL
 from flask_login import (
     LoginManager,
@@ -17,7 +15,7 @@ from flask_login import (
     current_user,
     UserMixin
 )
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
 
 
@@ -392,7 +390,6 @@ def approve_audit(audit_id, manager_id):
     items = get_audit_items(audit_id)
     cur = mysql.connection.cursor()
 
-    
     log_user_id = audit['conducted_by']
 
     for item in items:
@@ -487,6 +484,13 @@ def audit_access_allowed(audit, user):
         return True
 
     return audit['conducted_by'] == int(user.id)
+
+
+# ── Helper: Python date → 'm/d/yyyy' string ─────────────────
+def fmt_date(d):
+    if d is None:
+        return None
+    return f"{d.month}/{d.day}/{d.year}"
 
 
 # =========================
@@ -740,23 +744,26 @@ def sl_audit_3():
 @role_required('Employee')
 def employee_home():
     return '<h1>Employee home placeholder</h1>'
+
+
 # =========================
-# Michelle Part start
+# MICHELLE PART
 # =========================
 @app.route('/manage-users')
+@login_required
+@role_required('Manager')
 def manage_users():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT name, role, phone FROM users")
+    cur.execute("SELECT name, role, phone FROM users ORDER BY name ASC")
     users = cur.fetchall()
     cur.close()
 
     return render_template('man-5.html', users=users)
 
 
-# =========================
-# ADD USER (POST)
-# =========================
 @app.route('/user', methods=['POST'])
+@login_required
+@role_required('Manager')
 def add_user():
     try:
         data = request.get_json()
@@ -765,22 +772,45 @@ def add_user():
         role = data.get('role')
         phone = data.get('phone')
 
+        if not name or not role:
+            return jsonify({"error": "Name and role are required"}), 400
+
+        base_email = name.lower().replace(" ", "") + "@kft.com"
+
         cur = mysql.connection.cursor()
+
+        email = base_email
+        counter = 1
+        while True:
+            cur.execute("SELECT id FROM users WHERE email = %s", (email,))
+            existing = cur.fetchone()
+            if not existing:
+                break
+            email = name.lower().replace(" ", "") + str(counter) + "@kft.com"
+            counter += 1
+
+        password_hash = generate_password_hash("default123")
+
         cur.execute(
-            "INSERT INTO users (name, role, phone) VALUES (%s, %s, %s)",
-            (name, role, phone)
+            """
+            INSERT INTO users (name, email, password, role, phone)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (name, email, password_hash, role, phone)
         )
         mysql.connection.commit()
         cur.close()
 
-        return jsonify({"message": "User added successfully"})
+        return jsonify({
+            "message": "User added successfully",
+            "email": email,
+            "default_password": "default123"
+        })
 
     except Exception as e:
-        print("ERROR:", e)  # 👈 this shows error in terminal
+        print("ERROR:", e)
         return jsonify({"error": str(e)}), 500
-# =========================
-# Michelle Part end
-# =========================
+
 
 @app.route("/predictive")
 @login_required
@@ -790,44 +820,14 @@ def predictive_reports():
 
 
 # =========================
-# Nathan's Part
+# NATHAN'S PART
 # =========================
-
-# ── Helper: Python date → 'm/d/yyyy' string ─────────────────
-from datetime import datetime
-
-def fmt_date(d):
-    if not d:
-        return None
-
-    # If it's already a date object
-    if hasattr(d, 'month'):
-        return f"{d.month}/{d.day}/{d.year}"
-
-    # If it's a string
-    try:
-        parsed = datetime.strptime(d, "%Y-%m-%d")
-        return f"{parsed.month}/{parsed.day}/{parsed.year}"
-    except:
-        return d  # fallback (won’t crash)
- 
- 
-# ============================================================
-# PAGE: Purchase Order Info
-# GET /purchase-orders
-# Reads all orders + items + suppliers from SQL,
-# renders purchase_order_info.html with live data.
-# ============================================================
-
-# ─────────────────────────────────────────────
-# VIEW PURCHASE ORDERS
-# ─────────────────────────────────────────────
-@app.route('/purchase-orders', methods=['GET', 'POST'])
+@app.route('/purchase-orders', methods=['GET'])
 @login_required
 @role_required('Manager')
 def purchaseOrders():
     cur = mysql.connection.cursor()
- 
+
     cur.execute("""
         SELECT
             po.id,
@@ -842,7 +842,7 @@ def purchaseOrders():
         ORDER BY po.id DESC
     """)
     orders_raw = cur.fetchall()
- 
+
     cur.execute("""
         SELECT
             poi.purchase_order_id,
@@ -855,47 +855,53 @@ def purchaseOrders():
     """)
     items_raw = cur.fetchall()
     cur.close()
- 
-    # Group items by order id  →  {1: [{name, qty}, ...], ...}
+
     items_by_order = {}
-    for order_id, product_name, quantity in items_raw:
+    for row in items_raw:
+        order_id = row['purchase_order_id']
+        product_name = row['item_name']
+        quantity = row['quantity']
+
         items_by_order.setdefault(order_id, []).append({
             'name': product_name,
-            'qty':  quantity
+            'qty': quantity
         })
- 
+
     orders = []
     for row in orders_raw:
-        oid, supplier, order_date, expected_date, received_date, status = row
+        oid = row['id']
+        supplier = row['supplier_name']
+        order_date = row['order_date']
+        expected_date = row['expected_date']
+        received_date = row['received_date']
+        status = row['order_status']
+
         orders.append({
-            'id':            oid,
-            'supplier':      supplier,
-            'order_date':    fmt_date(order_date),
+            'id': oid,
+            'supplier': supplier,
+            'order_date': fmt_date(order_date),
             'expected_date': fmt_date(expected_date),
             'received_date': fmt_date(received_date),
-            'status':        status,
-            'items':         items_by_order.get(oid, [])
+            'status': status,
+            'items': items_by_order.get(oid, [])
         })
- 
+
     return render_template('purchase_order_info.html', orders=orders)
- 
- 
-# ============================================================
-# API: Update order status
-# PATCH /purchase-orders/<id>/status
-# Body JSON: { "status": "Received" }
-# ============================================================
- 
+
+
 @app.route('/purchase-orders/<int:order_id>/status', methods=['PATCH'])
+@login_required
+@role_required('Manager')
 def update_order_status(order_id):
     if not request.is_json:
         return jsonify(error='JSON required'), 400
- 
+
     new_status = request.get_json().get('status')
-    if new_status not in ('Pending', 'Received'):
+    if new_status not in ('Pending', 'Received', 'Ordered', 'Cancelled'):
         return jsonify(error='Invalid status'), 400
- 
+
     cur = mysql.connection.cursor()
+
     if new_status == 'Received':
         cur.execute("""
             UPDATE purchase_orders
@@ -910,103 +916,96 @@ def update_order_status(order_id):
                 received_date = NULL
             WHERE id = %s
         """, (new_status, order_id))
+
     mysql.connection.commit()
     cur.close()
- 
-    return jsonify(message='Status updated', received_date=fmt_date(__import__('datetime').date.today()) if new_status == 'Received' else None), 200
- 
- 
-# ============================================================
-# API: Delete a purchase order
-# DELETE /purchase-orders/<id>
-# ============================================================
- 
+
+    return jsonify(
+        message='Status updated',
+        received_date=fmt_date(__import__('datetime').date.today()) if new_status == 'Received' else None
+    ), 200
+
+
 @app.route('/purchase-orders/<int:order_id>', methods=['DELETE'])
+@login_required
+@role_required('Manager')
 def delete_purchase_order(order_id):
     cur = mysql.connection.cursor()
     cur.execute("DELETE FROM purchase_order_items WHERE purchase_order_id = %s", (order_id,))
     cur.execute("DELETE FROM purchase_orders WHERE id = %s", (order_id,))
     mysql.connection.commit()
     cur.close()
+
     return jsonify(message='Order deleted'), 200
- 
- 
-# ============================================================
-# PAGE: Create Purchase Order
-# GET /purchase-orders/new
-# Reads suppliers and products from SQL for the dropdowns.
-# ============================================================
- 
-@app.route('/purchase-orders/new', methods=['GET', 'POST'])
+
+
+@app.route('/purchase-orders/new', methods=['GET'])
 @login_required
 @role_required('Manager')
 def create_purchase_order_page():
     cur = mysql.connection.cursor()
- 
+
     cur.execute("""
         SELECT id, supplier_name, supplier_address
         FROM suppliers
         ORDER BY supplier_name
     """)
     suppliers = [
-        {'id': row[0], 'name': row[1], 'address': row[2]}
+        {
+            'id': row['id'],
+            'name': row['supplier_name'],
+            'address': row['supplier_address']
+        }
         for row in cur.fetchall()
     ]
- 
+
     cur.execute("""
         SELECT id, item_name
         FROM inventory_items
         ORDER BY item_name
     """)
     products = [
-        {'id': row[0], 'name': row[1]}
+        {
+            'id': row['id'],
+            'name': row['item_name']
+        }
         for row in cur.fetchall()
     ]
-    
-    # If no products exist yet, fall back to the default list
-    if not products:
-        products = [
-            'Black Tea', 'Chia Seeds', 'Grass Jelly', 'Green Tea',
-            'Hot Large Cups', 'Hot Med. Cups', 'Jasmine Tea', 'Large Cups',
-            'Lychee Jelly', 'Mango Bubbles', 'Mango Syrup', 'Milk Powder',
-            'Oolong Tea', 'Straws', 'Tapioca Balls', 'Taro Powder', 'Thai Powder'
-        ]
- 
+
     cur.close()
-    return render_template('create_purchase_order.html',
-                           suppliers=suppliers,
-                           products=products)
- 
- 
-# ============================================================
-# API: Submit new purchase order
-# POST /purchase-orders
-# Body JSON: { supplier_id, date, expectedDate, products:[{name,qty}] }
-# ============================================================
- 
+
+    return render_template(
+        'create_purchase_order.html',
+        suppliers=suppliers,
+        products=products
+    )
+
+
 @app.route('/purchase-orders', methods=['POST'])
+@login_required
+@role_required('Manager')
 def submit_purchase_order():
     if not request.is_json:
         return jsonify(error='JSON required'), 400
- 
-    data          = request.get_json()
-    supplier_id   = data.get('supplier_id')
-    order_date    = data.get('date')
+
+    data = request.get_json()
+    supplier_id = data.get('supplier_id')
+    order_date = data.get('date')
     expected_date = data.get('expectedDate') or None
     products_list = data.get('products', [])
- 
+
     if not supplier_id or not order_date or not products_list:
         return jsonify(error='Supplier, date, and at least one product are required'), 400
- 
+
     cur = mysql.connection.cursor()
- 
+
     cur.execute("""
         INSERT INTO purchase_orders (supplier_id, order_date, expected_date, order_status)
         VALUES (%s, %s, %s, 'Pending')
     """, (supplier_id, order_date, expected_date))
- 
+
     new_order_id = cur.lastrowid
- 
+
     for item in products_list:
         inventory_item_id = item.get('product_id')
         qty = item.get('qty', 0)
@@ -1016,15 +1015,14 @@ def submit_purchase_order():
                 INSERT INTO purchase_order_items (purchase_order_id, inventory_item_id, quantity)
                 VALUES (%s, %s, %s)
             """, (new_order_id, inventory_item_id, qty))
- 
-    # Fetch the supplier name to return to the frontend
-    cur.execute("SELECT name FROM suppliers WHERE id = %s", (supplier_id,))
-    supplier_row  = cur.fetchone()
-    supplier_name = supplier_row[0] if supplier_row else ''
- 
+
+    cur.execute("SELECT supplier_name FROM suppliers WHERE id = %s", (supplier_id,))
+    supplier_row = cur.fetchone()
+    supplier_name = supplier_row['supplier_name'] if supplier_row else ''
+
     mysql.connection.commit()
     cur.close()
- 
+
     return jsonify(
         message='Order created',
         order_id=new_order_id,
@@ -1032,60 +1030,57 @@ def submit_purchase_order():
         order_date=order_date,
         expected_date=expected_date
     ), 201
- 
- 
-# ============================================================
-# API: Add new supplier
-# POST /suppliers
-# Body JSON: { "name": "...", "address": "..." }
-# ============================================================
- 
+
+
 @app.route('/suppliers', methods=['POST'])
+@login_required
+@role_required('Manager')
 def add_supplier():
     data = request.get_json()
     name = data.get('name')
     address = data.get('address')
 
-    cursor = mysql.connection.cursor()
+    if not name:
+        return jsonify(error='Supplier name is required'), 400
+
+    cur = mysql.connection.cursor()
     cur.execute("""
         INSERT INTO suppliers (supplier_name, supplier_address)
         VALUES (%s, %s)
     """, (name, address))
 
     mysql.connection.commit()
+    new_id = cur.lastrowid
+    cur.close()
 
-    new_id = cursor.lastrowid
-    cursor.close()
+    return jsonify(
+        message='Supplier added',
+        id=new_id,
+        name=name,
+        address=address
+    ), 200
 
-    return jsonify(message='Supplier updated', name=name, address=address), 200
- 
- 
-# ============================================================
-# API: Edit existing supplier
-# PATCH /suppliers/<id>
-# Body JSON: { "name": "...", "address": "..." }
-# ============================================================
- 
+
 @app.route('/suppliers/<int:id>', methods=['PATCH'])
+@login_required
+@role_required('Manager')
 def edit_supplier(id):
     data = request.get_json()
     name = data.get('name')
     address = data.get('address')
 
-    cursor = mysql.connection.cursor()
+    cur = mysql.connection.cursor()
     cur.execute("""
         UPDATE suppliers
         SET supplier_name = %s,
             supplier_address = %s
         WHERE id = %s
-    """, (name, address, supplier_id))
+    """, (name, address, id))
     mysql.connection.commit()
-    cursor.close()
+    cur.close()
 
     return jsonify({"message": "updated"})
-# =========================
-#Nathan's Part END
-# =========================
+
 
 # =========================
 # RUN APP
