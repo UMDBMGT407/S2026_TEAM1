@@ -1152,6 +1152,31 @@ def edit_supplier(id):
 
     return jsonify({"message": "updated"})
 
+@app.route('/suppliers/<int:id>', methods=['DELETE'])
+@login_required
+@role_required('Manager')
+def delete_supplier(id):
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT COUNT(*) AS count FROM purchase_orders WHERE supplier_id = %s", (id,))
+    result = cur.fetchone()
+    count = result['count'] if result else 0
+
+    if count > 0:
+        cur.close()
+        return jsonify(error='Cannot delete a supplier that is used by purchase orders.'), 400
+
+    cur.execute("DELETE FROM suppliers WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify(message='Supplier deleted'), 200
+
+# =========================
+# RUN APP
+# =========================
+if __name__ == '__main__':
+    app.run(debug=True)
 
 # =========================
 # RUN APP
