@@ -1173,11 +1173,162 @@ def delete_supplier(id):
     return jsonify(message='Supplier deleted'), 200
 
 # =========================
-# RUN APP
+# Leon's Part
 # =========================
-if __name__ == '__main__':
-    app.run(debug=True)
-
+ 
+# =========================
+# INVENTORY CRUD API
+# =========================
+@app.route('/inventory/<int:item_id>', methods=['PATCH'])
+@login_required
+@role_required('Manager', 'ShiftLead')
+def update_inventory_item(item_id):
+    data = request.get_json()
+    if not data:
+        return jsonify(error='JSON required'), 400
+    action = data.get('action')
+    try:
+        qty = int(data.get('qty', 0))
+    except (ValueError, TypeError):
+        return jsonify(error='qty must be an integer'), 400
+    if qty <= 0:
+        return jsonify(error='qty must be positive'), 400
+    if action not in ('add', 'subtract'):
+        return jsonify(error='action must be add or subtract'), 400
+ 
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id, system_qty FROM inventory_items WHERE id = %s", (item_id,))
+    item = cur.fetchone()
+ 
+    if not item:
+        cur.close()
+        return jsonify(error='Item not found'), 404
+ 
+    old_qty = item['system_qty']
+ 
+    if action == 'add':
+        new_qty = old_qty + qty
+        action_type = 'Add'
+        qty_change = qty
+    else:
+        new_qty = old_qty - qty
+        if new_qty < 0:
+            cur.close()
+            return jsonify(error='Not enough inventory'), 400
+        action_type = 'Sub'
+        qty_change = -qty
+ 
+    cur.execute("UPDATE inventory_items SET system_qty = %s WHERE id = %s", (new_qty, item_id))
+    cur.execute("""
+        INSERT INTO inventory_updates
+            (inventory_item_id, updated_by, action_type, qty_change, old_qty, new_qty)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """, (item_id, current_user.id, action_type, qty_change, old_qty, new_qty))
+ 
+    mysql.connection.commit()
+    cur.close()
+ 
+    return jsonify(message='Updated', new_qty=new_qty), 200
+ 
+ 
+@app.route('/inventory', methods=['POST'])
+@login_required
+@role_required('Manager', 'ShiftLead')
+def add_inventory_item():
+    data = request.get_json()
+    if not data:
+        return jsonify(error='JSON required'), 400
+ 
+    name = data.get('name', '').strip()
+    category = data.get('category', 'Other').strip()
+ 
+    try:
+        qty = max(0, int(data.get('qty', 0)))
+    except (ValueError, TypeError):
+        return jsonify(error='qty must be an integer'), 400
+ 
+    if not name:
+        return jsonify(error='name is required'), 400
+ 
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute(
+            "INSERT INTO inventory_items (item_name, category, system_qty) VALUES (%s, %s, %s)",
+            (name, category, qty)
+        )
+        new_id = cur.lastrowid
+        mysql.connection.commit()
+        return jsonify(message='Item added', id=new_id, name=name, qty=qty), 201
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+    finally:
+        cur.close()
+ 
+ 
+@app.route('/inventory/<int:item_id>', methods=['DELETE'])
+@login_required
+@role_required('Manager', 'ShiftLead')
+def delete_inventory_item(item_id):
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("""
+            SELECT COUNT(*) AS cnt FROM audit_items ai
+            JOIN audits a ON ai.audit_id = a.id
+            WHERE ai.inventory_item_id = %s AND a.status IN ('Submitted', 'Approved')
+        """, (item_id,))
+        if cur.fetchone()['cnt'] > 0:
+            return jsonify(error='Cannot delete: item is in a submitted or approved audit.'), 400
+ 
+        cur.execute(
+            "SELECT COUNT(*) AS cnt FROM purchase_order_items WHERE inventory_item_id = %s",
+            (item_id,)
+        )
+        if cur.fetchone()['cnt'] > 0:
+            return jsonify(error='Cannot delete: item is referenced in a purchase order.'), 400
+ 
+        cur.execute("DELETE FROM inventory_items WHERE id = %s", (item_id,))
+        mysql.connection.commit()
+        return jsonify(message='Item deleted'), 200
+    finally:
+        cur.close()
+ 
+ 
+# =========================
+# PREDICTIVE REPORTS API
+# =========================
+@app.route('/api/predictions')
+@login_required
+@role_required('Manager')
+def api_predictions():
+    import datetime
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("""
+            SELECT i.item_name, i.system_qty,
+                   op.prediction_quantity, op.prediction_order_by_date
+            FROM order_predictions op
+            JOIN inventory_items i ON op.inventory_item_id = i.id
+            ORDER BY op.prediction_order_by_date ASC, i.item_name
+        """)
+        rows = cur.fetchall()
+    finally:
+        cur.close()
+ 
+    today = datetime.date.today()
+    result = []
+    for r in rows:
+        days = (r['prediction_order_by_date'] - today).days
+        status = 'Critical' if days <= 1 else ('Low' if days <= 5 else 'In Stock')
+        result.append({
+            'item_name':           r['item_name'],
+            'system_qty':          r['system_qty'],
+            'prediction_quantity': r['prediction_quantity'],
+            'order_by_date':       fmt_date(r['prediction_order_by_date']),
+            'status':              status,
+        })
+    return jsonify(result)
+ 
+ 
 # =========================
 # RUN APP
 # =========================
