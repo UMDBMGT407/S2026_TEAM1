@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Reconciliation</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container-fluid p-0">
+  <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
+    <div class="w-100">
+      <img class="kft-logo" src="{{ url_for('static', filename='images/kft-logo0.png') }}" alt="Kung Fu Tea logo">
+
+      <div class="sidebar-nav d-flex flex-column gap-2">
+        <button class="nav-btn" onclick="window.location.href='{{ url_for('inventory') }}'">
+          Full Inventory View
+        </button>
+
+        <button class="nav-btn active">
+          Inventory Reconciliation
+        </button>
+
+        <button class="nav-btn" onclick="window.location.href='{{ url_for('man_audit_4') }}'">
+          Activity Log
+        </button>
+
+        <button class="nav-btn" onclick="window.location.href='{{ url_for('dashboard') }}'">
+          Dashboards &amp; Analytics
+        </button>
+
+        <button class="nav-btn" onclick="window.location.href='{{ url_for('predictive_reports') }}'">
+          Predictive Reports
+        </button>
+
+        <button class="nav-btn" onclick="window.location.href='{{ url_for('manage_users') }}'">
+          Manage Users
+        </button>
+
+        <button class="nav-btn two-line"
+          onclick="window.location.href='{{ url_for('purchaseOrders') }}'">
+          Purchase Order<br>Management
+        </button>
+      </div>
+    </div>
+
+    <div class="pb-4">
+      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </div>
+  </nav>
+
+  <main class="col main-content-area">
+    <div class="content-container-centered">
+
+      <div class="rectangle-5 mb-5">
+        <h1 class="page-title">Inventory Reconciliation</h1>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="dashboard-card p-4">
+
+            <div class="mb-4">
+              <h2 class="section-title">
+                Last Audit Approved:
+                {% if last_audit %}
+                  {{ (last_audit.approved_at or last_audit.created_at).strftime('%B %d, %Y') }}
+                {% else %}
+                  No approved audit yet
+                {% endif %}
+              </h2>
+              <hr>
+              <p class="section-sub">
+                Conducted by:
+                {% if last_audit %}
+                  {{ last_audit.conducted_by_name }}
+                {% else %}
+                  N/A
+                {% endif %}
+              </p>
+            </div>
+
+            <div class="mb-4">
+              <h2 class="section-title">
+                Audit to Approve:
+                {% if pending_audit %}
+                  {{ (pending_audit.submitted_at or pending_audit.created_at).strftime('%B %d, %Y') }}
+                {% else %}
+                  No submitted audit waiting
+                {% endif %}
+              </h2>
+              <hr>
+              <p class="section-sub">
+                Conducted by:
+                {% if pending_audit %}
+                  {{ pending_audit.conducted_by_name }}
+                {% else %}
+                  N/A
+                {% endif %}
+              </p>
+            </div>
+
+            {% if pending_audit %}
+            <div class="d-flex justify-content-end">
+              <button class="approve-btn"
+                onclick="window.location.href='{{ url_for('man_audit_3', audit_id=pending_audit.id) }}'">
+                Approve Audit
+              </button>
+            </div>
+            {% endif %}
+
+          </div>
+
+          <div class="row mt-4 g-3">
+            <div class="col-md-6">
+              <button class="resume-btn w-100"
+                onclick="window.location.href='{{ url_for('man_audit_2', audit_id=draft_audit.id) if draft_audit else url_for('man_audit_2', mode='new') }}'">
+                {{ 'Resume Draft Audit' if draft_audit else 'Open New Audit' }}
+              </button>
+            </div>
+
+            <div class="col-md-6">
+              <button class="start-btn w-100"
+                onclick="window.location.href='{{ url_for('man_audit_2', mode='new') }}'">
+                Start New Audit
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+</body>
+</html>
