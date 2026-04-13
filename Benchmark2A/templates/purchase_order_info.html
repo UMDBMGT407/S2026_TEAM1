@@ -82,47 +82,81 @@
         </div>
  
         <!-- Scrollable rows -->
-<div id="ordersScrollContainer">
-  {% for order in orders %}
-    <div class="order-row-flex" data-order-id="{{ order['id'] }}" data-status="{{ order['status'] }}">
-      <div class="col-orderno">Order #po{{ order['id'] }}</div>
-
-      <div class="col-product">
-        {% for item in order['items'] %}
-          {{ item['name'] }}{% if not loop.last %}<br/>{% endif %}
-        {% endfor %}
-      </div>
-
-      <div class="col-qty">
-        {% for item in order['items'] %}
-          {{ item['qty'] }}{% if not loop.last %}<br/>{% endif %}
-        {% endfor %}
-      </div>
-
-      <div class="col-history" id="history-po{{ order['id'] }}">
-        Ordered: {{ order['order_date'] }}<br/>
-        Expected: {{ order['expected_date'] if order['expected_date'] else 'TBD' }}
-        {% if order['received_date'] %}
-          <br/><span class="received-line">Received: {{ order['received_date'] }}</span>
-        {% endif %}
-      </div>
-
-      <div class="col-status">
-        <div class="status-badge">
-          <span id="status-label-po{{ order['id'] }}">{{ order['status'] }}</span>
-          <select onchange="updateStatus(this, '{{ order['id'] }}')">
-            <option value="Pending" {% if order['status'] == 'Pending' %}selected{% endif %}>Pending</option>
-            <option value="Received" {% if order['status'] == 'Received' %}selected{% endif %}>Received</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="col-delete">
-        <span onclick="openDeleteModal('{{ order['id'] }}')">X</span>
-      </div>
-    </div>
-  {% endfor %}
-</div>
+        <div id="ordersScrollContainer">
+ 
+          <!-- PO4 — Pending -->
+          <div class="order-row-flex" data-order-id="po4" data-status="Pending">
+            <div class="col-orderno">Order #po4</div>
+            <div class="col-product">Taro Powder<br/>Large Cups<br/>Mango Syrup</div>
+            <div class="col-qty">6<br/>9<br/>8</div>
+            <div class="col-history" id="history-po4">Ordered: 3/5/2026<br/>Expected: 3/11/2026</div>
+            <div class="col-status">
+              <div class="status-badge">
+                <span id="status-label-po4">Pending</span>
+                <select onchange="updateStatus(this,'po4')">
+                  <option value="Pending" selected>Pending</option>
+                  <option value="Received">Received</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-delete"><span onclick="openDeleteModal('po4')">X</span></div>
+          </div>
+ 
+          <!-- PO3 — Received -->
+          <div class="order-row-flex" data-order-id="po3" data-status="Received">
+            <div class="col-orderno">Order #po3</div>
+            <div class="col-product">Chia Seeds<br/>Milk Powder<br/>Hot Med. Cups</div>
+            <div class="col-qty">5<br/>10<br/>4</div>
+            <div class="col-history" id="history-po3">Ordered: 2/28/2026<br/>Expected: 3/4/2026<br/><span class="received-line">Received: 3/5/2026</span></div>
+            <div class="col-status">
+              <div class="status-badge">
+                <span id="status-label-po3">Received</span>
+                <select onchange="updateStatus(this,'po3')">
+                  <option value="Pending">Pending</option>
+                  <option value="Received" selected>Received</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-delete"><span onclick="openDeleteModal('po3')">X</span></div>
+          </div>
+ 
+          <!-- PO2 — Received -->
+          <div class="order-row-flex" data-order-id="po2" data-status="Received">
+            <div class="col-orderno">Order #po2</div>
+            <div class="col-product">Black Tea<br/>Green Tea<br/>Large Hot Cups</div>
+            <div class="col-qty">5<br/>5<br/>4</div>
+            <div class="col-history" id="history-po2">Ordered: 2/24/2026<br/>Expected: 3/1/2026<br/><span class="received-line">Received: 3/1/2026</span></div>
+            <div class="col-status">
+              <div class="status-badge">
+                <span id="status-label-po2">Received</span>
+                <select onchange="updateStatus(this,'po2')">
+                  <option value="Pending">Pending</option>
+                  <option value="Received" selected>Received</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-delete"><span onclick="openDeleteModal('po2')">X</span></div>
+          </div>
+ 
+          <div class="order-divider" id="divider-po2-po1"></div>
+ 
+          <!-- PO1 — Received -->
+          <div class="order-row-flex" data-order-id="po1" data-status="Received">
+            <div class="col-orderno">Order #po1</div>
+            <div class="col-product">Lychee Jelly<br/>Straws<br/>Oolong Tea</div>
+            <div class="col-qty">6<br/>10<br/>5</div>
+            <div class="col-history" id="history-po1">Ordered: 2/18/2026<br/>Expected: 2/24/2026<br/><span class="received-line">Received: 2/24/2026</span></div>
+            <div class="col-status">
+              <div class="status-badge">
+                <span id="status-label-po1">Received</span>
+                <select onchange="updateStatus(this,'po1')">
+                  <option value="Pending">Pending</option>
+                  <option value="Received" selected>Received</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-delete"><span onclick="openDeleteModal('po1')">X</span></div>
+          </div>
  
         </div><!-- end #ordersScrollContainer -->
       </div><!-- end .orders-card -->
@@ -155,40 +189,19 @@
       return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
     }
  
-    let orderToDelete = null;
-
-    async function updateStatus(selectEl, orderId) {
+    function updateStatus(selectEl, orderId) {
       const newStatus = selectEl.value;
-
-      const response = await fetch(`/purchase-orders/${orderId}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.error || 'Could not update status.');
-        return;
-      }
-
-      const row = document.querySelector(`[data-order-id="${orderId}"]`);
-      const label = document.getElementById(`status-label-po${orderId}`);
-      const histEl = document.getElementById(`history-po${orderId}`);
-
-      if (label) label.textContent = newStatus;
-      if (row) row.dataset.status = newStatus;
-
-      if (histEl) {
-        histEl.querySelectorAll('.received-line').forEach(el => el.remove());
-
-        if (newStatus === 'Received' && data.received_date) {
-          histEl.insertAdjacentHTML(
-            'beforeend',
-            `<br/><span class="received-line">Received: ${data.received_date}</span>`
-          );
-        }
+      const row    = document.querySelector(`[data-order-id="${orderId}"]`);
+      const label  = document.getElementById('status-label-' + orderId);
+      const histEl = document.getElementById('history-' + orderId)
+                  || row?.querySelector('.col-history');
+      if (label) label.textContent  = newStatus;
+      if (row)   row.dataset.status = newStatus;
+      if (!histEl) return;
+      histEl.querySelectorAll('.received-line').forEach(el => el.remove());
+      if (newStatus === 'Received') {
+        histEl.insertAdjacentHTML('beforeend',
+          `<br/><span class="received-line">Received: ${todayStr()}</span>`);
       }
     }
  
@@ -197,6 +210,7 @@
       document.querySelectorAll('.order-row-flex').forEach(r => {
         r.style.display = (!q || r.textContent.toLowerCase().includes(q)) ? '' : 'none';
       });
+      updateDividerVisibility();
     }
  
     function applyStatusFilter() {
@@ -204,34 +218,69 @@
       document.querySelectorAll('.order-row-flex').forEach(r => {
         r.style.display = (f === 'all' || f === r.dataset.status) ? '' : 'none';
       });
+      updateDividerVisibility();
     }
  
-    function openDeleteModal(id) {
-      orderToDelete = id;
-      document.getElementById('deleteModalWrapper').classList.add('modal-visible');
+    function updateDividerVisibility() {
+      const div = document.getElementById('divider-po2-po1');
+      if (!div) return;
+      const p1 = document.querySelector('[data-order-id="po1"]');
+      const p2 = document.querySelector('[data-order-id="po2"]');
+      div.style.display =
+        ((p1 && p1.style.display==='none') || (p2 && p2.style.display==='none'))
+          ? 'none' : '';
     }
-
-    function closeDeleteModal() {
-      document.getElementById('deleteModalWrapper').classList.remove('modal-visible');
-      orderToDelete = null;
-    }
-
-    async function confirmDelete() {
-      if (!orderToDelete) return;
-
-      const response = await fetch(`/purchase-orders/${orderToDelete}`, {
-        method: 'DELETE'
+ 
+    (function renderNewOrders() {
+      const stored = sessionStorage.getItem('newOrders');
+      if (!stored) return;
+      const orders = JSON.parse(stored);
+      if (!orders.length) return;
+      const container = document.getElementById('ordersScrollContainer');
+ 
+      [...orders].reverse().forEach(order => {
+        const names   = order.products.map(p => p.name).join('<br/>');
+        const qtys    = order.products.map(p => p.qty).join('<br/>');
+        const [y,m,d] = order.date.split('-');
+        const fmtDate = `${parseInt(m)}/${parseInt(d)}/${y}`;
+        const fmtExpected = order.expectedDate
+          ? (() => { const [ey,em,ed] = order.expectedDate.split('-'); return `${parseInt(em)}/${parseInt(ed)}/${ey}`; })()
+          : 'TBD';
+        const recLine = order.status === 'Received'
+          ? `<br/><span class="received-line">Received: ${todayStr()}</span>` : '';
+ 
+        container.insertAdjacentHTML('afterbegin', `
+          <div class="order-row-flex" data-order-id="${order.id}" data-status="${order.status}">
+            <div class="col-orderno">Order #${order.id}</div>
+            <div class="col-product">${names}</div>
+            <div class="col-qty">${qtys}</div>
+            <div class="col-history" id="history-${order.id}">Ordered: ${fmtDate}<br/>Expected: ${fmtExpected}${recLine}</div>
+            <div class="col-status">
+              <div class="status-badge">
+                <span id="status-label-${order.id}">${order.status}</span>
+                <select onchange="updateStatus(this,'${order.id}')">
+                  <option value="Pending"  ${order.status==='Pending' ?'selected':''}>Pending</option>
+                  <option value="Received" ${order.status==='Received'?'selected':''}>Received</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-delete">
+              <span onclick="openDeleteModal('${order.id}')">X</span>
+            </div>
+          </div>`);
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.error || 'Could not delete order.');
-        return;
-      }
-
-      document.querySelector(`[data-order-id="${orderToDelete}"]`)?.remove();
-      closeDeleteModal();
+    })();
+ 
+    let orderToDelete = null;
+    function openDeleteModal(id)  { orderToDelete = id; document.getElementById('deleteModalWrapper').classList.add('modal-visible'); }
+    function closeDeleteModal()   { document.getElementById('deleteModalWrapper').classList.remove('modal-visible'); orderToDelete = null; }
+    function confirmDelete()      { if (!orderToDelete) return; removeOrderFromPage(orderToDelete); closeDeleteModal(); }
+    function removeOrderFromPage(orderId) {
+      document.querySelector(`[data-order-id="${orderId}"]`)?.remove();
+      const stored  = JSON.parse(sessionStorage.getItem('newOrders') || '[]');
+      const updated = stored.filter(o => o.id !== orderId);
+      if (updated.length !== stored.length) sessionStorage.setItem('newOrders', JSON.stringify(updated));
+      updateDividerVisibility();
     }
   </script>
 </body>
