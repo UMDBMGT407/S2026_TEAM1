@@ -15,23 +15,24 @@
     <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
 
       <div class="w-100">
-        <img class="kft-logo" src="{{ url_for('static', filename='/images/kft-logo0.png') }}" />
+        <img class="kft-logo" src="{{ url_for('static', filename='images/kft-logo0.png') }}" />
 
         <div class="sidebar-nav d-flex flex-column gap-2">
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-full.html'">Full Inventory View</button>
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-audit-1.html'">Inventory Reconciliation</button>
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-audit-4.html'">Activity Log</button>
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-dash.html'">Dashboards & Analytics</button>
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-predictive-7.html'">Predictive Reports</button>
-          <button class="nav-btn" onclick="window.location.href='/S2026_TEAM1/Benchmark2A/templates/man-5.html'">Manage Users</button>
-          <button class="nav-btn active two-line">Purchase Order Management</button>
+          <a class="nav-btn" href="{{ url_for('home') }}">Full Inventory View</a>
+          <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Inventory Reconciliation</a>
+          <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Activity Log</a>
+          <a class="nav-btn" href="{{ url_for('home') }}">Dashboards &amp; Analytics</a>
+          <a class="nav-btn" href" href="{{ url_for('predictive_reports') }}">Predictive Reports</a>
+          <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
+          <a class="nav-btn active two-line" href="{{ url_for('purchaseOrders') }}">Purchase Order Management</a>
           
       </div>
     </div>
 
     <div class="pb-4">
-      <a href="/S2026_TEAM1/Benchmark2A/templates/loginhtml" class="logout-btn">Logout</a>
+      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
     </div>
+
 
   </nav>
 
@@ -155,19 +156,9 @@
         </div>
  
         <div class="supplier-modal-actions">
-          <button type="button"
-                  class="btn-supplier-delete"
-                  id="supplierDeleteBtn"
-                  onclick="deleteSupplier()"
-                  style="display:none;">
-            Delete
-          </button>
-
-          <button type="button"
-                  class="btn-supplier-submit"
-                  id="supplierSubmitBtn"
-                  onclick="confirmSupplier()">
-            <span id="supplierSubmitLabel">Save</span>
+          <button type="button" class="supplier-modal-cancel" onclick="closeSupplierModal()">Cancel</button>
+          <button type ="button" class = "btn-supplier-submit" id="supplierSubmitBtn" onclick="confirmSupplier()">
+            <span id="supplierSubmitLabel">Add Supplier</span>
           </button>
         </div>
       </div>
@@ -242,74 +233,36 @@
         const addressInput = document.getElementById('inputSupplierAddress');
         const errorEl = document.getElementById('supplierNameError');
         const submitLabel = document.getElementById('supplierSubmitLabel');
-        const deleteBtn = document.getElementById('supplierDeleteBtn');
         const select = document.getElementById('supplierSelect');
-
-        if (!wrapper || !nameInput || !addressInput || !errorEl || !submitLabel || !select) {
-          console.error('Supplier modal elements are missing.');
-          return;
-        }
 
         errorEl.style.display = 'none';
         nameInput.classList.remove('input-error');
 
         if (mode === 'add') {
-          nameInput.value = '';
-          addressInput.value = '';
-          submitLabel.textContent = 'Add Supplier';
-          if (deleteBtn) deleteBtn.style.display = 'none';
+        nameInput.value = '';
+        addressInput.value = '';
+        submitLabel.textContent = 'Add Supplier';
         } else if (mode === 'edit') {
-          if (!select.value) {
+        if (!select.value) {
             alert('Please select a supplier first.');
             return;
-          }
+        }
 
-          const selectedOption = select.options[select.selectedIndex];
-          nameInput.value = selectedOption.dataset.name || selectedOption.textContent.trim();
-          addressInput.value = selectedOption.dataset.address || '';
-          submitLabel.textContent = 'Save Changes';
-          if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+        const selectedOption = select.options[select.selectedIndex];
+
+        nameInput.value = selectedOption.dataset.name || selectedOption.textContent.trim();
+        addressInput.value = selectedOption.dataset.address || '';
+        submitLabel.textContent = 'Save Changes';
         }
 
         wrapper.classList.add('modal-visible');
         nameInput.focus();
-      }
+    }
+
   function closeSupplierModal() {
     document.getElementById('supplierModalWrapper').classList.remove('modal-visible');
   }
-  async function deleteSupplier() {
-    const select = document.getElementById('supplierSelect');
-    const supplierId = select.value;
-
-    if (!supplierId) {
-      alert('Please select a supplier first.');
-      return;
-    }
-
-    const confirmed = confirm('Are you sure you want to delete this supplier?');
-    if (!confirmed) return;
-
-    try {
-      const response = await fetch(`/suppliers/${supplierId}`, {
-        method: 'DELETE'
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.error || 'Could not delete supplier.');
-        return;
-      }
-
-      select.options[select.selectedIndex].remove();
-      select.value = '';
-      closeSupplierModal();
-    } catch (err) {
-      alert('Something went wrong while deleting the supplier.');
-      console.error(err);
-    }
-  }
-
+ 
   async function confirmSupplier() {
     const nameInput = document.getElementById('inputSupplierName');
     const addressInput = document.getElementById('inputSupplierAddress');
