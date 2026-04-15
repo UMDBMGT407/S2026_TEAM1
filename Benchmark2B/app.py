@@ -883,11 +883,120 @@ def update_user(id):
         return jsonify({"error": str(e)}), 500
 
 
+# =========================
+# PREDICTIVE PART
+# =========================
+
 @app.route("/predictive")
 @login_required
 @role_required('Manager')
 def predictive_reports():
-    return render_template("man-predictive-7.html")
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id, drink_name FROM drinks ORDER BY drink_name")
+    drinks = cur.fetchall()
+    cur.execute("SELECT id, item_name FROM inventory_items ORDER BY item_name")
+    inventory_items = cur.fetchall()
+    cur.close()
+
+    return render_template(
+        "man-predictive-7.html",
+        drinks=drinks,
+        inventory_items=inventory_items
+    )
+
+
+@app.route("/predictive/recipe", methods=['POST'])
+@login_required
+@role_required('Manager')
+def upsert_predictive_recipe():
+    if not request.is_json:
+        return jsonify({"error": "JSON required"}), 400
+
+    data = request.get_json(silent=True) or {}
+    drink_name = (data.get('drink_name') or '').strip()
+    products = data.get('products') or []
+
+    if not drink_name:
+        return jsonify({"error": "Drink name is required"}), 400
+    if not isinstance(products, list) or not products:
+        return jsonify({"error": "At least one product is required"}), 400
+
+    cleaned_products = []
+    for product in products:
+        try:
+            inventory_item_id = int(product.get('inventory_item_id'))
+        except (TypeError, ValueError, AttributeError):
+            return jsonify({"error": "Invalid product selection"}), 400
+        try:
+            quantity = int(product.get('quantity', 0))
+        except (TypeError, ValueError, AttributeError):
+            quantity = 0
+        cleaned_products.append({
+            "inventory_item_id": inventory_item_id,
+            "quantity": max(0, quantity)
+        })
+
+    # Merge duplicate products by summing quantities.
+    deduped_products_by_id = {}
+    for product in cleaned_products:
+        inventory_item_id = product["inventory_item_id"]
+        deduped_products_by_id[inventory_item_id] = (
+            deduped_products_by_id.get(inventory_item_id, 0) + product["quantity"]
+        )
+    deduped_product_ids = list(deduped_products_by_id.keys())
+
+    cur = mysql.connection.cursor()
+    try:
+        placeholders = ",".join(["%s"] * len(deduped_product_ids))
+        cur.execute(
+            f"SELECT id FROM inventory_items WHERE id IN ({placeholders})",
+            tuple(deduped_product_ids)
+        )
+        valid_inventory_ids = {row['id'] for row in cur.fetchall()}
+        if len(valid_inventory_ids) != len(deduped_product_ids):
+            return jsonify({"error": "One or more selected products do not exist"}), 400
+
+        cur.execute(
+            "SELECT id FROM drinks WHERE LOWER(drink_name) = LOWER(%s) LIMIT 1",
+            (drink_name,)
+        )
+        existing_drink = cur.fetchone()
+
+        if existing_drink:
+            drink_id = existing_drink['id']
+            cur.execute(
+                "UPDATE drinks SET drink_name = %s WHERE id = %s",
+                (drink_name, drink_id)
+            )
+        else:
+            cur.execute(
+                "INSERT INTO drinks (drink_name) VALUES (%s)",
+                (drink_name,)
+            )
+            drink_id = cur.lastrowid
+
+        # Overwrite recipe mappings by replacing all ingredient links for this drink.
+        cur.execute("DELETE FROM drink_product WHERE drink_id = %s", (drink_id,))
+        for inventory_item_id in deduped_product_ids:
+            cur.execute(
+                """
+                INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+                VALUES (%s, %s, %s)
+                """,
+                (drink_id, inventory_item_id, deduped_products_by_id[inventory_item_id])
+            )
+
+        mysql.connection.commit()
+        return jsonify({
+            "message": f"Recipe saved for {drink_name}",
+            "drink_id": drink_id,
+            "drink_name": drink_name
+        }), 200
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
 
 
 # =========================
