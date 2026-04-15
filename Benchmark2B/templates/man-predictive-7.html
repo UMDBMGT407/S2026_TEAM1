@@ -172,12 +172,14 @@
               </div>
 
               <div class="recipe-popup-drink-menu hidden" id="recipe-popup-drink-menu">
-                <button
-                  class="recipe-popup-drink-option"
-                  type="button"
-                  data-value="Winter Melon Milk Tea">
-                  Winter Melon Milk Tea
-                </button>
+                {% for drink in drinks %}
+                  <button
+                    class="recipe-popup-drink-option"
+                    type="button"
+                    data-value="{{ drink.drink_name }}">
+                    {{ drink.drink_name }}
+                  </button>
+                {% endfor %}
               </div>
             </section>
 
@@ -190,35 +192,13 @@
               <div class="predictive-products-list" id="recipe-popup-rows">
                 <div class="recipe-popup-row">
                   <select class="product-select recipe-popup-name-select" aria-label="Product selection 1">
-                    <option value="" disabled>Product Name</option>
-                    <option value="tapioca-pearls" selected>Tapioca Pearls</option>
-                    <option value="black-tea">Black Tea</option>
-                  </select>
-
-                  <input class="product-qty-input recipe-popup-qty-input" type="number" value="64" min="0" aria-label="Quantity for product 1" />
-
-                  <button class="row-delete-btn recipe-popup-remove" type="button" aria-label="Remove product">X</button>
-                </div>
-
-                <div class="recipe-popup-row">
-                  <select class="product-select recipe-popup-name-select" aria-label="Product selection 2">
                     <option value="" selected disabled>Product Name</option>
-                    <option value="tapioca-pearls">Tapioca Pearls</option>
-                    <option value="black-tea">Black Tea</option>
+                    {% for item in inventory_items %}
+                      <option value="{{ item.id }}">{{ item.item_name }}</option>
+                    {% endfor %}
                   </select>
 
-                  <input class="product-qty-input recipe-popup-qty-input" type="number" min="0" placeholder="Quantity" aria-label="Quantity for product 2" />
-
-                  <button class="row-delete-btn recipe-popup-remove" type="button" aria-label="Remove product">X</button>
-                </div>
-
-                <div class="recipe-popup-row">
-                  <select class="product-select recipe-popup-name-select" aria-label="Product selection 3">
-                    <option value="tapioca-pearls" selected>Tapioca Pearls</option>
-                    <option value="black-tea">Black Tea</option>
-                  </select>
-
-                  <input class="product-qty-input recipe-popup-qty-input" type="number" value="64" min="0" aria-label="Quantity for product 3" />
+                  <input class="product-qty-input recipe-popup-qty-input" type="number" min="0" placeholder="Quantity" aria-label="Quantity for product 1" />
 
                   <button class="row-delete-btn recipe-popup-remove" type="button" aria-label="Remove product">X</button>
                 </div>
@@ -226,7 +206,7 @@
             </section>
 
             <div class="submit-row predictive-modal-actions">
-              <button class="btn-submit-order recipe-popup-update-wrap" type="button">Update Recipe</button>
+              <button class="btn-submit-order recipe-popup-update-wrap" id="recipe-popup-update" type="button">Update Recipe</button>
             </div>
           </div>
         </div>
@@ -246,7 +226,12 @@
     const recipePopupDrinkInput = document.getElementById('recipe-popup-drink-input');
     const recipePopupDrinkTrigger = document.getElementById('recipe-popup-drink-trigger');
     const recipePopupDrinkMenu = document.getElementById('recipe-popup-drink-menu');
-    const recipePopupDrinkOptions = document.querySelectorAll('.recipe-popup-drink-option');
+    const recipePopupUpdateBtn = document.getElementById('recipe-popup-update');
+    const recipeInventoryItems = {{ inventory_items|tojson }};
+    const predictiveRecipeSaveUrl = "{{ url_for('upsert_predictive_recipe') }}";
+
+    const getRecipePopupDrinkOptions = () =>
+      Array.from(document.querySelectorAll('.recipe-popup-drink-option'));
 
     const syncRecipePopupSelectState = (selectElement) => {
       selectElement.classList.toggle('placeholder-active', selectElement.value === '');
@@ -269,12 +254,14 @@
     const createRecipePopupRow = () => {
       const rowCount = getRecipePopupRowCount() + 1;
       const rowElement = document.createElement('div');
+      const inventoryOptionsHtml = recipeInventoryItems
+        .map((item) => `<option value="${item.id}">${item.item_name}</option>`)
+        .join('');
       rowElement.className = 'recipe-popup-row';
       rowElement.innerHTML = `
         <select class="product-select recipe-popup-name-select" aria-label="Product selection ${rowCount}">
           <option value="" selected disabled>Product Name</option>
-          <option value="tapioca-pearls">Tapioca Pearls</option>
-          <option value="black-tea">Black Tea</option>
+          ${inventoryOptionsHtml}
         </select>
         <input class="product-qty-input recipe-popup-qty-input" type="number" min="0" placeholder="Quantity" aria-label="Quantity for product ${rowCount}" />
         <button class="row-delete-btn recipe-popup-remove" type="button" aria-label="Remove product">X</button>
@@ -314,13 +301,24 @@
     };
 
     if (recipePopupDrinkInput && recipePopupDrinkTrigger) {
+      recipePopupDrinkInput.addEventListener('click', (event) => {
+        event.stopPropagation();
+      });
+
       recipePopupDrinkTrigger.addEventListener('click', () => {
+        const wasHidden = recipePopupDrinkMenu.classList.contains('hidden');
         recipePopupDrinkInput.focus();
-        if (recipePopupDrinkMenu.classList.contains('hidden')) {
+        if (wasHidden) {
           openRecipeDrinkMenu();
         } else {
           closeRecipeDrinkMenu();
         }
+      });
+
+      recipePopupDrinkTrigger.addEventListener('mousedown', (event) => {
+        // Keep focus behavior stable so selecting a dropdown option is reliable.
+        event.preventDefault();
+        event.stopPropagation();
       });
 
       recipePopupDrinkInput.addEventListener('focus', () => {
@@ -329,7 +327,7 @@
 
       recipePopupDrinkInput.addEventListener('input', () => {
         const currentValue = recipePopupDrinkInput.value.trim().toLowerCase();
-        recipePopupDrinkOptions.forEach((optionElement) => {
+        getRecipePopupDrinkOptions().forEach((optionElement) => {
           const optionValue = optionElement.dataset.value.toLowerCase();
           const isVisible = !currentValue || optionValue.includes(currentValue);
           optionElement.classList.toggle('hidden', !isVisible);
@@ -344,14 +342,20 @@
       });
     }
 
-    recipePopupDrinkOptions.forEach((optionElement) => {
-      optionElement.addEventListener('click', () => {
-        if (recipePopupDrinkInput) {
-          recipePopupDrinkInput.value = optionElement.dataset.value;
-        }
+    if (recipePopupDrinkMenu) {
+      recipePopupDrinkMenu.addEventListener('mousedown', (event) => {
+        const optionElement = event.target.closest('.recipe-popup-drink-option');
+        if (!optionElement || !recipePopupDrinkInput) return;
+        event.preventDefault();
+        event.stopPropagation();
+        recipePopupDrinkInput.value = optionElement.dataset.value;
         closeRecipeDrinkMenu();
       });
-    });
+
+      recipePopupDrinkMenu.addEventListener('click', (event) => {
+        event.stopPropagation();
+      });
+    }
 
     if (addRecipeBtn && recipeModalOverlay) {
       addRecipeBtn.addEventListener('click', () => {
@@ -376,20 +380,77 @@
       });
     }
 
-    document.addEventListener('click', (event) => {
-      const clickedInsideDrinkField =
-        recipePopupDrinkInput?.contains(event.target) ||
-        recipePopupDrinkTrigger?.contains(event.target) ||
-        recipePopupDrinkMenu?.contains(event.target);
-
-      if (!clickedInsideDrinkField) {
-        closeRecipeDrinkMenu();
-      }
-    });
-
     if (uploadDataBtn && uploadDataInput) {
       uploadDataBtn.addEventListener('click', () => {
         uploadDataInput.click();
+      });
+    }
+
+    if (recipePopupUpdateBtn && recipePopupRows && recipePopupDrinkInput) {
+      recipePopupUpdateBtn.addEventListener('click', async () => {
+        const drinkName = recipePopupDrinkInput.value.trim();
+        if (!drinkName) {
+          window.alert('Please enter a drink name.');
+          return;
+        }
+
+        const productRows = Array.from(recipePopupRows.querySelectorAll('.recipe-popup-row'));
+        const products = productRows
+          .map((rowElement) => {
+            const productSelect = rowElement.querySelector('.recipe-popup-name-select');
+            const quantityInput = rowElement.querySelector('.recipe-popup-qty-input');
+            const inventoryItemId = Number(productSelect?.value || 0);
+            const quantity = Number(quantityInput?.value || 0);
+            if (!inventoryItemId) return null;
+            return {
+              inventory_item_id: inventoryItemId,
+              quantity: Number.isFinite(quantity) && quantity >= 0 ? quantity : 0,
+            };
+          })
+          .filter(Boolean);
+
+        if (!products.length) {
+          window.alert('Please add at least one product.');
+          return;
+        }
+
+        recipePopupUpdateBtn.disabled = true;
+        try {
+          const response = await fetch(predictiveRecipeSaveUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              drink_name: drinkName,
+              products,
+            }),
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || 'Failed to save recipe.');
+          }
+
+          const existingDrinkOption = getRecipePopupDrinkOptions().find(
+            (optionElement) => optionElement.dataset.value.toLowerCase() === drinkName.toLowerCase()
+          );
+
+          if (!existingDrinkOption && recipePopupDrinkMenu) {
+            const newOptionElement = document.createElement('button');
+            newOptionElement.type = 'button';
+            newOptionElement.className = 'recipe-popup-drink-option';
+            newOptionElement.dataset.value = drinkName;
+            newOptionElement.textContent = drinkName;
+            recipePopupDrinkMenu.appendChild(newOptionElement);
+          }
+
+          window.alert(data.message || 'Recipe updated successfully.');
+          recipeModalOverlay?.classList.add('hidden');
+          recipeModalOverlay?.setAttribute('aria-hidden', 'true');
+        } catch (error) {
+          window.alert(error.message || 'Unable to save recipe.');
+        } finally {
+          recipePopupUpdateBtn.disabled = false;
+        }
       });
     }
   </script>
