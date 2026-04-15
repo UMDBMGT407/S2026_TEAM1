@@ -91,7 +91,21 @@
                 <div class="man5-add-new-user" onclick="openPopup()">+ Add New User</div>
               </div>
             </div>
-
+            
+            <!-- SEARCH BAR B2 -->
+            <div class="man5-search-row">
+              <div class="man5-search-box2">
+                <span class="man5-div-span2">🔍</span>
+                <input 
+                  type="text" 
+                  class="man5-fakeSearch" 
+                  placeholder="Search users..."
+                  onkeyup="filterUsers(this.value)"
+                  autocomplete="off"
+                >
+              </div>
+            </div>
+            
             <!-- TABLE -->
             <div class="man5-inner-rec">
 
@@ -107,23 +121,23 @@
 
               <!-- DATA -->
               {% for user in users %}
-<div class="man5-name-1">
-  <div class="man5-frame-2">
-    <div>{{ user['name'] }}</div>
-    <div>{{ user['role'] }}</div>
-    <div>{{ user['phone'] }}</div>
-    <div>
-      <button onclick="editUser('{{ user['id'] }}', '{{ user['name'] }}', '{{ user['role'] }}', '{{ user['phone'] }}')">
-        Edit
-      </button>
+              <div class="man5-name-1">
+                <div class="man5-frame-2">
+                  <div>{{ user[1] }}</div>
+                  <div>{{ user[2] }}</div>
+                  <div>{{ user[3] }}</div>
+                  <div>
+                    <button onclick="editUser('{{ user[0] }}', '{{ user[1] }}', '{{ user[2] }}', '{{ user[3] }}')">
+                      Edit
+                    </button>
 
-      <button onclick="deleteUser('{{ user['id'] }}')">
-        Delete
-      </button>
-    </div>
-  </div>
-</div>
-{% endfor %}
+                    <button onclick="deleteUser('{{ user[0] }}')">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
 
             </div>
 
@@ -133,7 +147,7 @@
     </div>
   </main>
 </div>
-
+  
 <!-- ===== ADD USER POPUP ===== -->
 <div id="popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); justify-content:center; align-items:center;">
   <div style="background:white; padding:20px; border-radius:10px; width:300px;">
@@ -245,7 +259,15 @@ function updateUser() {
   .then(res => res.json())
   .then(() => location.reload());
 }
+// ================= SEARCH (added for B2) =================
+function filterUsers(query) {
+  query = query.toLowerCase();
 
+  document.querySelectorAll(".man5-name-1").forEach(row => {
+    row.style.display = row.innerText.toLowerCase().includes(query)
+      ? "block" : "none";
+  });
+}
 </script>
 
 </body>
