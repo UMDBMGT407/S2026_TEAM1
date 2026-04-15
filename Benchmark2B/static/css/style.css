@@ -2558,13 +2558,12 @@ select:focus {
   opacity: 0.85;
 }
 
-/* ==== Michelle's section ==== */
+/* ==== Michelle's section start ==== */
 /* ===== SHARED LAYOUT ===== */
 
 .man5-manage-users {
   color: #000000;
   text-align: center;
-  font-family: "Inria Serif", serif;
   font-size: 34px;
   font-weight: 700;
   margin: 0;
@@ -2598,6 +2597,9 @@ select:focus {
   margin: 0;
 }
 
+/* ===== SEARCH BAR ===== */
+/* added for B2 */
+
 .man5-search-row {
   margin-bottom: 16px;
 }
@@ -2630,21 +2632,6 @@ select:focus {
   font-family: "Inria Serif", serif;
 }
 
-.man5-fakeSearch::placeholder {
-  color: #8b4a44;
-}
-
-/*==== white box making transparent ====*/
-.man5-search-box2 input {
-  background: transparent;
-  border: none;
-  outline: none;
-  width: 100%;
-  font-size: 16px;
-  color: #8b4a44;
-  font-family: "Inria Serif", serif;
-}
-
 /* ===== ADD USER BUTTON ===== */
 
 .man5-add-new-user-rectangle {
@@ -2660,14 +2647,12 @@ select:focus {
 
 .man5-add-new-user {
   color: #ffffff;
-  text-align: center;
   font-family: "Inria Serif", serif;
   font-size: 24px;
-  font-weight: 400;
   cursor: pointer;
 }
 
-/* ===== INNER TABLE CARD ===== */
+/* ===== TABLE ===== */
 
 .man5-inner-rec {
   width: 100%;
@@ -2681,12 +2666,23 @@ select:focus {
   padding: 14px 20px;
 }
 
+/* changed for B2 */
 .man5-frame-2 {
   display: grid;
-  grid-template-columns: 1.3fr 1fr 1fr 0.9fr;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
   align-items: center;
-  width: 100%;
   column-gap: 12px;
+}
+
+/* added for B2 */
+.man5-frame-2 div {
+  text-align: center;
+}
+
+/* added for B2 */
+.man5-frame-2 div:first-child {
+  text-align: left;
+  padding-left: 10px;
 }
 
 .man5-name2,
@@ -2694,122 +2690,255 @@ select:focus {
 .man5-phone,
 .man5-status {
   color: #ffffff;
-  text-align: center;
   font-size: 24px;
   font-weight: 400;
 }
 
-.man5-name2 {
-  text-align: left;
-}
-
-.man5-name-1,
-.man5-name-2,
-.man5-name-3,
-.man5-name-4 {
+.man5-name-1 {
   padding: 16px 20px;
   border-bottom: 1px solid #ddb3ae;
   background: #f8efe6;
 }
 
-.man5-name-4 {
-  border-bottom: none;
+/* ===== ACTION BUTTONS ===== */
+/* changed for B2 */
+
+.man5-action-btn {
+  background: #964f4c;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-family: "Inria Serif", serif;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.toalima-t,
-.manager-role,
-.phone-text,
-.man5-active,
-.medhar-p,
-.shift-lead,
-.yinmin-l,
-.employee,
-#newName,
-#newRole,
-#newPhone,
-#newStatus {
-  color: #964f4c;
-  text-align: center;
-  font-size: 24px;
-  font-weight: 700;
+.man5-action-btn.delete {
+  background: #c46b64;
 }
 
-.toalima-t,
-.medhar-p,
-.yinmin-l,
-#newName {
-  text-align: left;
+.man5-action-btn:hover {
+  opacity: 0.85;
 }
 
-/* ===== POPUP ===== */
+/* added for B2 */
+.man5-frame-2 div:last-child {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
 
-#man5-popupForm {
+/* ===== POPUP WRAPPER ===== */
+/* added for B2 */
+
+.man5-popup-wrapper {
   position: fixed;
-  left: 270px;
   top: 0;
+  left: 270px;
   width: calc(100% - 270px);
   height: 100vh;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0,0,0,0.25);
   display: none;
-  align-items: center;
   justify-content: center;
-  z-index: 9999;
-  padding: 20px;
+  align-items: center;
+  z-index: 999;
 }
 
+/* added for B2 (fix showing popup) */
+.man5-popup-wrapper[style*="flex"] {
+  display: flex;
+}
+
+/* ===== POPUP BOX ===== */
+
 .man5-popup-box {
-  background: #efe3d6;
-  padding: 28px;
-  border-radius: 18px;
-  width: 320px;
-  max-width: 100%;
+  background: #f8efe6; /* same as table */
+  padding: 30px 26px;
+  border-radius: 20px;
+  width: 360px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-  position: relative;
   font-family: "Inria Serif", serif;
+  border: 1px solid rgba(0,0,0,0.2);
 }
 
 .man5-popup-box h4 {
-  color: #8b4a44;
-  font-weight: 600;
+  color: #964f4c; /* same maroon */
+  font-size: 28px;
+  font-weight: 700;
   margin-bottom: 18px;
 }
 
-.man5-popup-box label {
-  font-size: 14px;
-  color: #8b4a44;
-  margin-bottom: 4px;
-  display: block;
-}
+/* ===== POPUP INPUTS ===== */
 
 .man5-popup-box input,
 .man5-popup-box select {
   width: 100%;
-  padding: 10px 14px;
-  border-radius: 16px;
-  border: none;
-  background: #f6efe8;
-  margin-bottom: 12px;
-  font-size: 14px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid #ddb3ae;
+  background: #fffaf5;
+  margin-bottom: 14px;
+  font-size: 15px;
+  font-family: "Inria Serif", serif;
+  color: #5c3a36;
 }
+
+/* ===== POPUP BUTTONS ===== */
+/* changed for B2 */
 
 .man5-popup-box button {
   width: 100%;
-  background: #8b4a44;
+  background: #964f4c; /* theme color */
   color: white;
   padding: 10px;
-  border-radius: 16px;
-  font-size: 14px;
+  border-radius: 14px;
+  font-size: 15px;
   cursor: pointer;
+  margin-top: 8px;
+  border: none;
+  transition: 0.2s ease;
 }
 
-#man5-closePopup {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  font-size: 16px;
-  color: #8b4a44;
-  cursor: pointer;
+.man5-popup-box button:hover {
+  background: #7d3f3c;
 }
+
+/* added for B2 */
+.man5-popup-box button:last-child {
+  background: #bfa39a;
+}
+
+.man5-popup-box button:last-child:hover {
+  background: #a88f87;
+}
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 900px) {
+  .man5-manage-users2 {
+    font-size: 32px;
+  }
+
+  .man5-name2,
+  .man5-role,
+  .man5-phone,
+  .man5-status {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 768px) {
+  .man5-main-rectangle {
+    padding: 20px;
+  }
+
+  .man5-manage-users-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .man5-add-new-user-rectangle {
+    width: 100%;
+  }
+
+  .man5-frame-2 {
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  }
+
+  .man5-popup-wrapper {
+    left: 0;
+    width: 100%;
+  }
+}
+
+.man5-frame-2 div:last-child {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ===== FIX EDIT / DELETE BUTTONS ONLY ===== */
+
+.man5-name-1 button {
+  background: #c46b64; /* lighter red */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-family: "Inria Serif", serif;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* DELETE button (second button) */
+.man5-name-1 button:last-child {
+  background: #964f4c; /* theme maroon */
+}
+
+/* hover */
+.man5-name-1 button:hover {
+  opacity: 0.85;
+}
+
+/* ===== FIX ADD / CLOSE BUTTONS IN POPUP ===== */
+
+/* BOTH buttons */
+#popup button {
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 10px !important;
+  font-family: "Inria Serif", serif;
+  font-size: 15px;
+}
+
+/* ADD button */
+#popup button:first-of-type {
+  background: #964f4c !important;
+  color: #fff !important;
+}
+
+/* CLOSE button */
+#popup button:last-of-type {
+  background: #bfa39a !important;
+  color: #fff !important;
+}
+
+/* hover */
+#popup button:hover {
+  opacity: 0.9;
+}
+
+/* ===== FIX UPDATE / CLOSE BUTTONS (EDIT POPUP) ===== */
+
+/* both buttons */
+#editPopup button {
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 10px !important;
+  font-family: "Inria Serif", serif;
+  font-size: 15px;
+}
+
+/* UPDATE button */
+#editPopup button:first-of-type {
+  background: #964f4c !important;
+  color: #ffffff !important;
+}
+
+/* CLOSE button */
+#editPopup button:last-of-type {
+  background: #bfa39a !important;
+  color: #ffffff !important;
+}
+
+/* hover */
+#editPopup button:hover {
+  opacity: 0.9;
+}
+/* ==== Michelle's section end ==== */
 
 /* PREDICTIVE REPORTS */
 .predictive-layout {
