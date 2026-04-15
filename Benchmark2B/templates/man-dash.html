@@ -69,13 +69,14 @@
                     <option value="2026-03-13">End: Fri 3/13</option>
                     <option value="2026-03-06">End: Fri 3/6</option>
                   </select>
-                
-                  <select class="dropdown-box" aria-label="Ingredient Category">
-                    <option value="all">Category: All</option>
-                    <option value="toppings">Toppings</option>
-                    <option value="syrups">Syrups</option>
-                    <option value="tea">Tea</option>
-                    <option value="dairy">Dairy</option>
+
+                  <select class="dropdown-box" id="categoryFilter" aria-label="Inventory Category">
+                    <option value="all" {% if selected_category == 'all' %}selected{% endif %}>Category: All</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>
+                        Category: {{ cat }}
+                    </option>
+                    {% endfor %}
                   </select>
                 </div>
 
@@ -91,13 +92,14 @@
                 <div class="controls-row d-flex gap-2 mb-3 flex-wrap">
                   
                   <div class="time-box">As of: 3/5/26 13:12</div>
-                  
-                  <select class="dropdown-box">
-                    <option value="all">Category: All</option>
-                    <option value="toppings">Toppings</option>
-                    <option value="syrups">Syrups</option>
-                    <option value="tea">Tea</option>
-                    <option value="dairy">Dairy</option>
+
+                  <select class="dropdown-box" id="categoryFilter" aria-label="Inventory Category">
+                    <option value="all" {% if selected_category == 'all' %}selected{% endif %}>Category: All</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>
+                        Category: {{ cat }}
+                    </option>
+                    {% endfor %}
                   </select>
 
                   <button type="button" class="refresh-btn">Refresh ↻</button>
@@ -120,22 +122,6 @@
                       </div>
                     </div>
                   </div>
-                  <!--<div class="table-container">
-                    <div class="table-header">
-                      <div class="col-ingredient">Ingredient</div>
-                      <div class="col-qty">System Qty</div>
-                    </div>
-                    <div class="table-scroll-area">
-                      <div class="table-body">
-                        <div class="table-row"><div class="col-ingredient">Tapioca Pearls</div><div class="col-qty">10</div></div>
-                        <div class="table-row"><div class="col-ingredient">Black Tea</div><div class="col-qty">6</div></div>
-                        <div class="table-row"><div class="col-ingredient">Mango Syrup</div><div class="col-qty">5</div></div>
-                        <div class="table-row"><div class="col-ingredient">Strawberry Syrup</div><div class="col-qty">8</div></div>
-                        <div class="table-row"><div class="col-ingredient">Oolong Tea</div><div class="col-qty">10</div></div>
-                        <div class="table-row"><div class="col-ingredient">Grass Jelly</div><div class="col-qty">5</div></div>
-                      </div>
-                    </div>
-                  </div>-->
                 </div>
               </div>
             </div>
@@ -169,12 +155,13 @@
                     <option value="shift">View: Shift Comparison</option>
                   </select>
                 
-                  <select class="dropdown-box" aria-label="Category Filter">
-                    <option value="all">Category: All</option>
-                    <option value="toppings">Toppings</option>
-                    <option value="syrups">Syrups</option>
-                    <option value="tea">Tea</option>
-                    <option value="dairy">Dairy</option>
+                  <select class="dropdown-box" id="categoryFilter" aria-label="Inventory Category">
+                    <option value="all" {% if selected_category == 'all' %}selected{% endif %}>Category: All</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>
+                        Category: {{ cat }}
+                    </option>
+                    {% endfor %}
                   </select>
                 </div>
 
@@ -190,12 +177,13 @@
                 <div class="controls-row d-flex gap-2 mb-3 flex-wrap">
                   <div class="time-box">As of: 3/5/26 13:12</div>
                   
-                  <select class="dropdown-box">
-                    <option value="all">Category: All</option>
-                    <option value="toppings">Toppings</option>
-                    <option value="syrups">Syrups</option>
-                    <option value="tea">Tea</option>
-                    <option value="dairy">Dairy</option>
+                  <select class="dropdown-box" id="categoryFilter" aria-label="Inventory Category">
+                    <option value="all" {% if selected_category == 'all' %}selected{% endif %}>Category: All</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>
+                        Category: {{ cat }}
+                    </option>
+                    {% endfor %}
                   </select>
 
                   <button type="button" class="refresh-btn">Refresh ↻</button>
@@ -220,22 +208,6 @@
                       </div>
                     </div>
                   </div>
-                  <!--<div class="table-container">
-                    <div class="table-header">
-                      <div class="col-ingredient">Ingredient</div>
-                      <div class="col-status">Status</div>
-                    </div>
-                    <div class="table-scroll-area">
-                      <div class="table-body">
-                        <div class="table-row"><div class="col-ingredient">Tapioca Pearls</div><div class="col-status critical">Critical</div></div>
-                        <div class="table-row"><div class="col-ingredient">Mango Syrup</div><div class="col-status critical">Critical</div></div>
-                        <div class="table-row"><div class="col-ingredient">Black Tea</div><div class="col-status low">Low</div></div>
-                        <div class="table-row"><div class="col-ingredient">Oolong Tea</div><div class="col-status low">Low</div></div>
-                        <div class="table-row"><div class="col-ingredient">Green Tea</div><div class="col-status low">Low</div></div>
-                        <div class="table-row"><div class="col-ingredient">Grass Jelly</div><div class="col-status low">Low</div></div>
-                      </div>
-                    </div>
-                  </div>-->
                 </div>
               </div>
             </div>
@@ -247,6 +219,41 @@
     </main>
     
   </div>
+
+  <script>
+    document.querySelectorAll('.dropdown-box').forEach(select => {
+        select.addEventListener('change', function() {
+            const category = this.value;
+            // reloads the page with the selected category as a URL parameter
+            window.location.href = `{{ url_for('dashboard') }}?category=${category}`;
+        });
+    });
+
+    document.getElementById('categoryFilter').addEventListener('change', function() {
+        const category = this.value;
+        window.location.href = `{{ url_for('dashboard') }}?category=${encodeURIComponent(category)}`;
+    });
+
+    document.querySelectorAll('.refresh-btn').forEach(btn => {
+        btn.addEventListener('click', () => window.location.reload());
+    });
+
+    function updateDashboardTime() {
+        const now = new Date();
+        const formatted = (now.getMonth() + 1) + '/' + 
+                          now.getDate() + '/' + 
+                          now.getFullYear().toString().substr(-2) + ' ' + 
+                          now.getHours() + ':' + 
+                          now.getMinutes().toString().padStart(2, '0');
+        
+        document.querySelectorAll('.time-box').forEach(box => {
+            box.innerText = `As of: ${formatted}`;
+        });
+    }
+
+    updateDashboardTime();
+    setInterval(updateDashboardTime, 60000);
+  </script>
     
 </body>
 </html>
