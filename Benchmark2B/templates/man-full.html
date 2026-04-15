@@ -9,25 +9,28 @@
   <title>Full Inventory View</title>
 </head>
 <body>
-  
+
   <div class="container-fluid p-0">
 
     <!-- navigation bar -->
-    <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center">
-      <div class="w-100">
+    <nav class="sidebar-wrapper d-flex flex-column justify-content-between align-items-center" style="overflow-y: auto;">
+      <div class="w-100" style="flex: 1 1 0; min-height: 0; overflow-y: auto;">
         <img class="kft-logo" src="{{ url_for('static', filename='images/kft-logo0.png') }}" alt="Logo">
-        <div class="sidebar-nav d-flex flex-column gap-2">
-          <button class="nav-btn active">Full Inventory View</button>
-          {% if current_user.role in ['ShiftLead'] %}
-          <button class="nav-btn" onclick="window.location.href='{{ url_for('sl_audit_1') }}'">Inventory Reconciliation</button>
+        <div class="sidebar-nav d-flex flex-column gap-2" style="overflow-y: auto; flex-shrink: 1;">
+          <button class="nav-btn active" type="button">Full Inventory View</button>
+
+          {% if current_user.role == 'ShiftLead' %}
+          <button class="nav-btn" type="button" onclick="window.location.href='{{ url_for('sl_audit_1') }}'">Inventory Reconciliation</button>
           {% endif %}
-          {% if current_user.role in ['Manager'] %}
-          <button class="nav-btn" onclick="window.location.href='{{ url_for('man_audit_1') }}'">Inventory Reconciliation</button>
-          <button class="nav-btn" onclick="window.location.href='{{ url_for('man_audit_4') }}'">Activity Log</button>
-          <button class="nav-btn" onclick="window.location.href='{{ url_for('dashboard') }}'">Dashboards &amp; Analytics</button>
-          <button class="nav-btn" onclick="window.location.href='{{ url_for('predictive_reports') }}'">Predictive Reports</button>
-          <button class="nav-btn" onclick="window.location.href='{{ url_for('manage_users') }}'">Manage Users</button>
-          <button class="nav-btn two-line" onclick="window.location.href='{{ url_for('purchaseOrders') }}'">Purchase Order<br>Management</button>
+
+          {% if current_user.role == 'Manager' %}
+          <button class="nav-btn" type="button" onclick="window.location.href='{{ url_for('man_audit_1') }}'">Inventory Reconciliation</button>
+          <button class="nav-btn" type="button" onclick="window.location.href='{{ url_for('man_audit_4') }}'">Activity Log</button>
+          <button class="nav-btn" type="button" onclick="window.location.href='{{ url_for('dashboard') }}'">Dashboards &amp; Analytics</button>
+          <button class="nav-btn" type="button" onclick="window.location.href='{{ url_for('predictive_reports') }}'">Predictive Reports</button>
+          <button class="nav-btn" type="button" onclick="window.location.href='{{ url_for('manage_users') }}'">Manage Users</button>
+          <button class="nav-btn two-line" type="button" onclick="window.location.href='{{ url_for('purchaseOrders') }}'">Purchase Order<br>Management</button>
+          <button class="nav-btn" type="button" onclick="window.location.href='{{ url_for('delivery_audit_list') }}'">Delivery Audit</button>
           {% endif %}
         </div>
       </div>
@@ -39,7 +42,7 @@
     <!-- main content of page -->
     <main class="main-content-area">
       <div class="content-container-centered">
-        
+
         <div class="header-container mb-5">
           <h1 class="page-heading">Full Inventory View</h1>
         </div>
@@ -48,13 +51,12 @@
 
           <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <div class="search-box">
-              <!--<span class="search-icon">⌕</span>-->
               <input type="text" placeholder="Search ingredients..." id="inventorySearch">
             </div>
             {% if current_user.role in ['Manager', 'ShiftLead'] %}
             <div class="inventory-action-buttons d-flex gap-3">
-              <button class="page-action-btn solid-btn" onclick="openAddIngredientPopup()">Add Ingredient</button>
-              <button class="page-action-btn outline-btn" onclick="openDeleteIngredientPopup()">Delete Ingredient</button>
+              <button class="page-action-btn solid-btn" type="button" onclick="openAddIngredientPopup()">Add Ingredient</button>
+              <button class="page-action-btn outline-btn" type="button" onclick="openDeleteIngredientPopup()">Delete Ingredient</button>
             </div>
             {% endif %}
           </div>
@@ -66,19 +68,19 @@
               <div class="col-system-qty">System Qty</div>
               <div class="col-last-updated">Last Updated</div>
             </div>
-            
+
             <div class="inventory-scroll-area" id="inventoryRows">
 
               {% for item in inventory %}
-              <div class="inventory-row" id="row-{{ loop.index }}">
+              <div class="inventory-row" id="row-{{ item.id }}">
                   <div class="col-edit">
-                      <button class="edit-icon-btn" onclick="openPopup('{{ item.item_name }}', '{{ item.system_qty }}', '{{ item.created_at }}', '{{ loop.index }}')">✎</button>
+                      <button class="edit-icon-btn" type="button" onclick="openPopup('{{ item.item_name|replace("'", "\\'") }}', '{{ item.system_qty }}', '{{ item.created_at.strftime('%m/%d/%y, %I:%M%p') if item.created_at else 'N/A' }}', '{{ item.id }}')">✎</button>
                   </div>
                   <div class="col-ingredient-name">
                       <span class="ingredient-name-text">{{ item.item_name }}</span>
                   </div>
-                  <div class="col-system-qty" id="qty-{{ loop.index }}">{{ item.system_qty }}</div>
-                  <div class="col-last-updated" id="updated-{{ loop.index }}">
+                  <div class="col-system-qty" id="qty-{{ item.id }}">{{ item.system_qty }}</div>
+                  <div class="col-last-updated" id="updated-{{ item.id }}">
                       {{ item.created_at.strftime('%m/%d/%y, %I:%M%p') if item.created_at else 'N/A' }}
                   </div>
               </div>
@@ -94,7 +96,7 @@
 
   <div id="inventoryPopup" class="inventory-popup">
     <div class="popup-card">
-      <button class="close-popup" onclick="closePopup()">&times;</button>
+      <button class="close-popup" type="button" onclick="closePopup()">&times;</button>
       <div class="popup-ingredient-bar"><span id="popupIngredientName"></span></div>
       <div class="popup-info-box">
         <div class="popup-info-top">
@@ -104,8 +106,8 @@
         </div>
       </div>
       <div class="popup-toggle-row">
-        <button id="addBtn" class="inventory-btn add-btn-pos selected-btn" onclick="setMode('add')">Add</button>
-        <button id="subtractBtn" class="inventory-btn subtract-btn-pos unselected-btn" onclick="setMode('subtract')">Subtract</button>
+        <button id="addBtn" class="inventory-btn add-btn-pos selected-btn" type="button" onclick="setMode('add')">Add</button>
+        <button id="subtractBtn" class="inventory-btn subtract-btn-pos unselected-btn" type="button" onclick="setMode('subtract')">Subtract</button>
       </div>
       <div class="popup-entry-box">
         <div class="popup-entry-row">
@@ -116,13 +118,13 @@
           <span id="popupDate"></span> | <span id="popupTime"></span>
         </div>
       </div>
-      <button class="submit-btn" onclick="submitInventoryUpdate()">Submit</button>
+      <button class="submit-btn" type="button" onclick="submitInventoryUpdate()">Submit</button>
     </div>
   </div>
-  
+
   <div id="addIngredientPopup" class="inventory-popup">
     <div class="small-popup-card">
-      <button class="close-popup" onclick="closeAddIngredientPopup()">&times;</button>
+      <button class="close-popup" type="button" onclick="closeAddIngredientPopup()">&times;</button>
       <h2 class="small-popup-title">Add New Ingredient</h2>
       <div class="small-popup-form">
         <label>Name:</label>
@@ -130,22 +132,22 @@
         <label>Starting Qty:</label>
         <input type="number" id="newIngredientQty" placeholder="Enter quantity">
       </div>
-      <button class="page-action-btn solid-btn small-submit-btn" onclick="submitAddIngredient()">Add</button>
+      <button class="page-action-btn solid-btn small-submit-btn" type="button" onclick="submitAddIngredient()">Add</button>
     </div>
   </div>
-  
+
   <div id="deleteIngredientPopup" class="inventory-popup">
     <div class="small-popup-card">
-      <button class="close-popup" onclick="closeDeleteIngredientPopup()">&times;</button>
+      <button class="close-popup" type="button" onclick="closeDeleteIngredientPopup()">&times;</button>
       <h2 class="small-popup-title">Delete Ingredient</h2>
       <div class="small-popup-form">
         <label>Select Ingredient:</label>
         <select id="deleteIngredientSelect"></select>
       </div>
-      <button class="page-action-btn solid-btn small-submit-btn" onclick="submitDeleteIngredient()">Delete</button>
+      <button class="page-action-btn solid-btn small-submit-btn" type="button" onclick="submitDeleteIngredient()">Delete</button>
     </div>
   </div>
-  
+
   <div id="toastNotification" class="toast-notification"></div>
 
   <script>
@@ -231,8 +233,10 @@
       const updatedText = `${popupDate}, ${popupTime.toLowerCase()}`;
 
       document.getElementById("popupStock").innerText = `Current Stocks: ${currentStock} Units`;
-      document.getElementById(`qty-${currentIngredientKey}`).innerText = currentStock;
-      document.getElementById(`updated-${currentIngredientKey}`).innerText = updatedText;
+      const qtyCell = document.getElementById(`qty-${currentIngredientKey}`);
+      const updatedCell = document.getElementById(`updated-${currentIngredientKey}`);
+      if (qtyCell) qtyCell.innerText = currentStock;
+      if (updatedCell) updatedCell.innerText = updatedText;
       document.getElementById("popupUpdated").innerText = `Last Updated: ${updatedText}`;
 
       const ingredientName = document.getElementById("popupIngredientName").innerText;
@@ -275,9 +279,7 @@
       row.id = `row-${key}`;
       row.innerHTML = `
         <div class="col-edit text-center">
-          <button class="edit-icon-btn" type="button" onclick="openPopup('${name.replace(/'/g, "\\'")}', ${qty}, '${updatedText}', '${key}')">
-            ✎
-          </button>
+          <button class="edit-icon-btn" type="button" onclick="openPopup('${name.replace(/'/g, "\\'")}', ${qty}, '${updatedText}', '${key}')">✎</button>
         </div>
         <div class="col-ingredient-name">
           <span class="ingredient-name-text">${name}</span>
@@ -307,7 +309,6 @@
 
       const rows = document.querySelectorAll(".inventory-row");
       rows.forEach((row) => {
-        // Look for the span containing the name
         const nameSpan = row.querySelector(".ingredient-name-text");
         if (nameSpan) {
           const option = document.createElement("option");
@@ -328,10 +329,10 @@
       }
 
       const row = document.getElementById(rowId);
-      const nameSpan = row.querySelector(".ingredient-name-text");
+      const nameSpan = row ? row.querySelector(".ingredient-name-text") : null;
       const ingredientName = nameSpan ? nameSpan.textContent.trim() : "Ingredient";
 
-      row.remove();
+      if (row) row.remove();
       showToast(`${ingredientName} was deleted from inventory.`);
       closeDeleteIngredientPopup();
     }
@@ -345,6 +346,14 @@
         toast.classList.remove("show");
       }, 2500);
     }
+
+    document.getElementById("inventorySearch").addEventListener("input", function () {
+      const term = this.value.toLowerCase().trim();
+      document.querySelectorAll(".inventory-row").forEach((row) => {
+        const name = row.querySelector(".ingredient-name-text")?.textContent.toLowerCase() || "";
+        row.style.display = name.includes(term) ? "" : "none";
+      });
+    });
 
     window.onclick = function (event) {
       if (event.target === document.getElementById("inventoryPopup")) {
