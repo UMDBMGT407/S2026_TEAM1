@@ -968,7 +968,7 @@ def update_order_status(order_id):
         return jsonify(error='JSON required'), 400
 
     new_status = request.get_json().get('status')
-    if new_status not in ('Pending', 'Received', 'Ordered', 'Cancelled'):
+    if new_status not in ('Pending', 'Received', 'Cancelled'):
         return jsonify(error='Invalid status'), 400
 
     cur = mysql.connection.cursor()
@@ -995,19 +995,6 @@ def update_order_status(order_id):
         message='Status updated',
         received_date=fmt_date(__import__('datetime').date.today()) if new_status == 'Received' else None
     ), 200
-
-
-@app.route('/purchase-orders/<int:order_id>', methods=['DELETE'])
-@login_required
-@role_required('Manager')
-def delete_purchase_order(order_id):
-    cur = mysql.connection.cursor()
-    cur.execute("DELETE FROM purchase_order_items WHERE purchase_order_id = %s", (order_id,))
-    cur.execute("DELETE FROM purchase_orders WHERE id = %s", (order_id,))
-    mysql.connection.commit()
-    cur.close()
-
-    return jsonify(message='Order deleted'), 200
 
 
 @app.route('/purchase-orders/new', methods=['GET'])
