@@ -72,7 +72,7 @@ app.secret_key = '407TEAM1'
 # =========================
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Leon1'
+app.config['MYSQL_PASSWORD'] = '407TEAM1'
 app.config['MYSQL_DB'] = 'kft_inventory'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
