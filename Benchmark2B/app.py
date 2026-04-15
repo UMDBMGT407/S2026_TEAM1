@@ -763,20 +763,33 @@ def inventory():
 @role_required('Manager')
 def dashboard():
 
+    category = request.args.get('category', 'all')
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT item_name, system_qty FROM inventory_items")
+    cur.execute("SELECT DISTINCT category FROM inventory_items WHERE category IS NOT NULL")
+    unique_categories = [row['category'] for row in cur.fetchall()]
+
+    inventory_query = "SELECT item_name, system_qty FROM inventory_items"
+    alerts_query = "SELECT item_name, system_qty FROM inventory_items WHERE system_qty < 10"
+
+    if category != 'all':
+        inventory_query += f" WHERE LOWER(category) = '{category.lower()}'"
+        alerts_query += f" AND LOWER(category) = '{category.lower()}'"
+
+    cur.execute(inventory_query)
     all_inventory = cur.fetchall()
 
-    cur.execute("SELECT item_name, system_qty FROM inventory_items WHERE system_qty < 10")
+    cur.execute(alerts_query)
     restock_items = cur.fetchall()
 
     cur.close()
 
     return render_template('man-dash.html', 
                            inventory=all_inventory, 
-                           alerts=restock_items)
-
+                           alerts=restock_items,
+                           categories=unique_categories,
+                           selected_category=category)
+    
 
 # =========================
 # MICHELLE PART
