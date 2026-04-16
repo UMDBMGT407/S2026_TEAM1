@@ -1,26 +1,16 @@
-﻿Actions Summary
-
-
-
-
-
-
-
-
+Actions Summary
 
 
 Login
 * Retrieve users names and passwords from the users table
-
-
 Man1, SL1 
-*  show information about last audit approval date and time. Allow to create a new audit.
+* Show information about the last audit approval date and time. Allow to create a new audit.
 Man2, sl 2-
-*  show current inventory data, allow to update them as well. Also retrieve unfinished or saved audits with the button show data
+* Show current inventory data, allow you to update them as well. Also retrieve unfinished or saved audits with the button show data
 Man 3, sl 3
 * calculated inventory difference based on audit and system quantity as a summary. 
 Man 4 
-Activity log show the changes made within the inventory reconciliation.
+* Activity log show the changes made within the inventory reconciliation.
 
 
 Dashboard
@@ -32,19 +22,13 @@ Dashboard
 Full Inventory View
 * Accessed by all 3 users (Manager, Shift Lead, and Employee)
    * Manager and Shift Lead can add and delete inventory but Employee can’t
-* Can update inventory details
-
-
+* All roles can update inventory quantities
 
 
 Purchase Orders (purchase_order_info.html)
-* Manager: View purchase orders created, change the status of the purchase order from (pending, received, cancelled), search/filter purchase orders by order number and/ir products included
+* Manager: View purchase orders created, change the status of the purchase order from (pending, received, cancelled), search/filter purchase orders by order number and/or products included
 Create Purchase Order (create_purchase_order.html)
 * Manager: Create purchase order form, add supplier, edit supplier, delete supplier.
-
-
-
-
 
 
 Predictive (man-predictive-7.html, def predictive_reports(), def upsert_predictive_recipe())
@@ -53,15 +37,8 @@ Predictive (man-predictive-7.html, def predictive_reports(), def upsert_predicti
    * Retrieve recipe names
    * Create new recipe
    * Update existing recipe
-   * Create drink_product
-   * 
-
-
-
-
-
-
-
+   * Create drink_product rows
+   * Update drink_product table
 
 
 Delivery Audit:
@@ -84,26 +61,15 @@ System effect
 * Supports discrepancy tracking between ordered and received quantities
 
 
-
-
-
-
-
-
-
-
-________________
-
-
 Manage Users Page – allows admins to view, add, edit, and delete users from the database.
 Actions Implemented:
-Read (SELECT):
- Displays all users in a table using data pulled from MySQL through a Flask route.
-Create (INSERT):
- “+ Add New User” opens a form to enter user details. Data is sent to the backend and added to the database.
-Update (UPDATE):
- “Edit” opens a pre-filled form where admins can update user information, which is then saved to the database.
-Delete (DELETE):
- “Delete” removes a user after a confirmation prompt.
+* Read (SELECT):
+Displays all users in a table using data pulled from MySQL through a Flask route.
+* Create (INSERT):
+“+ Add New User” opens a form to enter user details. Data is sent to the backend and added to the database.
+* Update (UPDATE):
+“Edit” opens a pre-filled form where admins can update user information, which is then saved to the database.
+* Delete (DELETE):
+“Delete” removes a user after a confirmation prompt.
 Additional Features:
- Includes a search bar to filter users and demonstrates full frontend and backend integration using Flask and MySQL.
+Includes a search bar to filter users and demonstrates full frontend and backend integration using Flask and MySQL.
