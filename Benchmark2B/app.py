@@ -1297,11 +1297,6 @@ def delete_supplier(id):
 
 
 
-
-
-
-
-
 # =========================
 # LEON PART (DELIVERY + INVENTORY EXTENSIONS)
 # =========================
@@ -1372,7 +1367,7 @@ def apply_purchase_order_to_inventory(order_id, received_by_user_id):
 # =========================
 @app.route('/delivery-audit')
 @login_required
-@role_required('Manager')
+@role_required('Manager', 'ShiftLead')
 def delivery_audit_list():
     cur = mysql.connection.cursor()
 
@@ -1413,7 +1408,7 @@ def delivery_audit_list():
 
 @app.route('/delivery-audit/<int:order_id>', methods=['GET', 'POST'])
 @login_required
-@role_required('Manager')
+@role_required('Manager', 'ShiftLead')
 def delivery_audit_detail(order_id):
     cur = mysql.connection.cursor()
 
@@ -1587,7 +1582,7 @@ def delivery_audit_detail(order_id):
 # =========================
 @app.route('/api/delivery-audit/<int:order_id>')
 @login_required
-@role_required('Manager')
+@role_required('Manager', 'ShiftLead')
 def get_delivery_audit(order_id):
     cur = mysql.connection.cursor()
 
