@@ -126,15 +126,15 @@
               {% for user in users %}
               <div class="man5-name-1">
                 <div class="man5-frame-2">
-                  <div>{{ user[1] }}</div>
-                  <div>{{ user[2] }}</div>
-                  <div>{{ user[3] }}</div>
+                  <div>{{ user['name'] }}</div>
+                  <div>{{ user['role'] }}</div>
+                  <div>{{ user['phone'] }}</div>
                   <div>
-                    <button onclick="editUser('{{ user[0] }}', '{{ user[1] }}', '{{ user[2] }}', '{{ user[3] }}')">
+                    <button onclick="editUser('{{ user['id'] }}', '{{ user['name'] }}', '{{ user['role'] }}', '{{ user['phone'] }}')">
                       Edit
                     </button>
 
-                    <button onclick="deleteUser('{{ user[0] }}')">
+                    <button onclick="deleteUser('{{ user['id'] }}')">
                       Delete
                     </button>
                   </div>
