@@ -62,11 +62,11 @@
         <div class="login-card-content position-absolute d-flex flex-column align-items-center">
           <div class="login-user">LOGIN USER</div>
 
-          {% if error %}
-            <div class="alert alert-danger w-100 text-center mb-3">
-              {{ error }}
-            </div>
-          {% endif %}
+         {% if error %}
+  <div class="login-error">
+    {{ error }}
+  </div>
+{% endif %}
 
           <form
             class="login-form w-100 d-flex flex-column align-items-center"
