@@ -21,6 +21,7 @@
 
           {% if current_user.role == 'ShiftLead' %}
           <button class="nav-btn" type="button" onclick="window.location.href='{{ url_for('sl_audit_1') }}'">Inventory Reconciliation</button>
+          <button class="nav-btn" type="button" onclick="window.location.href='{{ url_for('delivery_audit_list') }}'">Delivery Audit</button>
           {% endif %}
 
           {% if current_user.role == 'Manager' %}
