@@ -1281,6 +1281,264 @@ def delete_supplier(id):
 
     return jsonify(message='Supplier deleted'), 200
 
+
+
+
+
+
+
+
+    # =========================
+# LEON PART (DELIVERY + INVENTORY EXTENSIONS)
+# =========================
+
+import datetime
+
+
+# ── APPLY PURCHASE ORDER TO INVENTORY ─────────────────
+def apply_purchase_order_to_inventory(order_id, received_by_user_id):
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        SELECT poi.inventory_item_id,
+               poi.quantity AS qty_ordered,
+               ii.system_qty AS current_qty
+        FROM purchase_order_items poi
+        JOIN inventory_items ii ON poi.inventory_item_id = ii.id
+        WHERE poi.purchase_order_id = %s
+    """, (order_id,))
+    items = cur.fetchall()
+
+    for item in items:
+        old_qty = int(item['current_qty'])
+        ordered_qty = int(item['qty_ordered'])
+        new_qty = old_qty + ordered_qty
+
+        # update inventory
+        cur.execute(
+            "UPDATE inventory_items SET system_qty = %s WHERE id = %s",
+            (new_qty, item['inventory_item_id'])
+        )
+
+        # log update
+        cur.execute("""
+            INSERT INTO inventory_updates
+            (inventory_item_id, updated_by, action_type, qty_change, old_qty, new_qty, purchase_order_id, reason)
+            VALUES (%s, %s, 'Receive', %s, %s, %s, %s, %s)
+        """, (
+            item['inventory_item_id'],
+            received_by_user_id,
+            ordered_qty,
+            old_qty,
+            new_qty,
+            order_id,
+            f'PO #{order_id} received'
+        ))
+
+        # delivery audit
+        cur.execute("""
+            INSERT INTO delivery_audits
+            (purchase_order_id, inventory_item_id, quantity_ordered, quantity_received, received_by)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (
+            order_id,
+            item['inventory_item_id'],
+            ordered_qty,
+            ordered_qty,
+            received_by_user_id
+        ))
+
+    mysql.connection.commit()
+    cur.close()
+
+
+# =========================
+# DELIVERY AUDIT PAGES
+# =========================
+@app.route('/delivery-audit')
+@login_required
+@role_required('Manager')
+def delivery_audit_list():
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        SELECT po.id,
+               s.supplier_name,
+               po.order_date,
+               po.expected_date,
+               po.received_date,
+               po.order_status,
+               COUNT(da.id) AS audit_line_count
+        FROM purchase_orders po
+        JOIN suppliers s ON po.supplier_id = s.id
+        LEFT JOIN delivery_audits da ON da.purchase_order_id = po.id
+        GROUP BY po.id
+        ORDER BY po.id DESC
+    """)
+
+    orders_raw = cur.fetchall()
+    cur.close()
+
+    orders = []
+    for row in orders_raw:
+        orders.append({
+            'id': row['id'],
+            'supplier': row['supplier_name'],
+            'order_date': fmt_date(row['order_date']),
+            'expected_date': fmt_date(row['expected_date']),
+            'received_date': fmt_date(row['received_date']),
+            'status': row['order_status'],
+            'audit_line_count': row['audit_line_count'],
+        })
+
+    return render_template('delivery_audit.html', orders=orders)
+
+
+@app.route('/delivery-audit/<int:order_id>', methods=['GET', 'POST'])
+@login_required
+@role_required('Manager')
+def delivery_audit_detail(order_id):
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        SELECT po.id, po.order_status, s.supplier_name
+        FROM purchase_orders po
+        JOIN suppliers s ON po.supplier_id = s.id
+        WHERE po.id = %s
+    """, (order_id,))
+    order = cur.fetchone()
+
+    if not order:
+        return "Order not found", 404
+
+    cur.execute("""
+        SELECT poi.inventory_item_id,
+               i.item_name,
+               poi.quantity AS qty_ordered,
+               da.quantity_received
+        FROM purchase_order_items poi
+        JOIN inventory_items i ON poi.inventory_item_id = i.id
+        LEFT JOIN delivery_audits da
+            ON da.purchase_order_id = poi.purchase_order_id
+           AND da.inventory_item_id = poi.inventory_item_id
+        WHERE poi.purchase_order_id = %s
+    """, (order_id,))
+
+    items = cur.fetchall()
+    cur.close()
+
+    return render_template('delivery_audit.html', order=order, items=items)
+
+
+# =========================
+# DELIVERY AUDIT API
+# =========================
+@app.route('/api/delivery-audit/<int:order_id>')
+@login_required
+@role_required('Manager')
+def get_delivery_audit(order_id):
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        SELECT poi.inventory_item_id,
+               i.item_name,
+               poi.quantity AS qty_ordered,
+               da.quantity_received
+        FROM purchase_order_items poi
+        JOIN inventory_items i ON poi.inventory_item_id = i.id
+        LEFT JOIN delivery_audits da
+            ON da.purchase_order_id = poi.purchase_order_id
+           AND da.inventory_item_id = poi.inventory_item_id
+        WHERE poi.purchase_order_id = %s
+    """, (order_id,))
+
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+
+# =========================
+# INVENTORY UPDATE (API)
+# =========================
+@app.route('/inventory/<int:item_id>', methods=['PATCH'])
+@login_required
+@role_required('Manager', 'ShiftLead')
+def update_inventory_item(item_id):
+    data = request.get_json()
+
+    action = data.get('action')
+    qty = int(data.get('qty', 0))
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT system_qty FROM inventory_items WHERE id = %s", (item_id,))
+    item = cur.fetchone()
+
+    if not item:
+        return jsonify(error='Item not found'), 404
+
+    old_qty = item['system_qty']
+
+    if action == 'add':
+        new_qty = old_qty + qty
+    else:
+        new_qty = old_qty - qty
+
+    cur.execute(
+        "UPDATE inventory_items SET system_qty = %s WHERE id = %s",
+        (new_qty, item_id)
+    )
+
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify(message='Updated', new_qty=new_qty)
+
+
+@app.route('/inventory/<int:item_id>', methods=['DELETE'])
+@login_required
+@role_required('Manager', 'ShiftLead')
+def delete_inventory_item(item_id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM inventory_items WHERE id = %s", (item_id,))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify(message='Deleted')
+
+
+# =========================
+# PREDICTIONS API
+# =========================
+@app.route('/api/predictions')
+@login_required
+@role_required('Manager')
+def api_predictions():
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        SELECT i.item_name, i.system_qty,
+               op.prediction_quantity, op.prediction_order_by_date
+        FROM order_predictions op
+        JOIN inventory_items i ON op.inventory_item_id = i.id
+    """)
+
+    rows = cur.fetchall()
+    cur.close()
+
+    today = datetime.date.today()
+
+    result = []
+    for r in rows:
+        result.append({
+            'item_name': r['item_name'],
+            'system_qty': r['system_qty'],
+            'prediction_quantity': r['prediction_quantity'],
+            'order_by_date': fmt_date(r['prediction_order_by_date'])
+        })
+
+    return jsonify(result)
+
 # =========================
 # RUN APP
 # =========================
