@@ -1923,7 +1923,7 @@ select:focus {
 .order-row-flex,
 .table-grid-header {
   display: grid;
-  grid-template-columns: 120px 2.5fr 80px 200px 120px 40px;
+  grid-template-columns: 120px 2.5fr 90px 220px 130px 40px;
   gap: 33px;
   justify-content: center;
   align-items: center;
@@ -1941,9 +1941,10 @@ select:focus {
   color: #ffffff;
 }
 
-.table-grid-header div:nth-child(5) {
+.table-grid-header > div:nth-child(3) {  /* Quantity */
+  justify-self: end;
   text-align: left;
-  padding-right: 10px; 
+  padding-right: 50px;
 }
 
 #ordersScrollContainer {
