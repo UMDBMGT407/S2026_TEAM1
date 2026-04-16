@@ -1,0 +1,141 @@
+﻿Actions Summary
+
+
+
+
+
+
+
+
+
+
+Login
+* Retrieve users names and passwords from the users table
+
+
+Man1, SL1 
+*  show information about last audit approval date and time. Allow to create a new audit.
+Man2, sl 2-
+*  show current inventory data, allow to update them as well. Also retrieve unfinished or saved audits with the button show data
+Man 3, sl 3
+* calculated inventory difference based on audit and system quantity as a summary. 
+Man 4 
+Activity log show the changes made within the inventory reconciliation.
+
+
+Dashboard
+* Only accessed by Manager
+* Can read from SQL tables to display current inventory, restock alerts, and visualizations of current inventory and audit patterns
+* Tables can be filtered by category which accesses the SQL tables in real time
+
+
+Full Inventory View
+* Accessed by all 3 users (Manager, Shift Lead, and Employee)
+   * Manager and Shift Lead can add and delete inventory but Employee can’t
+* Can update inventory details
+
+
+
+
+Purchase Orders (purchase_order_info.html)
+* Manager: View purchase orders created, change the status of the purchase order from (pending, received, cancelled), search/filter purchase orders by order number and/ir products included
+Create Purchase Order (create_purchase_order.html)
+* Manager: Create purchase order form, add supplier, edit supplier, delete supplier.
+
+
+
+
+
+
+Predictive (man-predictive-7.html, def predictive_reports(), def upsert_predictive_recipe())
+* In the “Add Recipe” pop-up:
+   * Retrieve potential ingredient names
+   * Retrieve recipe names
+   * Create new recipe
+   * Update existing recipe
+   * Create drink_product
+   * 
+
+
+
+
+
+
+
+
+
+Delivery Audit:
+Actions
+* View all purchase orders with delivery-audit status
+* See whether an order already has audit lines
+* Navigate to a specific delivery audit detail page
+System effect
+* Read-only list page
+* Pulls PO and supplier info plus count of linked delivery audit rows
+
+
+Actions
+* View one purchase order’s delivery audit details
+* Submit received quantities for line items
+* Compare ordered vs received quantities
+System effect
+* Reads purchase order and line item data
+* On submit, updates/creates delivery audit records tied to the order
+* Supports discrepancy tracking between ordered and received quantities
+
+
+
+
+
+
+
+
+
+
+________________
+
+
+Manage Users Page – allows administrators to view, create, update, and delete user records from the users table.
+
+
+Actions Implemented:
+
+
+1. Read (SELECT)
+
+
+Displays all users from the database in a table format.
+Data is retrieved using a Flask route and passed into the HTML using Jinja templating.
+Fields displayed include: Name, Role, and Phone.
+
+
+2. Create (INSERT)
+
+
+Admin can click “+ Add New User” to open a popup form.
+Form collects: Name, Email, Password, Role, and Phone.
+Data is sent via a POST request (/user) and inserted into the MySQL database.
+Page refreshes to display the new user.
+
+
+3. Update (UPDATE)
+
+
+Admin can click “Edit” on any user row.
+A popup form appears pre-filled with existing user data.
+Admin can modify Name, Role, and Phone.
+Changes are sent via a PUT request (/user/<id>) and updated in the database.
+
+
+4. Delete (DELETE)
+
+
+Admin can click “Delete” on a user row.
+A confirmation popup ensures the user wants to proceed.
+If confirmed, a DELETE request (/user/<id>) is sent to remove the user from the database.
+Page refreshes to reflect the change.
+Additional Features:
+Search Functionality:
+Users can search by typing in the search bar, which filters visible users dynamically using JavaScript.
+Frontend + Backend Integration:
+All actions (Create, Read, Update, Delete) are connected to Flask routes and MySQL queries.
