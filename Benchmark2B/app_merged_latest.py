@@ -1181,6 +1181,9 @@ def update_user(id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# =========================
+# PREDICTIVE
+# =========================
 
 @app.route("/predictive")
 @login_required
