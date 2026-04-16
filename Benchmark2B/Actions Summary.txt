@@ -95,47 +95,15 @@ System effect
 ________________
 
 
-Manage Users Page – allows administrators to view, create, update, and delete user records from the users table.
-
-
+Manage Users Page – allows admins to view, add, edit, and delete users from the database.
 Actions Implemented:
-
-
-1. Read (SELECT)
-
-
-Displays all users from the database in a table format.
-Data is retrieved using a Flask route and passed into the HTML using Jinja templating.
-Fields displayed include: Name, Role, and Phone.
-
-
-2. Create (INSERT)
-
-
-Admin can click “+ Add New User” to open a popup form.
-Form collects: Name, Email, Password, Role, and Phone.
-Data is sent via a POST request (/user) and inserted into the MySQL database.
-Page refreshes to display the new user.
-
-
-3. Update (UPDATE)
-
-
-Admin can click “Edit” on any user row.
-A popup form appears pre-filled with existing user data.
-Admin can modify Name, Role, and Phone.
-Changes are sent via a PUT request (/user/<id>) and updated in the database.
-
-
-4. Delete (DELETE)
-
-
-Admin can click “Delete” on a user row.
-A confirmation popup ensures the user wants to proceed.
-If confirmed, a DELETE request (/user/<id>) is sent to remove the user from the database.
-Page refreshes to reflect the change.
+Read (SELECT):
+ Displays all users in a table using data pulled from MySQL through a Flask route.
+Create (INSERT):
+ “+ Add New User” opens a form to enter user details. Data is sent to the backend and added to the database.
+Update (UPDATE):
+ “Edit” opens a pre-filled form where admins can update user information, which is then saved to the database.
+Delete (DELETE):
+ “Delete” removes a user after a confirmation prompt.
 Additional Features:
-Search Functionality:
-Users can search by typing in the search bar, which filters visible users dynamically using JavaScript.
-Frontend + Backend Integration:
-All actions (Create, Read, Update, Delete) are connected to Flask routes and MySQL queries.
+ Includes a search bar to filter users and demonstrates full frontend and backend integration using Flask and MySQL.
