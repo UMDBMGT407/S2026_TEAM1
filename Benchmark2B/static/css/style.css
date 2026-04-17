@@ -290,20 +290,6 @@ body {
   width: 100%;
 }
 
-.search-box {
-  background: #fcefe4;
-  border-radius: 30px;
-  padding: 8px 20px; display: flex; align-items: center; gap: 10px;
-  box-shadow: 0 4px 4px rgba(0,0,0,0.1);
-}
-
-.search-box input {
-  border: none !important;
-  outline: none !important;
-  background: transparent;
-  width: 100%;
-}
-
 .page-action-btn {
   min-width: 160px; height: 45px;
   border-radius: 28px; font-weight: 700;
@@ -320,6 +306,102 @@ body {
   background: #fcefe4;
   color: #964f4c; border:
   1.5px solid #b47b76;
+}
+
+#fullInventorySearchBox {
+  background: #fcefe4 !important;
+  border: 1.5px solid #b47b76 !important;
+  border-radius: 28px !important;
+  height: 45px;
+  width: 268px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: none !important;
+}
+
+#fullInventorySearchBox.search-wrap {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#fullInventorySearchBox input {
+  background: #fcefe4 !important;
+  border: 1.5px solid #b47b76 !important;
+  border-radius: 30px !important;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15) !important;
+  color: #964f4c !important;
+  font-weight: 700;
+  padding: 6px 16px 6px 40px !important;
+  width: 268px;
+  height: 100%;
+}
+
+#fullInventorySearchBox .search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #964f4c;
+  pointer-events: none;
+  z-index: 5;
+}
+
+#fullInventoryCategoryFilter.filter-select {
+  background: #ffffff !important;
+  border: 1px solid #964f4c !important;
+  border-radius: 4px !important;
+  color: #964f4c !important;
+  font-family: "Inria Serif", serif;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 0 35px 0 12px;
+  height: 37px;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.1) !important;
+  cursor: pointer;
+  outline: none;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23964f4c'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 8px center !important;
+  background-size: 20px !important;
+}
+#fullInventoryCategoryFilter {
+  background-color: #964f4c !important;
+  color: #f0e6dd !important;
+  border: none !important;
+  border-radius: 28px !important;
+  height: 45px;
+  padding: 0 25px;
+  font-family: "Inria Serif", serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f0e6dd'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 20px;
+}
+
+.inventory-panel .gap-3 {
+  align-items: center !important;
+}
+
+.inventory-panel .gap-3 {
+  align-items: center !important;
+}
+
+.inventory-panel .d-flex {
+  align-items: center !important;
 }
 
 .inven-table-card-bg {
