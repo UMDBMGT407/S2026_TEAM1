@@ -51,13 +51,22 @@
         <div class="inventory-panel p-4">
 
           <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <div class="search-box">
-              <input type="text" placeholder="Search ingredients..." id="inventorySearch">
+  
+            <div class="search-wrap" id="fullInventorySearchBox">
+              <span class="search-icon">⌕</span> <input type="text" placeholder="Search item..." id="inventorySearch">
             </div>
+          
+            <select class="filter-select" id="fullInventoryCategoryFilter" onchange="filterByCategory()">
+                <option value="all" {% if selected_category == 'all' %}selected{% endif %}>Category: All</option>
+                {% for cat in categories %}
+                <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+          
             {% if current_user.role in ['Manager', 'ShiftLead'] %}
             <div class="inventory-action-buttons d-flex gap-3">
-              <button class="page-action-btn solid-btn" type="button" onclick="openAddIngredientPopup()">Add Ingredient</button>
-              <button class="page-action-btn outline-btn" type="button" onclick="openDeleteIngredientPopup()">Delete Ingredient</button>
+              <button class="page-action-btn solid-btn" type="button" onclick="openAddIngredientPopup()">Add Item</button>
+              <button class="page-action-btn outline-btn" type="button" onclick="openDeleteIngredientPopup()">Delete Item</button>
             </div>
             {% endif %}
           </div>
@@ -130,6 +139,17 @@
       <div class="small-popup-form">
         <label>Name:</label>
         <input type="text" id="newIngredientName" placeholder="Enter ingredient name">
+        
+        <label>Category:</label>
+        <select id="categorySelect" onchange="toggleNewCategoryInput()">
+            <option value="" disabled selected>Select Category</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+            <option value="NEW">+ Create New Category</option>
+        </select>
+        <input type="text" id="newCategoryName" placeholder="Enter new category name" style="display:none; margin-top: 10px;">
+          
         <label>Starting Qty:</label>
         <input type="number" id="newIngredientQty" placeholder="Enter quantity">
       </div>
@@ -156,6 +176,17 @@
     let currentStock = 0;
     let currentMode = "add";
     let ingredientCounter = 0;
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Check if there is a parked message
+        const pendingMsg = localStorage.getItem("pendingToast");
+        
+        if (pendingMsg) {
+            showToast(pendingMsg);
+            // Clear it immediately so it doesn't pop up again on the next manual refresh
+            localStorage.removeItem("pendingToast");
+        }
+    });
 
     function getNowParts() {
       const now = new Date();
@@ -205,47 +236,82 @@
       }
     }
 
-    function submitInventoryUpdate() {
-      const qtyInput = document.getElementById("popupQuantity");
-      const changeAmount = Number(qtyInput.value);
-
-      if (!changeAmount || changeAmount <= 0) {
-        showToast("Please enter a valid quantity.");
-        return;
-      }
-
-      let newStock = currentStock;
-
-      if (currentMode === "add") {
-        newStock = currentStock + changeAmount;
-      } else {
-        newStock = currentStock - changeAmount;
-
-        if (newStock < 0) {
-          showToast("Not enough inventory to subtract that amount.");
-          return;
-        }
-      }
-
-      currentStock = newStock;
-
-      const popupDate = document.getElementById("popupDate").innerText;
-      const popupTime = document.getElementById("popupTime").innerText;
-      const updatedText = `${popupDate}, ${popupTime.toLowerCase()}`;
-
-      document.getElementById("popupStock").innerText = `Current Stocks: ${currentStock} Units`;
-      const qtyCell = document.getElementById(`qty-${currentIngredientKey}`);
-      const updatedCell = document.getElementById(`updated-${currentIngredientKey}`);
-      if (qtyCell) qtyCell.innerText = currentStock;
-      if (updatedCell) updatedCell.innerText = updatedText;
-      document.getElementById("popupUpdated").innerText = `Last Updated: ${updatedText}`;
-
-      const ingredientName = document.getElementById("popupIngredientName").innerText;
-      const actionText = currentMode === "add" ? "added to" : "subtracted from";
-      showToast(`${changeAmount} units ${actionText} ${ingredientName}. New stock: ${currentStock}.`);
-
-      closePopup();
+    function reloadWithToast(msg) {
+        localStorage.setItem("pendingToast", msg);
+        window.location.reload();
     }
+
+
+    async function submitInventoryUpdate() {
+        const qtyInput = document.getElementById("popupQuantity");
+        const changeAmount = Number(qtyInput.value);
+        const action = currentMode;
+
+        try {
+            const response = await fetch(`/inventory/${currentIngredientKey}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action, qty: changeAmount })
+            });
+
+            if (response.ok) {
+                closePopup();
+                reloadWithToast("Inventory updated successfully!");
+            } else {
+                showToast("Error updating inventory.");
+            }
+        } catch (err) {
+            showToast("Server connection failed.");
+        }
+    }
+
+    async function submitAddIngredient() {
+        const name = document.getElementById("newIngredientName").value.trim();
+        const qty = document.getElementById("newIngredientQty").value;
+        const select = document.getElementById("categorySelect");
+        let category = (select.value === "NEW") 
+            ? document.getElementById("newCategoryName").value.trim() 
+            : select.value;
+
+        if (!name || !category) {
+            showToast("Name and Category are required.");
+            return;
+        }
+
+        const response = await fetch('/inventory/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, qty: qty, category: category })
+        });
+
+        if (response.ok) {
+            closeAddIngredientPopup();
+            reloadWithToast(`${name} added to inventory!`);
+        } else {
+            const result = await response.json();
+            showToast(result.error || "An error occurred.");
+        }
+    }
+
+    async function submitDeleteIngredient() {
+        const select = document.getElementById("deleteIngredientSelect");
+        const rowIdStr = select.value; 
+        const itemId = rowIdStr.replace('row-', ''); 
+
+        if (!itemId) { showToast("Please select an ingredient."); return; }
+
+        const response = await fetch(`/inventory/${itemId}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            closeDeleteIngredientPopup();
+            reloadWithToast("Item deleted successfully.");
+        } else {
+            showToast("Error deleting item.");
+        }
+    }
+
 
     function openAddIngredientPopup() {
       document.getElementById("newIngredientName").value = "";
@@ -257,44 +323,26 @@
       document.getElementById("addIngredientPopup").style.display = "none";
     }
 
-    function submitAddIngredient() {
-      const name = document.getElementById("newIngredientName").value.trim();
-      const qty = Number(document.getElementById("newIngredientQty").value);
-
-      if (!name) {
-        showToast("Please enter an ingredient name.");
-        return;
-      }
-
-      if (isNaN(qty) || qty < 0) {
-        showToast("Please enter a valid starting quantity.");
-        return;
-      }
-
-      const key = "custom" + ingredientCounter++;
-      const { formattedDate, formattedTime } = getNowParts();
-      const updatedText = `${formattedDate}, ${formattedTime.toLowerCase()}`;
-
-      const row = document.createElement("div");
-      row.className = "inventory-row";
-      row.id = `row-${key}`;
-      row.innerHTML = `
-        <div class="col-edit text-center">
-          <button class="edit-icon-btn" type="button" onclick="openPopup('${name.replace(/'/g, "\\'")}', ${qty}, '${updatedText}', '${key}')">✎</button>
-        </div>
-        <div class="col-ingredient-name">
-          <span class="ingredient-name-text">${name}</span>
-        </div>
-        <div class="col-system-qty" id="qty-${key}">${qty}</div>
-        <div class="col-last-updated" id="updated-${key}">${updatedText}</div>
-      `;
-
-      document.getElementById("inventoryRows").appendChild(row);
-      updateDeleteIngredientOptions();
-      showToast(`${name} was added to inventory.`);
-      closeAddIngredientPopup();
+    function toggleNewCategoryInput() {
+        const select = document.getElementById("categorySelect");
+        const newInput = document.getElementById("newCategoryName");
+        newInput.style.display = (select.value === "NEW") ? "block" : "none";
     }
 
+    function filterByCategory() {
+        const category = document.getElementById("fullInventoryCategoryFilter").value;
+        window.location.href = `{{ url_for('inventory') }}?category=${encodeURIComponent(category)}`;
+    }
+
+    document.getElementById("inventorySearch").addEventListener("input", function () {
+        const term = this.value.toLowerCase().trim();
+        document.querySelectorAll(".inventory-row").forEach((row) => {
+            const name = row.querySelector(".ingredient-name-text")?.textContent.toLowerCase() || "";
+            row.style.display = name.includes(term) ? "grid" : "none";
+        });
+    });
+
+    
     function openDeleteIngredientPopup() {
       updateDeleteIngredientOptions();
       document.getElementById("deleteIngredientPopup").style.display = "flex";
@@ -320,39 +368,13 @@
       });
     }
 
-    function submitDeleteIngredient() {
-      const select = document.getElementById("deleteIngredientSelect");
-      const rowId = select.value;
-
-      if (!rowId) {
-        showToast("Please select an ingredient to delete.");
-        return;
-      }
-
-      const row = document.getElementById(rowId);
-      const nameSpan = row ? row.querySelector(".ingredient-name-text") : null;
-      const ingredientName = nameSpan ? nameSpan.textContent.trim() : "Ingredient";
-
-      if (row) row.remove();
-      showToast(`${ingredientName} was deleted from inventory.`);
-      closeDeleteIngredientPopup();
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById("toastNotification");
-      toast.innerText = message;
-      toast.classList.add("show");
-
-      setTimeout(() => {
-        toast.classList.remove("show");
-      }, 2500);
-    }
-
     document.getElementById("inventorySearch").addEventListener("input", function () {
       const term = this.value.toLowerCase().trim();
-      document.querySelectorAll(".inventory-row").forEach((row) => {
-        const name = row.querySelector(".ingredient-name-text")?.textContent.toLowerCase() || "";
-        row.style.display = name.includes(term) ? "" : "none";
+      const rows = document.querySelectorAll("#inventoryRows .inventory-row");
+      
+      rows.forEach((row) => {
+        const name = row.querySelector(".ingredient-name-text").textContent.toLowerCase();
+        row.style.setProperty('display', name.includes(term) ? 'grid' : 'none', 'important');
       });
     });
 
@@ -367,6 +389,18 @@
         closeDeleteIngredientPopup();
       }
     };
+
+    function showToast(message) {
+        const toast = document.getElementById("toastNotification");
+        if (!toast) return;
+
+        toast.innerText = message;
+        toast.classList.add("show");
+
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 3000);
+    }
   </script>
 </body>
 </html>
