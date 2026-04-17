@@ -743,15 +743,55 @@ def sl_audit_3():
 @app.route('/inventory')
 @login_required
 def inventory():
+    selected_category = request.args.get('category', 'all')
+    cur = mysql.connection.cursor()
+    
+    cur.execute("SELECT DISTINCT category FROM inventory_items WHERE category IS NOT NULL ORDER BY category")
+    unique_categories = [row['category'] for row in cur.fetchall()]
+    
+    if selected_category != 'all':
+        cur.execute("SELECT id, item_name, system_qty, created_at, category FROM inventory_items WHERE LOWER(category) = %s", (selected_category.lower(),))
+    else:
+        cur.execute("SELECT id, item_name, system_qty, created_at, category FROM inventory_items")
+        
+    inventory_data = cur.fetchall()
+    cur.close()
+
+    return render_template('man-full.html', 
+                           inventory=inventory_data, 
+                           categories=unique_categories,
+                           selected_category=selected_category)
+
+@app.route('/inventory/add', methods=['POST'])
+@login_required
+@role_required('Manager', 'ShiftLead')
+def add_inventory_item_direct():
+    data = request.get_json()
+    name = data.get('name', '').strip()
+    qty = data.get('qty', 0)
+    category = data.get('category', 'Uncategorized').strip()
+
+    if not name:
+        return jsonify(error="Ingredient name is required."), 400
 
     cur = mysql.connection.cursor()
     
-    cur.execute("SELECT item_name, system_qty, created_at FROM inventory_items")
-    inventory_data = cur.fetchall()
-    
-    cur.close()
+    cur.execute("SELECT id FROM inventory_items WHERE LOWER(item_name) = LOWER(%s)", (name,))
+    if cur.fetchone():
+        cur.close()
+        return jsonify(error=f"'{name}' already exists in the inventory."), 409
 
-    return render_template('man-full.html', inventory=inventory_data)
+    try:
+        cur.execute(
+            "INSERT INTO inventory_items (item_name, system_qty, category, created_at) VALUES (%s, %s, %s, NOW())",
+            (name, qty, category)
+        )
+        mysql.connection.commit()
+        new_id = cur.lastrowid
+        cur.close()
+        return jsonify(message='Added', id=new_id)
+    except Exception as e:
+        return jsonify(error="A database error occurred."), 500
 
 
 # =========================
