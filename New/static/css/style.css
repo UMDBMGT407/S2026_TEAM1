@@ -422,7 +422,7 @@ body {
 .table-header-grid, 
 .inventory-row {
   display: grid !important;
-  grid-template-columns: 50px 1.5fr 0.8fr 1.5fr;
+  grid-template-columns: 1.5fr 0.8fr 1.5fr;
   align-items: center;
   min-width: 600px;
   width: 100%;
