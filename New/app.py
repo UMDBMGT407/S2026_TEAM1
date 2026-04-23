@@ -502,9 +502,9 @@ def home():
         if current_user.role == 'Manager':
             return redirect(url_for('firstdash'))
         elif current_user.role == 'ShiftLead':
-            return redirect(url_for('inventory'))
+            return redirect(url_for('shiftlead_dashboard'))
         elif current_user.role == 'Employee':
-            return redirect(url_for('inventory'))
+            return redirect(url_for('employee_dashboard'))
 
     return redirect(url_for('login'))
 
@@ -547,6 +547,18 @@ def logout():
 @role_required('Manager')
 def firstdash():
     return render_template('firstdash.html')
+
+@app.route('/employee-dashboard')
+@login_required
+@role_required('Employee')
+def employee_dashboard():
+    return render_template('employee-dashboard.html')
+
+@app.route('/shiftlead-dashboard')
+@login_required
+@role_required('ShiftLead')
+def shiftlead_dashboard():
+    return render_template('shiftlead-dashboard.html')
 
 # =========================
 # MANAGER ROUTES
