@@ -12,43 +12,64 @@
 
   <div class="container-fluid p-0">
 
-    <!-- navigation bar -->
     <nav class="sidebar-wrapper">
 
-      <div>
-        <div class="logo">
-          Kung Fu Tea<br>Manager Portal
-        </div>
+  <div>
+    <div class="logo">
+      {% if current_user.role == 'Manager' %}
+        Kung Fu Tea<br>Manager Portal
+      {% elif current_user.role == 'ShiftLead' %}
+        Kung Fu Tea<br>Operations Portal
+      {% else %}
+        Kung Fu Tea<br>Employee Portal
+      {% endif %}
+    </div>
 
-        <div class="sidebar-nav">
+    <div class="sidebar-nav">
 
-          <div class="nav-section-title">OVERVIEW</div>
-          <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
+      {% if current_user.role == 'Manager' %}
+        <div class="nav-section-title">OVERVIEW</div>
+        <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
 
-          <div class="nav-section-title">INVENTORY</div>
-          <a class="nav-btn active" href="{{ url_for('inventory') }}">View Inventory</a>
-          <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
-          <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
+        <div class="nav-section-title">INVENTORY</div>
+        <a class="nav-btn active" href="{{ url_for('inventory') }}">View Inventory</a>
+        <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
+        <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
 
-          <div class="nav-section-title">ORDERS</div>
-          <a class="nav-btn" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
-          <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
+        <div class="nav-section-title">ORDERS</div>
+        <a class="nav-btn" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
+        <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
 
-          <div class="nav-section-title">INSIGHTS</div>
-          <a class="nav-btn" href="{{ url_for('dashboard') }}">Analytics</a>
-          <a class="nav-btn" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
+        <div class="nav-section-title">INSIGHTS</div>
+        <a class="nav-btn" href="{{ url_for('dashboard') }}">Analytics</a>
+        <a class="nav-btn" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
 
-          <div class="nav-section-title">ADMIN</div>
-          <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
+        <div class="nav-section-title">ADMIN</div>
+        <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
 
-        </div>
-      </div>
+      {% elif current_user.role == 'ShiftLead' %}
+        <div class="nav-section-title">OVERVIEW</div>
+        <a class="nav-btn" href="{{ url_for('shiftlead_dashboard') }}">Dashboard</a>
 
-      <div>
-        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-      </div>
+        <div class="nav-section-title">SHIFT TASKS</div>
+        <a class="nav-btn active" href="{{ url_for('inventory') }}">View Inventory</a>
+        <a class="nav-btn" href="{{ url_for('sl_audit_1') }}">Run Inventory Audit</a>
+        <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
 
-    </nav>
+      {% else %}
+        <div class="nav-section-title">MAIN</div>
+        <a class="nav-btn" href="{{ url_for('employee_dashboard') }}">Dashboard</a>
+        <a class="nav-btn active" href="{{ url_for('inventory') }}">View Inventory</a>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <div>
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+  </div>
+
+</nav>
 
     <!-- main content of page -->
     <main class="main-content-area">
@@ -82,8 +103,10 @@
           </div>
 
           <div class="inven-table-card-bg">
-            <div class="table-header-grid">
-              <div class="col-edit"></div>
+            <div class="table-header-grid {% if current_user.role == 'Employee' %}employee-table-grid{% endif %}">
+              {% if current_user.role != 'Employee' %}
+                <div class="col-edit"></div>
+              {% endif %}
               <div class="col-ingredient-name">Ingredient</div>
               <div class="col-system-qty">System Qty</div>
               <div class="col-last-updated">Last Updated</div>
@@ -91,20 +114,31 @@
 
             <div class="inventory-scroll-area" id="inventoryRows">
 
-              {% for item in inventory %}
-              <div class="inventory-row" id="row-{{ item.id }}">
-                  <div class="col-edit">
-                      <button class="edit-icon-btn" type="button" onclick="openPopup('{{ item.item_name|replace("'", "\\'") }}', '{{ item.system_qty }}', '{{ item.created_at.strftime('%m/%d/%y, %I:%M%p') if item.created_at else 'N/A' }}', '{{ item.id }}')">✎</button>
-                  </div>
-                  <div class="col-ingredient-name">
-                      <span class="ingredient-name-text">{{ item.item_name }}</span>
-                  </div>
-                  <div class="col-system-qty" id="qty-{{ item.id }}">{{ item.system_qty }}</div>
-                  <div class="col-last-updated" id="updated-{{ item.id }}">
-                      {{ item.created_at.strftime('%m/%d/%y, %I:%M%p') if item.created_at else 'N/A' }}
-                  </div>
-              </div>
-              {% endfor %}
+{% for item in inventory %}
+<div class="inventory-row {% if current_user.role == 'Employee' %}employee-table-grid{% endif %}" id="row-{{ item.id }}">
+
+    {% if current_user.role != 'Employee' %}
+    <div class="col-edit">
+        <button
+          class="edit-icon-btn"
+          type="button"
+          onclick='openPopup({{ item.item_name|tojson }}, {{ item.system_qty|tojson }}, {{ (item.created_at.strftime("%m/%d/%y, %I:%M%p") if item.created_at else "N/A")|tojson }}, {{ item.id|tojson }})'>
+          ✎
+        </button>
+    </div>
+        {% endif %}
+
+        <div class="col-ingredient-name">
+            <span class="ingredient-name-text">{{ item.item_name }}</span>
+        </div>
+
+        <div class="col-system-qty" id="qty-{{ item.id }}">{{ item.system_qty }}</div>
+
+        <div class="col-last-updated" id="updated-{{ item.id }}">
+            {{ item.created_at.strftime('%m/%d/%y, %I:%M%p') if item.created_at else 'N/A' }}
+        </div>
+    </div>
+    {% endfor %}
 
             </div>
 
