@@ -11,15 +11,20 @@
 <div class="container-fluid p-0">
 
   <!-- SIDEBAR -->
-    <nav class="sidebar-wrapper">
+  <nav class="sidebar-wrapper">
 
-      <div>
-        <div class="logo">
+    <div>
+      <div class="logo">
+        {% if current_user.role == 'Manager' %}
           Kung Fu Tea<br>Manager Portal
-        </div>
+        {% else %}
+          Kung Fu Tea<br>Operations Portal
+        {% endif %}
+      </div>
 
-        <div class="sidebar-nav">
+      <div class="sidebar-nav">
 
+        {% if current_user.role == 'Manager' %}
           <div class="nav-section-title">OVERVIEW</div>
           <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
 
@@ -39,14 +44,26 @@
           <div class="nav-section-title">ADMIN</div>
           <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
 
-        </div>
-      </div>
+        {% else %}
+          <div class="nav-section-title">OVERVIEW</div>
+          <a class="nav-btn" href="{{ url_for('shiftlead_dashboard') }}">Dashboard</a>
 
-      <div>
-        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-      </div>
+          <div class="nav-section-title">SHIFT TASKS</div>
+          <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
+          <a class="nav-btn" href="{{ url_for('sl_audit_1') }}">Run Inventory Audit</a>
+          <a class="nav-btn active" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
 
-    </nav>
+        {% endif %}
+
+
+      </div>
+    </div>
+
+    <div>
+      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </div>
+
+  </nav>
 
   <!-- MAIN CONTENT -->
   <main class="main-content-area">
