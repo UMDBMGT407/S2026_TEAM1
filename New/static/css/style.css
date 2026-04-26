@@ -422,7 +422,7 @@ body {
 .table-header-grid, 
 .inventory-row {
   display: grid !important;
-  grid-template-columns: 1.5fr 0.8fr 1.5fr;
+  grid-template-columns: 50px 1.5fr 0.8fr 1.5fr;
   align-items: center;
   min-width: 600px;
   width: 100%;
@@ -4446,4 +4446,123 @@ select:focus {
   .shiftlead-bottom-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* =========================
+   AUDIT FLOW / STEP TRACKER
+========================= */
+
+.audit-flow-card {
+  background: #f8efe6;
+  border-radius: 24px;
+  padding: 22px 26px;
+  border: 1px solid rgba(150, 79, 76, 0.15);
+}
+
+.audit-steps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: nowrap;
+}
+
+.audit-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+  text-align: center;
+}
+
+.audit-step-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.audit-step-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #7c5d58;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.audit-step-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #3e2a27;
+  line-height: 1.2;
+}
+
+.audit-step-line {
+  flex: 1;
+  height: 3px;
+  background: #d5b8ac;
+  border-radius: 999px;
+  margin: 0 6px;
+}
+
+.audit-step.completed .audit-step-circle {
+  background: #964f4c;
+  color: #f0e6dd;
+}
+
+.audit-step.current .audit-step-circle {
+  background: #e9d9cc;
+  color: #964f4c;
+  border: 2px solid #964f4c;
+}
+
+.audit-step.upcoming .audit-step-circle {
+  background: #f4e7dc;
+  color: #a3837e;
+  border: 2px solid #d8c4b5;
+}
+
+.audit-step-help {
+  margin-top: 18px;
+  background: #fffaf6;
+  border-left: 5px solid #964f4c;
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: #6a4c48;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+
+.audit-back-link {
+  color: #964f4c;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.audit-back-link:hover {
+  text-decoration: underline;
+  color: #7f413f;
+}
+
+.audit-step {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.audit-step:hover .audit-step-circle {
+  transform: scale(1.05);
+}
+
+.locked-step {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
