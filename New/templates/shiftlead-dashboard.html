@@ -14,7 +14,6 @@
 
 <div class="container-fluid p-0">
 
-  <!-- SIDEBAR -->
   <nav class="sidebar-wrapper">
     <div>
       <div class="logo">
@@ -37,11 +36,9 @@
     </div>
   </nav>
 
-  <!-- MAIN CONTENT -->
   <main class="main-content-area">
     <div class="content-container-centered shiftlead-dashboard-page">
 
-      <!-- HERO -->
       <section class="shiftlead-hero">
         <div class="shiftlead-hero-copy">
           <h1 class="shiftlead-hero-title">Shift Lead Dashboard</h1>
@@ -53,63 +50,82 @@
         </div>
 
         <div class="shiftlead-hero-actions">
-          <a href="{{ url_for('sl_audit_1') }}" class="shiftlead-btn shiftlead-btn-primary">Continue Audit</a>
+          <a href="{{ url_for('sl_audit_1') }}" class="shiftlead-btn shiftlead-btn-primary">
+            {% if draft_audit %}Continue Audit{% else %}Start Audit{% endif %}
+          </a>
           <a href="{{ url_for('delivery_audit_list') }}" class="shiftlead-btn shiftlead-btn-secondary">Check Delivery</a>
           <a href="{{ url_for('inventory') }}" class="shiftlead-btn shiftlead-btn-secondary">Open Inventory</a>
         </div>
       </section>
 
-      <!-- SUMMARY CARDS -->
       <section class="shiftlead-card-grid">
         <article class="shiftlead-card">
           <div class="shiftlead-card-label">Low Items</div>
-          <div class="shiftlead-card-value shiftlead-red">3</div>
+          <div class="shiftlead-card-value shiftlead-red">{{ low_count }}</div>
           <div class="shiftlead-card-note">Need attention during this shift</div>
         </article>
 
         <article class="shiftlead-card">
           <div class="shiftlead-card-label">Audit</div>
-          <div class="shiftlead-card-value shiftlead-gold">Active</div>
-          <div class="shiftlead-card-note">A draft audit is currently in progress</div>
+          <div class="shiftlead-card-value shiftlead-gold">{{ audit_status }}</div>
+          <div class="shiftlead-card-note">
+            {% if draft_audit %}
+              A draft audit is currently in progress
+            {% else %}
+              No draft audit currently in progress
+            {% endif %}
+          </div>
         </article>
 
         <article class="shiftlead-card">
-          <div class="shiftlead-card-label">Deliveries</div>
-          <div class="shiftlead-card-value shiftlead-gold">1</div>
-          <div class="shiftlead-card-note">One received order still needs verification</div>
+          <div class="shiftlead-card-label">Pending Deliveries</div>
+          <div class="shiftlead-card-value shiftlead-gold">{{ pending_delivery_count }}</div>
+          <div class="shiftlead-card-note">
+            {% if pending_delivery_count == 1 %}
+              One received order still needs verification
+            {% else %}
+              Received orders still need verification
+            {% endif %}
+          </div>
         </article>
 
         <article class="shiftlead-card">
           <div class="shiftlead-card-label">Top Item</div>
-          <div class="shiftlead-card-value shiftlead-green">Black Tea</div>
+          <div class="shiftlead-card-value shiftlead-green">{{ top_item }}</div>
           <div class="shiftlead-card-note">Most used ingredient this week</div>
         </article>
       </section>
 
-      <!-- NEEDS ATTENTION + GRAPH -->
       <section class="shiftlead-content-grid">
 
         <article class="shiftlead-panel">
           <h2 class="shiftlead-panel-title">Needs Attention</h2>
 
           <div class="shiftlead-alert-list">
-            <div class="shiftlead-alert-item shiftlead-alert-critical">
-              <div class="shiftlead-item-title">Tapioca Pearls are low</div>
-              <div class="shiftlead-item-desc">
-                Current stock is near the shift threshold. Check inventory and inform the manager
-                if back stock is also low.
-              </div>
-              <a class="shiftlead-inline-link" href="{{ url_for('inventory') }}">Go to Inventory →</a>
-            </div>
 
+            {% if lowest_items %}
+              {% for item in lowest_items %}
+              <div class="shiftlead-alert-item {% if item.system_qty < 5 %}shiftlead-alert-critical{% else %}shiftlead-alert-warning{% endif %}">
+                <div class="shiftlead-item-title">{{ item.item_name }} is low</div>
+                <div class="shiftlead-item-desc">
+                  Current stock is {{ item.system_qty }} units. Check inventory and update counts if needed.
+                </div>
+                <a class="shiftlead-inline-link" href="{{ url_for('inventory') }}">Go to Inventory →</a>
+              </div>
+              {% endfor %}
+            {% endif %}
+
+            {% if pending_delivery %}
             <div class="shiftlead-alert-item shiftlead-alert-warning">
-              <div class="shiftlead-item-title">Delivery #204 needs verification</div>
+              <div class="shiftlead-item-title">Delivery #{{ pending_delivery.id }} needs verification</div>
               <div class="shiftlead-item-desc">
                 A purchase order was marked received. The next required step is delivery audit.
               </div>
               <a class="shiftlead-inline-link" href="{{ url_for('delivery_audit_list') }}">Open Delivery Audit →</a>
             </div>
+            {% endif %}
 
+            {% if draft_audit %}
             <div class="shiftlead-alert-item shiftlead-alert-good">
               <div class="shiftlead-item-title">Draft audit already exists</div>
               <div class="shiftlead-item-desc">
@@ -117,6 +133,17 @@
               </div>
               <a class="shiftlead-inline-link" href="{{ url_for('sl_audit_1') }}">Continue Audit →</a>
             </div>
+            {% endif %}
+
+            {% if not lowest_items and not pending_delivery and not draft_audit %}
+            <div class="shiftlead-alert-item shiftlead-alert-good">
+              <div class="shiftlead-item-title">No urgent tasks right now</div>
+              <div class="shiftlead-item-desc">
+                Inventory, delivery audits, and draft audits currently do not need immediate attention.
+              </div>
+            </div>
+            {% endif %}
+
           </div>
         </article>
 
@@ -131,35 +158,26 @@
               <line x1="40" y1="220" x2="680" y2="220" stroke="#c9aba0" stroke-width="2" />
               <line x1="40" y1="30" x2="40" y2="220" stroke="#c9aba0" stroke-width="2" />
 
+              {% if usage_trend_points %}
               <polyline
                 fill="none"
                 stroke="#964f4c"
                 stroke-width="4"
-                points="60,180 150,150 240,165 330,110 420,120 510,70 600,90"
+                points="{{ usage_trend_points }}"
               />
-
-              <circle cx="60" cy="180" r="5" fill="#964f4c" />
-              <circle cx="150" cy="150" r="5" fill="#964f4c" />
-              <circle cx="240" cy="165" r="5" fill="#964f4c" />
-              <circle cx="330" cy="110" r="5" fill="#964f4c" />
-              <circle cx="420" cy="120" r="5" fill="#964f4c" />
-              <circle cx="510" cy="70" r="5" fill="#964f4c" />
-              <circle cx="600" cy="90" r="5" fill="#964f4c" />
-
-              <text x="55" y="240" font-size="12" fill="#7b5d59">Mon</text>
-              <text x="145" y="240" font-size="12" fill="#7b5d59">Tue</text>
-              <text x="235" y="240" font-size="12" fill="#7b5d59">Wed</text>
-              <text x="325" y="240" font-size="12" fill="#7b5d59">Thu</text>
-              <text x="415" y="240" font-size="12" fill="#7b5d59">Fri</text>
-              <text x="505" y="240" font-size="12" fill="#7b5d59">Sat</text>
-              <text x="595" y="240" font-size="12" fill="#7b5d59">Sun</text>
+              {% for point in usage_points %}
+              <circle cx="{{ point.x }}" cy="{{ point.y }}" r="5" fill="#964f4c" />
+              <text x="{{ point.x - 10 }}" y="240" font-size="12" fill="#7b5d59">{{ point.label }}</text>
+              {% endfor %}
+              {% else %}
+              <text x="250" y="130" font-size="18" fill="#7b5d59">No usage data this week</text>
+              {% endif %}
             </svg>
           </div>
         </article>
 
       </section>
 
-      <!-- TABLES -->
       <section class="shiftlead-bottom-grid">
 
         <article class="shiftlead-panel">
@@ -174,9 +192,17 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td><span class="shiftlead-rank">1</span></td><td>Black Tea</td><td>92</td></tr>
-              <tr><td><span class="shiftlead-rank">2</span></td><td>Tapioca Pearls</td><td>86</td></tr>
-              <tr><td><span class="shiftlead-rank">3</span></td><td>Whole Milk</td><td>81</td></tr>
+              {% for item in top_used_items %}
+              <tr>
+                <td><span class="shiftlead-rank">{{ loop.index }}</span></td>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.used_qty }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="3">No usage data this week.</td>
+              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </article>
@@ -193,9 +219,23 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td><span class="shiftlead-rank">1</span></td><td>Tapioca Pearls</td><td><span class="shiftlead-pill shiftlead-pill-red">Critical</span></td></tr>
-              <tr><td><span class="shiftlead-rank">2</span></td><td>Mango Syrup</td><td><span class="shiftlead-pill shiftlead-pill-gold">Low</span></td></tr>
-              <tr><td><span class="shiftlead-rank">3</span></td><td>Large Cups</td><td><span class="shiftlead-pill shiftlead-pill-gold">Low</span></td></tr>
+              {% for item in lowest_items %}
+              <tr>
+                <td><span class="shiftlead-rank">{{ loop.index }}</span></td>
+                <td>{{ item.item_name }}</td>
+                <td>
+                  {% if item.system_qty < 5 %}
+                    <span class="shiftlead-pill shiftlead-pill-red">Critical</span>
+                  {% else %}
+                    <span class="shiftlead-pill shiftlead-pill-gold">Low</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="3">No inventory items found.</td>
+              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </article>
