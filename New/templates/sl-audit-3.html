@@ -53,7 +53,40 @@
       <div class="rectangle-5">
         <h1 class="page-title">Inventory Audit Summary Report</h1>
       </div>
+<div class="audit-flow-card mb-4">
+  <div class="audit-steps">
 
+    <a href="{{ url_for('sl_audit_1') }}"
+       class="audit-step completed">
+      <div class="audit-step-circle">✓</div>
+      <div class="audit-step-label">Step 1</div>
+      <div class="audit-step-name">Start Audit</div>
+    </a>
+
+    <div class="audit-step-line"></div>
+
+    <a href="{{ url_for('sl_audit_2', audit_id=audit.id) }}"
+       class="audit-step completed">
+      <div class="audit-step-circle">✓</div>
+      <div class="audit-step-label">Step 2</div>
+      <div class="audit-step-name">Count Items</div>
+    </a>
+
+    <div class="audit-step-line"></div>
+
+    <a href="{{ url_for('sl_audit_3', audit_id=audit.id) }}"
+       class="audit-step current">
+      <div class="audit-step-circle">3</div>
+      <div class="audit-step-label">Step 3</div>
+      <div class="audit-step-name">Review & Submit</div>
+    </a>
+
+  </div>
+
+  <div class="audit-step-help">
+    Review the audit summary carefully. Once submitted, the audit will wait for manager approval.
+  </div>
+</div>
       <div class="sl3-summary-card">
         <div class="sl3-summary-header">
           Audit Date: {{ (audit.submitted_at or audit.created_at).strftime('%B %d, %Y') }}
