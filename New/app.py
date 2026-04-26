@@ -203,6 +203,7 @@ def get_pending_submitted_audit():
         FROM audits a
         JOIN users conductor ON a.conducted_by = conductor.id
         WHERE a.status = 'Submitted'
+          AND conductor.role = 'ShiftLead'
         ORDER BY COALESCE(a.submitted_at, a.created_at) ASC
         LIMIT 1
         """
@@ -558,8 +559,93 @@ def employee_dashboard():
 @login_required
 @role_required('ShiftLead')
 def shiftlead_dashboard():
-    return render_template('shiftlead-dashboard.html')
+    cur = mysql.connection.cursor()
 
+    # Low items count
+    cur.execute("""
+        SELECT COUNT(*) AS low_count
+        FROM inventory_items
+        WHERE system_qty < 10
+    """)
+    low_count = cur.fetchone()['low_count']
+
+    # Lowest items
+    cur.execute("""
+        SELECT item_name, system_qty
+        FROM inventory_items
+        ORDER BY system_qty ASC
+        LIMIT 3
+    """)
+    lowest_items = cur.fetchall()
+
+    # Pending delivery audits
+    cur.execute("""
+        SELECT COUNT(*) AS pending_delivery_count
+        FROM purchase_orders po
+        LEFT JOIN delivery_audits da ON da.purchase_order_id = po.id
+        WHERE po.order_status = 'Received'
+        GROUP BY po.id
+        HAVING COUNT(da.id) = 0
+    """)
+    pending_rows = cur.fetchall()
+    pending_delivery_count = len(pending_rows)
+
+    # Most recent received PO needing audit
+    cur.execute("""
+        SELECT po.id
+        FROM purchase_orders po
+        LEFT JOIN delivery_audits da ON da.purchase_order_id = po.id
+        WHERE po.order_status = 'Received'
+        GROUP BY po.id
+        HAVING COUNT(da.id) = 0
+        ORDER BY po.received_date DESC, po.id DESC
+        LIMIT 1
+    """)
+    pending_delivery = cur.fetchone()
+
+    # Draft audit for this shift lead
+    draft_audit = get_user_draft_audit(current_user.id)
+    audit_status = "Active" if draft_audit else "None"
+
+    # Top used items from activity log this week
+    cur.execute("""
+        SELECT i.item_name, SUM(ABS(iu.qty_change)) AS used_qty
+        FROM inventory_updates iu
+        JOIN inventory_items i ON iu.inventory_item_id = i.id
+        WHERE iu.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        GROUP BY i.id, i.item_name
+        ORDER BY used_qty DESC
+        LIMIT 3
+    """)
+    top_used_items = cur.fetchall()
+
+    top_item = top_used_items[0]['item_name'] if top_used_items else 'N/A'
+
+    # Usage trend by day this week
+    cur.execute("""
+        SELECT DAYNAME(iu.created_at) AS day_name,
+               SUM(ABS(iu.qty_change)) AS total_used
+        FROM inventory_updates iu
+        WHERE iu.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        GROUP BY DAYNAME(iu.created_at), DAYOFWEEK(iu.created_at)
+        ORDER BY DAYOFWEEK(iu.created_at)
+    """)
+    usage_trend = cur.fetchall()
+
+    cur.close()
+
+    return render_template(
+        'shiftlead-dashboard.html',
+        low_count=low_count,
+        lowest_items=lowest_items,
+        pending_delivery_count=pending_delivery_count,
+        pending_delivery=pending_delivery,
+        draft_audit=draft_audit,
+        audit_status=audit_status,
+        top_used_items=top_used_items,
+        top_item=top_item,
+        usage_trend=usage_trend
+    )
 # =========================
 # MANAGER ROUTES
 # =========================
@@ -569,6 +655,7 @@ def shiftlead_dashboard():
 def man_audit_1():
     return render_template(
         'man-audit-1.html',
+        current_step=1,
         last_audit=get_latest_approved_audit(),
         pending_audit=get_pending_submitted_audit(),
         draft_audit=get_user_draft_audit(current_user.id),
@@ -583,23 +670,7 @@ def man_audit_2():
     mode = request.args.get('mode', 'resume')
     category = request.args.get('category', 'all')
 
-    if not audit_id:
-        draft = get_user_draft_audit(current_user.id)
-
-        if mode == 'new':
-            if draft:
-                delete_user_draft_audit(current_user.id)
-            audit_id = create_audit(current_user.id)
-        elif draft:
-            audit_id = draft['id']
-        else:
-            audit_id = create_audit(current_user.id)
-
-    audit = get_audit(audit_id)
-
-    if not audit_access_allowed(audit, current_user):
-        abort(403)
-
+    # POST: save or submit the SAME audit
     if request.method == 'POST':
         audit_id = request.form.get('audit_id', type=int)
         action = request.form.get('action')
@@ -610,12 +681,33 @@ def man_audit_2():
             mark_audit_status(audit_id, 'Submitted')
             return redirect(url_for('man_audit_3', audit_id=audit_id))
 
-        return redirect(url_for('man_audit_1'))
+        return redirect(url_for('man_audit_2', audit_id=audit_id, category=category))
+
+    # GET: if audit_id is provided, use that audit
+    if audit_id:
+        audit = get_audit(audit_id)
+
+    else:
+        draft = get_user_draft_audit(current_user.id)
+
+        # IMPORTANT:
+        # Even if mode='new', reuse existing draft first.
+        # Only create a new audit if no draft exists.
+        if draft:
+            audit_id = draft['id']
+        else:
+            audit_id = create_audit(current_user.id)
+
+        audit = get_audit(audit_id)
+
+    if not audit_access_allowed(audit, current_user):
+        abort(403)
 
     items = get_audit_items(audit_id, None if category == 'all' else category)
 
     return render_template(
         'man-audit-2.html',
+        current_step=2,
         audit=audit,
         inventory_items=items,
         selected_category=category,
@@ -650,7 +742,7 @@ def man_audit_3():
         return redirect(url_for('man_audit_1'))
 
     summary = get_audit_summary(audit_id)
-    return render_template('man-audit-3.html', **summary)
+    return render_template('man-audit-3.html',current_step=3, **summary)
 
 
 @app.route('/man-audit-4')
@@ -679,6 +771,7 @@ def man_audit_4():
 def sl_audit_1():
     return render_template(
         'sl-audit-1.html',
+        current_step=1,
         last_audit=get_latest_user_visible_audit(current_user.id),
         draft_audit=get_user_draft_audit(current_user.id),
     )
@@ -725,6 +818,7 @@ def sl_audit_2():
 
     return render_template(
         'sl-audit-2.html',
+        current_step=2,
         audit=audit,
         inventory_items=items,
         selected_category=category,
@@ -750,7 +844,7 @@ def sl_audit_3():
         abort(403)
 
     summary = get_audit_summary(audit_id)
-    return render_template('sl-audit-3.html', **summary)
+    return render_template('sl-audit-3.html',current_step=3, **summary)
 
 
 # =========================
