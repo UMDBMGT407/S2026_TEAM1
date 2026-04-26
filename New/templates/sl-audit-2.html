@@ -53,7 +53,39 @@
       <div class="rectangle-5 mb-5">
         <h1 class="page-title">Inventory Audit - Physical Count</h1>
       </div>
+<div class="audit-flow-card mb-4">
+  <div class="audit-steps">
 
+    <a href="{{ url_for('sl_audit_1') }}"
+       class="audit-step {% if current_step == 1 %}current{% else %}completed{% endif %}">
+      <div class="audit-step-circle">{% if current_step > 1 %}✓{% else %}1{% endif %}</div>
+      <div class="audit-step-label">Step 1</div>
+      <div class="audit-step-name">Start Audit</div>
+    </a>
+
+    <div class="audit-step-line"></div>
+
+    <a href="{{ url_for('sl_audit_2', audit_id=audit.id) }}"
+       class="audit-step current">
+      <div class="audit-step-circle">2</div>
+      <div class="audit-step-label">Step 2</div>
+      <div class="audit-step-name">Count Items</div>
+    </a>
+
+    <div class="audit-step-line"></div>
+
+    <div class="audit-step upcoming locked-step">
+      <div class="audit-step-circle">3</div>
+      <div class="audit-step-label">Step 3</div>
+      <div class="audit-step-name">Review & Submit</div>
+    </div>
+
+  </div>
+
+  <div class="audit-step-help">
+    Count the real inventory on hand, enter each physical count below, then save progress or review the audit.
+  </div>
+</div>
       <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
         <form method="GET" action="{{ url_for('sl_audit_2') }}">
           <input type="hidden" name="audit_id" value="{{ audit.id }}">
@@ -107,10 +139,10 @@
 
         <div class="d-flex justify-content-end gap-3 mt-4 flex-wrap">
           <button class="sl2-resume-btn" type="submit" name="action" value="save">
-            Save Draft
+            Save Progress
           </button>
           <button class="sl2-start-btn" type="submit" name="action" value="submit">
-            Submit Audit
+            Review & Submit Audit
           </button>
         </div>
       </form>
