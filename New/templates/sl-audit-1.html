@@ -52,7 +52,56 @@
       <div class="rectangle-5 mb-5">
         <h1 class="page-title">Inventory Audit - Begin Audit</h1>
       </div>
+<div class="audit-flow-card mb-4">
+  <div class="audit-steps">
 
+    <a href="{{ url_for('sl_audit_1') }}"
+       class="audit-step {% if current_step == 1 %}current{% else %}completed{% endif %}">
+      <div class="audit-step-circle">{% if current_step > 1 %}✓{% else %}1{% endif %}</div>
+      <div class="audit-step-label">Step 1</div>
+      <div class="audit-step-name">Start Audit</div>
+    </a>
+
+    <div class="audit-step-line"></div>
+
+    {% if current_step >= 2 %}
+      <a href="{{ url_for('sl_audit_2', audit_id=audit.id) }}"
+         class="audit-step {% if current_step == 2 %}current{% elif current_step > 2 %}completed{% endif %}">
+        <div class="audit-step-circle">{% if current_step > 2 %}✓{% else %}2{% endif %}</div>
+        <div class="audit-step-label">Step 2</div>
+        <div class="audit-step-name">Count Items</div>
+      </a>
+    {% else %}
+      <div class="audit-step upcoming locked-step">
+        <div class="audit-step-circle">2</div>
+        <div class="audit-step-label">Step 2</div>
+        <div class="audit-step-name">Count Items</div>
+      </div>
+    {% endif %}
+
+    <div class="audit-step-line"></div>
+
+    {% if current_step >= 3 %}
+      <a href="{{ url_for('sl_audit_3', audit_id=audit.id) }}"
+         class="audit-step current">
+        <div class="audit-step-circle">3</div>
+        <div class="audit-step-label">Step 3</div>
+        <div class="audit-step-name">Review & Submit</div>
+      </a>
+    {% else %}
+      <div class="audit-step upcoming locked-step">
+        <div class="audit-step-circle">3</div>
+        <div class="audit-step-label">Step 3</div>
+        <div class="audit-step-name">Review & Submit</div>
+      </div>
+    {% endif %}
+
+  </div>
+
+  <div class="audit-step-help">
+    Review your latest audit activity, then resume a draft or begin a new inventory audit.
+  </div>
+</div>
       <div class="row justify-content-center">
         <div class="col-lg-9 col-xl-8">
           <div class="sl1-main-card p-4 p-md-5">
@@ -92,10 +141,12 @@
 
       <div class="row justify-content-center sl1-action-row g-3">
         <div class="col-md-6 col-lg-4">
-          <button class="sl1-resume-btn w-100"
-            onclick="window.location.href='{{ url_for('sl_audit_2', audit_id=draft_audit.id) if draft_audit else url_for('sl_audit_2', mode='new') }}'">
-            {{ 'Resume Draft Audit' if draft_audit else 'Open New Audit' }}
-          </button>
+          {% if draft_audit %}
+  <button class="sl1-resume-btn w-100"
+    onclick="window.location.href='{{ url_for('sl_audit_2', audit_id=draft_audit.id) }}'">
+    Resume Draft Audit
+  </button>
+{% endif %}
         </div>
 
         <div class="col-md-6 col-lg-4">
