@@ -337,6 +337,7 @@ CREATE TABLE `purchase_orders` (
   `expected_date` date DEFAULT NULL,
   `received_date` date DEFAULT NULL,
   `order_status` enum('Pending','Ordered','Received','Cancelled') DEFAULT 'Pending',
+  `audit_status` VARCHAR(50) DEFAULT 'Pending',
   PRIMARY KEY (`id`),
   KEY `fk_purchase_orders_supplier` (`supplier_id`),
   CONSTRAINT `fk_purchase_orders_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
