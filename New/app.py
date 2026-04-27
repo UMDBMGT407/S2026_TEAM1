@@ -547,13 +547,185 @@ def logout():
 @login_required
 @role_required('Manager')
 def firstdash():
-    return render_template('firstdash.html')
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        SELECT COUNT(*) AS low_count
+        FROM inventory_items
+        WHERE system_qty < 10
+    """)
+    low_count = cur.fetchone()['low_count']
+
+    cur.execute("""
+        SELECT item_name, system_qty
+        FROM inventory_items
+        ORDER BY system_qty ASC
+        LIMIT 4
+    """)
+    lowest_items = cur.fetchall()
+
+    cur.execute("""
+        SELECT COUNT(*) AS pending_delivery_count
+        FROM purchase_orders po
+        LEFT JOIN delivery_audits da ON da.purchase_order_id = po.id
+        WHERE po.order_status = 'Received'
+        GROUP BY po.id
+        HAVING COUNT(da.id) = 0
+    """)
+    pending_delivery_count = len(cur.fetchall())
+
+    cur.execute("""
+        SELECT po.id
+        FROM purchase_orders po
+        LEFT JOIN delivery_audits da ON da.purchase_order_id = po.id
+        WHERE po.order_status = 'Received'
+        GROUP BY po.id
+        HAVING COUNT(da.id) = 0
+        ORDER BY po.received_date DESC, po.id DESC
+        LIMIT 1
+    """)
+    pending_delivery = cur.fetchone()
+
+    last_audit = get_latest_approved_audit()
+    pending_audit = get_pending_submitted_audit()
+    manager_draft_audit = get_user_draft_audit(current_user.id)
+
+    cur.execute("""
+        SELECT i.item_name, SUM(ABS(iu.qty_change)) AS used_qty
+        FROM inventory_updates iu
+        JOIN inventory_items i ON iu.inventory_item_id = i.id
+        WHERE iu.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        GROUP BY i.id, i.item_name
+        ORDER BY used_qty DESC
+        LIMIT 3
+    """)
+    top_used_items = cur.fetchall()
+
+    cur.execute("""
+        SELECT DAYNAME(iu.created_at) AS day_name,
+               SUM(ABS(iu.qty_change)) AS total_used
+        FROM inventory_updates iu
+        WHERE iu.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        GROUP BY DAYNAME(iu.created_at), DAYOFWEEK(iu.created_at)
+        ORDER BY DAYOFWEEK(iu.created_at)
+    """)
+    usage_trend = cur.fetchall()
+
+    cur.close()
+
+    usage_points = []
+    usage_trend_points = ""
+
+    if usage_trend:
+        max_used = max(int(row['total_used']) for row in usage_trend) or 1
+        x_start = 40
+        x_gap = 640 / max(len(usage_trend) - 1, 1)
+
+        for index, row in enumerate(usage_trend):
+            x = x_start + index * x_gap
+            y = 220 - ((int(row['total_used']) / max_used) * 170)
+            usage_points.append({
+                "x": round(x, 1),
+                "y": round(y, 1),
+                "label": row['day_name'][:3]
+            })
+
+        usage_trend_points = " ".join(
+            f"{point['x']},{point['y']}" for point in usage_points
+        )
+
+    return render_template(
+        'firstdash.html',
+        low_count=low_count,
+        lowest_items=lowest_items,
+        pending_delivery_count=pending_delivery_count,
+        pending_delivery=pending_delivery,
+        last_audit=last_audit,
+        pending_audit=pending_audit,
+        manager_draft_audit=manager_draft_audit,
+        top_used_items=top_used_items,
+        usage_points=usage_points,
+        usage_trend_points=usage_trend_points
+    )
 
 @app.route('/employee-dashboard')
 @login_required
 @role_required('Employee')
 def employee_dashboard():
-    return render_template('employee-dashboard.html')
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        SELECT COUNT(*) AS low_count
+        FROM inventory_items
+        WHERE system_qty < 10
+    """)
+    low_count = cur.fetchone()['low_count']
+
+    cur.execute("""
+        SELECT item_name, system_qty
+        FROM inventory_items
+        ORDER BY system_qty ASC
+        LIMIT 10
+    """)
+    lowest_items = cur.fetchall()
+
+    cur.execute("""
+        SELECT i.item_name, SUM(ABS(iu.qty_change)) AS used_qty
+        FROM inventory_updates iu
+        JOIN inventory_items i ON iu.inventory_item_id = i.id
+        WHERE iu.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        GROUP BY i.id, i.item_name
+        ORDER BY used_qty DESC
+        LIMIT 10
+    """)
+    top_used_items = cur.fetchall()
+
+    top_item = top_used_items[0]['item_name'] if top_used_items else 'N/A'
+    lowest_item = lowest_items[0]['item_name'] if lowest_items else 'N/A'
+
+    cur.execute("""
+        SELECT DAYNAME(iu.created_at) AS day_name,
+               SUM(ABS(iu.qty_change)) AS total_used
+        FROM inventory_updates iu
+        WHERE iu.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        GROUP BY DAYNAME(iu.created_at), DAYOFWEEK(iu.created_at)
+        ORDER BY DAYOFWEEK(iu.created_at)
+    """)
+    usage_trend = cur.fetchall()
+
+    cur.close()
+
+    usage_points = []
+    usage_trend_points = ""
+
+    if usage_trend:
+        max_used = max(int(row['total_used']) for row in usage_trend) or 1
+        x_start = 40
+        x_gap = 640 / max(len(usage_trend) - 1, 1)
+
+        for index, row in enumerate(usage_trend):
+            x = x_start + index * x_gap
+            y = 220 - ((int(row['total_used']) / max_used) * 170)
+            usage_points.append({
+                "x": round(x, 1),
+                "y": round(y, 1),
+                "label": row['day_name'][:3]
+            })
+
+        usage_trend_points = " ".join(
+            f"{point['x']},{point['y']}" for point in usage_points
+        )
+
+    return render_template(
+        'employee-dashboard.html',
+        low_count=low_count,
+        lowest_items=lowest_items,
+        top_used_items=top_used_items,
+        top_item=top_item,
+        lowest_item=lowest_item,
+        usage_points=usage_points,
+        usage_trend_points=usage_trend_points
+    )
 
 @app.route('/shiftlead-dashboard')
 @login_required
@@ -1793,18 +1965,25 @@ def get_delivery_audit(order_id):
 # =========================
 @app.route('/inventory/<int:item_id>', methods=['PATCH'])
 @login_required
-@role_required('Manager', 'ShiftLead')
+@role_required('Manager', 'ShiftLead', 'Employee')
 def update_inventory_item(item_id):
     data = request.get_json()
 
     action = data.get('action')
     qty = int(data.get('qty', 0))
 
+    if action not in ['add', 'subtract']:
+        return jsonify(error='Invalid action'), 400
+
+    if qty <= 0:
+        return jsonify(error='Quantity must be greater than 0'), 400
+
     cur = mysql.connection.cursor()
     cur.execute("SELECT system_qty FROM inventory_items WHERE id = %s", (item_id,))
     item = cur.fetchone()
 
     if not item:
+        cur.close()
         return jsonify(error='Item not found'), 404
 
     old_qty = item['system_qty']
@@ -1814,16 +1993,36 @@ def update_inventory_item(item_id):
     else:
         new_qty = old_qty - qty
 
+    if new_qty < 0:
+        cur.close()
+        return jsonify(error='Inventory cannot go below zero'), 400
+
     cur.execute(
         "UPDATE inventory_items SET system_qty = %s WHERE id = %s",
         (new_qty, item_id)
+    )
+
+    cur.execute(
+        """
+        INSERT INTO inventory_updates
+            (inventory_item_id, updated_by, action_type, qty_change, old_qty, new_qty, reason)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """,
+        (
+            item_id,
+            current_user.id,
+            'Add' if action == 'add' else 'Sub',
+            qty if action == 'add' else -qty,
+            old_qty,
+            new_qty,
+            'Manual inventory update'
+        )
     )
 
     mysql.connection.commit()
     cur.close()
 
     return jsonify(message='Updated', new_qty=new_qty)
-
 
 @app.route('/inventory/<int:item_id>', methods=['DELETE'])
 @login_required
