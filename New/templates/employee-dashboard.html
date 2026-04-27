@@ -14,7 +14,6 @@
 
 <div class="container-fluid p-0">
 
-  <!-- SIDEBAR -->
   <nav class="sidebar-wrapper">
     <div>
       <div class="logo">Kung Fu Tea<br>Employee Portal</div>
@@ -31,11 +30,9 @@
     </div>
   </nav>
 
-  <!-- MAIN CONTENT -->
   <main class="main-content-area">
     <div class="content-container-centered employee-dashboard-page">
 
-      <!-- HERO -->
       <section class="employee-hero">
         <div>
           <h1 class="employee-hero-title">Employee Dashboard</h1>
@@ -51,31 +48,28 @@
         </a>
       </section>
 
-      <!-- SUMMARY CARDS -->
       <section class="employee-card-grid">
         <div class="employee-card">
           <div class="employee-card-label">Top Ingredient This Week</div>
-          <div class="employee-card-value employee-green">Black Tea</div>
+          <div class="employee-card-value employee-green">{{ top_item }}</div>
           <div class="employee-card-note">Highest total usage across all shifts</div>
         </div>
 
         <div class="employee-card">
           <div class="employee-card-label">Lowest Ingredient Right Now</div>
-          <div class="employee-card-value employee-red">Tapioca</div>
+          <div class="employee-card-value employee-red">{{ lowest_item }}</div>
           <div class="employee-card-note">Needs close monitoring during the shift</div>
         </div>
 
         <div class="employee-card">
           <div class="employee-card-label">Ingredients to Watch</div>
-          <div class="employee-card-value employee-gold">4</div>
-          <div class="employee-card-note">Items currently low or trending downward</div>
+          <div class="employee-card-value employee-gold">{{ low_count }}</div>
+          <div class="employee-card-note">Items currently below 10 units</div>
         </div>
       </section>
 
-      <!-- TOP SECTION -->
       <section class="employee-content-grid">
 
-        <!-- GRAPH -->
         <div class="employee-panel">
           <h2 class="employee-panel-title">Ingredient Usage This Week</h2>
           <p class="employee-panel-subtitle">
@@ -87,28 +81,26 @@
               <line x1="40" y1="220" x2="680" y2="220" stroke="#c9aba0" stroke-width="2" />
               <line x1="40" y1="30" x2="40" y2="220" stroke="#c9aba0" stroke-width="2" />
 
+              {% if usage_trend_points %}
               <polyline
                 fill="none"
                 stroke="#964f4c"
                 stroke-width="4"
-                points="60,180 150,150 240,165 330,118 420,102 510,70 600,82"
+                points="{{ usage_trend_points }}"
               />
 
-              <circle cx="60" cy="180" r="5" fill="#964f4c" />
-              <circle cx="150" cy="150" r="5" fill="#964f4c" />
-              <circle cx="240" cy="165" r="5" fill="#964f4c" />
-              <circle cx="330" cy="118" r="5" fill="#964f4c" />
-              <circle cx="420" cy="102" r="5" fill="#964f4c" />
-              <circle cx="510" cy="70" r="5" fill="#964f4c" />
-              <circle cx="600" cy="82" r="5" fill="#964f4c" />
+              {% for point in usage_points %}
+              <circle cx="{{ point.x }}" cy="{{ point.y }}" r="5" fill="#964f4c" />
+              <text x="{{ point.x - 10 }}" y="238" font-size="12" fill="#7b5d59">
+                {{ point.label }}
+              </text>
+              {% endfor %}
 
-              <text x="60" y="238" font-size="12" fill="#7b5d59">Mon</text>
-              <text x="150" y="238" font-size="12" fill="#7b5d59">Tue</text>
-              <text x="240" y="238" font-size="12" fill="#7b5d59">Wed</text>
-              <text x="330" y="238" font-size="12" fill="#7b5d59">Thu</text>
-              <text x="420" y="238" font-size="12" fill="#7b5d59">Fri</text>
-              <text x="510" y="238" font-size="12" fill="#7b5d59">Sat</text>
-              <text x="600" y="238" font-size="12" fill="#7b5d59">Sun</text>
+              {% else %}
+              <text x="250" y="130" font-size="18" fill="#7b5d59">
+                No usage data this week
+              </text>
+              {% endif %}
             </svg>
 
             <div class="employee-axis-labels">
@@ -118,39 +110,49 @@
           </div>
         </div>
 
-        <!-- QUICK INSIGHTS -->
         <div class="employee-panel">
           <h2 class="employee-panel-title">Quick Insights</h2>
 
           <div class="employee-insight-list">
+
+            {% if top_item != 'N/A' %}
             <div class="employee-insight-item employee-warning">
-              <div class="employee-insight-title">Weekend usage is highest</div>
+              <div class="employee-insight-title">{{ top_item }} is used the most</div>
               <div class="employee-insight-desc">
-                The chart shows the strongest ingredient usage on Saturday and Sunday, so employees
-                should pay closer attention to stock before rush periods.
+                This item has the highest total movement in the activity log this week.
               </div>
             </div>
+            {% endif %}
 
+            {% if lowest_item != 'N/A' %}
             <div class="employee-insight-item employee-critical">
-              <div class="employee-insight-title">Tapioca Pearls are lowest</div>
+              <div class="employee-insight-title">{{ lowest_item }} is the lowest item</div>
               <div class="employee-insight-desc">
-                This ingredient appears in the low-stock rankings and should be checked first in the
-                inventory page.
+                This ingredient should be checked first on the live inventory page.
               </div>
             </div>
+            {% endif %}
 
+            {% if low_count > 0 %}
             <div class="employee-insight-item employee-warning">
-              <div class="employee-insight-title">Mango Syrup is trending downward</div>
+              <div class="employee-insight-title">{{ low_count }} items need attention</div>
               <div class="employee-insight-desc">
-                Even if it is not yet critical, employees should monitor it during the shift because
-                it is one of the lower ingredients this week.
+                These items are below 10 units and should be monitored during the shift.
               </div>
             </div>
+            {% else %}
+            <div class="employee-insight-item employee-warning">
+              <div class="employee-insight-title">No low stock items right now</div>
+              <div class="employee-insight-desc">
+                Inventory does not show any items below the low-stock threshold.
+              </div>
+            </div>
+            {% endif %}
+
           </div>
         </div>
       </section>
 
-      <!-- BOTTOM TABLES -->
       <section class="employee-bottom-grid">
 
         <div class="employee-panel">
@@ -164,17 +166,19 @@
                 <th>Used</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr><td><span class="employee-rank">1</span></td><td>Black Tea</td><td>92</td></tr>
-              <tr><td><span class="employee-rank">2</span></td><td>Tapioca Pearls</td><td>86</td></tr>
-              <tr><td><span class="employee-rank">3</span></td><td>Whole Milk</td><td>81</td></tr>
-              <tr><td><span class="employee-rank">4</span></td><td>Brown Sugar</td><td>75</td></tr>
-              <tr><td><span class="employee-rank">5</span></td><td>Mango Syrup</td><td>66</td></tr>
-              <tr><td><span class="employee-rank">6</span></td><td>Large Cups</td><td>63</td></tr>
-              <tr><td><span class="employee-rank">7</span></td><td>Oat Milk</td><td>59</td></tr>
-              <tr><td><span class="employee-rank">8</span></td><td>Jasmine Tea</td><td>57</td></tr>
-              <tr><td><span class="employee-rank">9</span></td><td>Straws</td><td>55</td></tr>
-              <tr><td><span class="employee-rank">10</span></td><td>Napkins</td><td>49</td></tr>
+              {% for item in top_used_items %}
+              <tr>
+                <td><span class="employee-rank">{{ loop.index }}</span></td>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.used_qty }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="3">No usage data this week.</td>
+              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -190,17 +194,27 @@
                 <th>Status</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr><td><span class="employee-rank">1</span></td><td>Tapioca Pearls</td><td><span class="employee-pill employee-pill-red">Critical</span></td></tr>
-              <tr><td><span class="employee-rank">2</span></td><td>Mango Syrup</td><td><span class="employee-pill employee-pill-gold">Low</span></td></tr>
-              <tr><td><span class="employee-rank">3</span></td><td>Large Cups</td><td><span class="employee-pill employee-pill-gold">Low</span></td></tr>
-              <tr><td><span class="employee-rank">4</span></td><td>Whole Milk</td><td><span class="employee-pill employee-pill-gold">Low</span></td></tr>
-              <tr><td><span class="employee-rank">5</span></td><td>Oat Milk</td><td><span class="employee-pill employee-pill-gold">Low</span></td></tr>
-              <tr><td><span class="employee-rank">6</span></td><td>Brown Sugar</td><td><span class="employee-pill employee-pill-green">Watch</span></td></tr>
-              <tr><td><span class="employee-rank">7</span></td><td>Jasmine Tea</td><td><span class="employee-pill employee-pill-green">Watch</span></td></tr>
-              <tr><td><span class="employee-rank">8</span></td><td>Straws</td><td><span class="employee-pill employee-pill-green">Watch</span></td></tr>
-              <tr><td><span class="employee-rank">9</span></td><td>Napkins</td><td><span class="employee-pill employee-pill-green">Watch</span></td></tr>
-              <tr><td><span class="employee-rank">10</span></td><td>Honey</td><td><span class="employee-pill employee-pill-green">Watch</span></td></tr>
+              {% for item in lowest_items %}
+              <tr>
+                <td><span class="employee-rank">{{ loop.index }}</span></td>
+                <td>{{ item.item_name }}</td>
+                <td>
+                  {% if item.system_qty < 5 %}
+                    <span class="employee-pill employee-pill-red">Critical</span>
+                  {% elif item.system_qty < 10 %}
+                    <span class="employee-pill employee-pill-gold">Low</span>
+                  {% else %}
+                    <span class="employee-pill employee-pill-green">Watch</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="3">No inventory items found.</td>
+              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
