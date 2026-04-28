@@ -132,14 +132,14 @@
           </div>
         </div>
 
-        <div class="man3-table-card table-scroll-container">
+        <div class="man3-table-card">
           <div class="man3-table-header">
             <div class="man3-ingredient-col">Ingredient</div>
             <div class="man3-qty-col">System Qty</div>
             <div class="man3-count-col">Physical Count</div>
             <div class="man3-diff-col">Difference</div>
           </div>
-
+          <div class="table-scroll-container">
           {% for item in items %}
           {% set diff = item.physical_count - item.system_qty %}
           <div class="man3-table-row">
@@ -151,6 +151,7 @@
             <div class="man3-diff-col {% if diff != 0 %}red-text{% endif %}">
               {{ diff }}
             </div>
+          </div>
           </div>
           {% endfor %}
         </div>
