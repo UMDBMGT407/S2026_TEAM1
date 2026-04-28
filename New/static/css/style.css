@@ -2651,12 +2651,6 @@ select:focus {
 /* ==== Michelle's section start ==== */
 /* ===== SHARED LAYOUT ===== */
 
-/* FORCE SAME FONT AS SIDEBAR */
-.man5-main-rectangle,
-.man5-main-rectangle * {
-  font-family: "Inria Serif", serif !important;
-}
-
 .man5-manage-users {
   color: #000000;
   text-align: center;
@@ -2677,8 +2671,6 @@ select:focus {
   padding: 28px 28px 24px;
 }
 
-/* ===== TOP BAR ===== */
-
 .man5-manage-users-topbar {
   display: flex;
   align-items: center;
@@ -2696,6 +2688,7 @@ select:focus {
 }
 
 /* ===== SEARCH BAR ===== */
+/* added for B2 */
 
 .man5-search-row {
   margin-bottom: 16px;
@@ -2705,28 +2698,37 @@ select:focus {
   background: #fcefe4;
   border-radius: 30px;
   width: 268px;
+  max-width: 100%;
   height: 37px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   padding: 0 14px;
-  box-shadow: 0px 4px 4px rgba(0,0,0,0.25);
+}
+
+.man5-div-span2 {
+  font-size: 14px;
+  color: #8b4a44;
+  margin-right: 10px;
 }
 
 .man5-fakeSearch {
   width: 100%;
+  background: transparent;
   border: none;
   outline: none;
-  background: transparent;
+  font-size: 16px;
   color: #8b4a44;
   font-family: "Inria Serif", serif;
 }
 
-/* ===== ADD BUTTON ===== */
+/* ===== ADD USER BUTTON ===== */
 
 .man5-add-new-user-rectangle {
   background: #964f4c;
   border-radius: 30px;
   width: 293px;
+  max-width: 100%;
   height: 49px;
   display: flex;
   align-items: center;
@@ -2734,7 +2736,8 @@ select:focus {
 }
 
 .man5-add-new-user {
-  color: #fff;
+  color: #ffffff;
+  font-family: "Inria Serif", serif;
   font-size: 24px;
   cursor: pointer;
 }
@@ -2742,27 +2745,31 @@ select:focus {
 /* ===== TABLE ===== */
 
 .man5-inner-rec {
+  width: 100%;
   background: #f8efe6;
   border-radius: 18px;
   overflow: hidden;
 }
 
-/* HEADER */
 .man5-status-box {
   background: #964f4c;
   padding: 14px 20px;
 }
 
+/* changed for B2 */
 .man5-frame-2 {
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 1fr;
   align-items: center;
+  column-gap: 12px;
 }
 
+/* added for B2 */
 .man5-frame-2 div {
   text-align: center;
 }
 
+/* added for B2 */
 .man5-frame-2 div:first-child {
   text-align: left;
   padding-left: 10px;
@@ -2772,51 +2779,49 @@ select:focus {
 .man5-role,
 .man5-phone,
 .man5-status {
-  color: #fff;
+  color: #ffffff;
   font-size: 24px;
+  font-weight: 400;
 }
 
-/* ROWS */
 .man5-name-1 {
   padding: 16px 20px;
   border-bottom: 1px solid #ddb3ae;
   background: #f8efe6;
 }
 
-/* ===== BUTTONS ===== */
+/* ===== ACTION BUTTONS ===== */
+/* changed for B2 */
 
-.man5-name-1 button {
-  background: #c46b64;
-  color: #fff;
+.man5-action-btn {
+  background: #964f4c;
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 6px 14px;
   font-size: 13px;
+  font-family: "Inria Serif", serif;
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.man5-name-1 button:last-child {
-  background: #964f4c;
+.man5-action-btn.delete {
+  background: #c46b64;
 }
 
-.man5-name-1 button:hover {
+.man5-action-btn:hover {
   opacity: 0.85;
 }
 
-/* ===== INACTIVE SECTION (MATCH EXACTLY) ===== */
-
-/* KEEP SAME LOOK — NO DIFFERENT BG */
-#inactiveContainer .man5-name-1 {
-  background: #f8efe6;
-  opacity: 1;
+/* added for B2 */
+.man5-frame-2 div:last-child {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
-/* ONLY DIFFERENCE = BUTTON COLOR */
-#inactiveContainer button {
-  background: #5c8d6d;
-}
-
-/* ===== POPUP ===== */
+/* ===== POPUP WRAPPER ===== */
+/* added for B2 */
 
 .man5-popup-wrapper {
   position: fixed;
@@ -2828,152 +2833,201 @@ select:focus {
   display: none;
   justify-content: center;
   align-items: center;
+  z-index: 999;
 }
 
+/* added for B2 (fix showing popup) */
 .man5-popup-wrapper[style*="flex"] {
   display: flex;
 }
 
+/* ===== POPUP BOX ===== */
+
 .man5-popup-box {
-  background: #f8efe6;
-  padding: 30px;
+  background: #f8efe6; /* same as table */
+  padding: 30px 26px;
   border-radius: 20px;
   width: 360px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  font-family: "Inria Serif", serif;
+  border: 1px solid rgba(0,0,0,0.2);
 }
 
 .man5-popup-box h4 {
-  color: #964f4c;
+  color: #964f4c; /* same maroon */
   font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 18px;
 }
+
+/* ===== POPUP INPUTS ===== */
 
 .man5-popup-box input,
 .man5-popup-box select {
   width: 100%;
-  padding: 12px;
+  padding: 12px 16px;
   border-radius: 14px;
   border: 1px solid #ddb3ae;
   background: #fffaf5;
   margin-bottom: 14px;
-}
-
-/* POPUP BUTTONS */
-#popup button,
-#editPopup button {
-  width: 100%;
-  border-radius: 12px;
-  padding: 10px;
   font-size: 15px;
-  border: none;
+  font-family: "Inria Serif", serif;
+  color: #5c3a36;
 }
 
-#popup button:first-child,
-#editPopup button:first-child {
-  background: #964f4c;
-  color: #fff;
-}
-
-#popup button:last-child,
-#editPopup button:last-child {
-  background: #bfa39a;
-  color: #fff;
-}
-
-/* ===== RESPONSIVE ===== */
-
-@media (max-width: 768px) {
-  .man5-frame-2 {
-    grid-template-columns: 1.2fr 1fr 1fr 1fr;
-  }
-}
-
-/* ===== FORCE ADD USER POPUP STYLE (FINAL) ===== */
-
-.man5-popup-box {
-  background: #f4ebe4 !important;  /* lighter cream */
-  border-radius: 16px !important;
-  padding: 25px !important;
-  width: 300px !important;
-  text-align: center;
-}
-
-/* inputs */
-.man5-popup-box input,
-.man5-popup-box select {
-  width: 100% !important;
-  padding: 10px !important;
-  margin-bottom: 10px !important;
-  border-radius: 10px !important;
-  border: 1px solid #ddd !important;
-  background: #ffffff !important;
-}
-
-/* ADD button */
-.man5-popup-box button:first-of-type {
-  background: #964f4c !important;
-  color: white !important;
-  border-radius: 10px !important;
-}
-
-/* CLOSE button */
-.man5-popup-box button:last-of-type {
-  background: #d6b5aa !important;
-  color: white !important;
-  border-radius: 10px !important;
-}
-
-/* title */
-.man5-popup-box h4 {
-  color: #964f4c !important;
-  font-weight: 700;
-}
-
-/* FIX BUTTON SPACING IN POPUP */
+/* ===== POPUP BUTTONS ===== */
+/* changed for B2 */
 
 .man5-popup-box button {
   width: 100%;
-  margin-top: 6px;   /* spacing between buttons */
-}
-
-.man5-popup-box button:first-of-type {
-  margin-bottom: 4px; /* extra space under Add */
-}
-
-.delete-btn {
-  background: #7a2e2e;
+  background: #964f4c; /* theme color */
   color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 8px;
-  margin-left: 6px;
+  padding: 10px;
+  border-radius: 14px;
+  font-size: 15px;
   cursor: pointer;
-}
-
-.delete-btn:hover {
-  background: #5c1f1f;
-}
-
-/* Make Delete button same as Deactivate */
-button[onclick*="permanentDelete"] {
-  background-color: #964f4c;  /* same red */
-  color: white;
+  margin-top: 8px;
   border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
+  transition: 0.2s ease;
 }
 
-button[onclick*="permanentDelete"]:hover {
-  background-color: #7a3f3c;
+.man5-popup-box button:hover {
+  background: #7d3f3c;
 }
 
-/* FORCE DELETE BUTTON COLOR (FINAL FIX) */
-#inactiveContainer button[onclick*="permanentDelete"] {
-  background-color: #964f4c !important;
+/* added for B2 */
+.man5-popup-box button:last-child {
+  background: #bfa39a;
 }
 
-#inactiveContainer button[onclick*="permanentDelete"]:hover {
-  background-color: #7a3f3c !important;
+.man5-popup-box button:last-child:hover {
+  background: #a88f87;
+}
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 900px) {
+  .man5-manage-users2 {
+    font-size: 32px;
+  }
+
+  .man5-name2,
+  .man5-role,
+  .man5-phone,
+  .man5-status {
+    font-size: 19px;
+  }
 }
 
+@media (max-width: 768px) {
+  .man5-main-rectangle {
+    padding: 20px;
+  }
+
+  .man5-manage-users-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .man5-add-new-user-rectangle {
+    width: 100%;
+  }
+
+  .man5-frame-2 {
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  }
+
+  .man5-popup-wrapper {
+    left: 0;
+    width: 100%;
+  }
+}
+
+.man5-frame-2 div:last-child {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ===== FIX EDIT / DELETE BUTTONS ONLY ===== */
+
+.man5-name-1 button {
+  background: #c46b64; /* lighter red */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-family: "Inria Serif", serif;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* DELETE button (second button) */
+.man5-name-1 button:last-child {
+  background: #964f4c; /* theme maroon */
+}
+
+/* hover */
+.man5-name-1 button:hover {
+  opacity: 0.85;
+}
+
+/* ===== FIX ADD / CLOSE BUTTONS IN POPUP ===== */
+
+/* BOTH buttons */
+#popup button {
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 10px !important;
+  font-family: "Inria Serif", serif;
+  font-size: 15px;
+}
+
+/* ADD button */
+#popup button:first-of-type {
+  background: #964f4c !important;
+  color: #fff !important;
+}
+
+/* CLOSE button */
+#popup button:last-of-type {
+  background: #bfa39a !important;
+  color: #fff !important;
+}
+
+/* hover */
+#popup button:hover {
+  opacity: 0.9;
+}
+
+/* ===== FIX UPDATE / CLOSE BUTTONS (EDIT POPUP) ===== */
+
+/* both buttons */
+#editPopup button {
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 10px !important;
+  font-family: "Inria Serif", serif;
+  font-size: 15px;
+}
+
+/* UPDATE button */
+#editPopup button:first-of-type {
+  background: #964f4c !important;
+  color: #ffffff !important;
+}
+
+/* CLOSE button */
+#editPopup button:last-of-type {
+  background: #bfa39a !important;
+  color: #ffffff !important;
+}
+
+/* hover */
+#editPopup button:hover {
+  opacity: 0.9;
+}
 /* ==== Michelle's section end ==== */
 
 /* PREDICTIVE REPORTS */
@@ -4511,4 +4565,19 @@ button[onclick*="permanentDelete"]:hover {
 .locked-step {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+.table-scroll-container {
+  max-height: 500px; /* adjust to your liking */
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: 20px;
+}
+
+/* Optional: keep header visible while scrolling */
+.man2-table-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #964f4c; /* match your theme */
 }
