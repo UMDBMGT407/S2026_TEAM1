@@ -277,7 +277,7 @@
                 <input class="da-qty-input"
                       type="number"
                       name="qty_received_{{ item.inventory_item_id }}"
-                      value="{{ item.qty_received if item.qty_received is not none else item.qty_ordered }}"
+                      value="{{ item.qty_received if item.qty_received is not none else '' }}"
                       min="0"
                       required
                       {% if order.audit_status == 'Confirmed' %}readonly{% endif %}>
