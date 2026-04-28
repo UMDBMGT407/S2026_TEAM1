@@ -1335,6 +1335,7 @@ def upsert_predictive_recipe():
         cur.close()
 
 
+
 # =========================
 # NATHAN'S PART
 # =========================
@@ -1351,7 +1352,8 @@ def purchaseOrders():
             po.order_date,
             po.expected_date,
             po.received_date,
-            po.order_status
+            po.order_status,
+            po.audit_status
         FROM purchase_orders po
         JOIN suppliers s
             ON po.supplier_id = s.id
@@ -1399,7 +1401,8 @@ def purchaseOrders():
             'expected_date': fmt_date(expected_date),
             'received_date': fmt_date(received_date),
             'status': status,
-            'items': items_by_order.get(oid, [])
+            'items': items_by_order.get(oid, []),
+            'audit_status': row['audit_status']
         })
 
     return render_template('purchase_order_info.html', orders=orders)
@@ -1413,19 +1416,8 @@ def update_order_status(order_id):
         return jsonify(error='JSON required'), 400
 
     new_status = request.get_json().get('status')
-    if new_status not in ('Pending', 'Received', 'Ordered', 'Cancelled'):
+    if new_status not in ('Pending', 'Received', 'Cancelled'):
         return jsonify(error='Invalid status'), 400
-
-    cur = mysql.connection.cursor()
-
-    cur.execute("SELECT order_status FROM purchase_orders WHERE id = %s", (order_id,))
-    current_row = cur.fetchone()
-    cur.close()
-
-    if not current_row:
-        return jsonify(error='Order not found'), 404
-
-    was_already_received = (current_row['order_status'] == 'Received')
 
     cur = mysql.connection.cursor()
 
@@ -1433,26 +1425,32 @@ def update_order_status(order_id):
         cur.execute("""
             UPDATE purchase_orders
             SET order_status = %s,
-                received_date = CURDATE()
+                received_date = CURDATE(),
+                audit_status = 'Pending'
             WHERE id = %s
         """, (new_status, order_id))
-    else:
+    elif new_status == 'Pending':
         cur.execute("""
             UPDATE purchase_orders
             SET order_status = %s,
-                received_date = NULL
+                received_date = NULL,
+                audit_status = 'Pending'
+            WHERE id = %s
+        """, (new_status, order_id))
+    else:  # Cancelled
+        cur.execute("""
+            UPDATE purchase_orders
+            SET order_status = %s,
+                audit_status = 'Pending'
             WHERE id = %s
         """, (new_status, order_id))
 
     mysql.connection.commit()
     cur.close()
 
-    if new_status == 'Received' and not was_already_received:
-        apply_purchase_order_to_inventory(order_id, current_user.id)
-
     return jsonify(
         message='Status updated',
-        received_date=fmt_date(datetime.date.today()) if new_status == 'Received' else None
+        received_date=fmt_date(__import__('datetime').date.today()) if new_status == 'Received' else None
     ), 200
 
 
@@ -1517,8 +1515,8 @@ def submit_purchase_order():
     cur = mysql.connection.cursor()
 
     cur.execute("""
-        INSERT INTO purchase_orders (supplier_id, order_date, expected_date, order_status)
-        VALUES (%s, %s, %s, 'Pending')
+        INSERT INTO purchase_orders (supplier_id, order_date, expected_date, order_status, audit_status)
+        VALUES (%s, %s, %s, 'Pending', 'Pending')
     """, (supplier_id, order_date, expected_date))
 
     new_order_id = cur.lastrowid
@@ -1628,6 +1626,51 @@ import datetime
 
 
 # ── APPLY PURCHASE ORDER TO INVENTORY ─────────────────
+def apply_confirmed_audit_to_inventory(order_id, user_id):
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        SELECT
+            da.inventory_item_id,
+            da.quantity_received,
+            ii.system_qty,
+            ii.item_name
+        FROM delivery_audits da
+        JOIN inventory_items ii
+            ON da.inventory_item_id = ii.id
+        WHERE da.purchase_order_id = %s
+    """, (order_id,))
+    items = cur.fetchall()
+
+    for item in items:
+        old_qty = int(item['system_qty'])
+        received_qty = int(item['quantity_received'])
+        new_qty = old_qty + received_qty
+
+        cur.execute("""
+            UPDATE inventory_items
+            SET system_qty = %s
+            WHERE id = %s
+        """, (new_qty, item['inventory_item_id']))
+
+        cur.execute("""
+            INSERT INTO inventory_updates
+                (inventory_item_id, updated_by, action_type, qty_change, old_qty, new_qty, purchase_order_id, reason)
+            VALUES
+                (%s, %s, 'Receive', %s, %s, %s, %s, %s)
+        """, (
+            item['inventory_item_id'],
+            user_id,
+            received_qty,
+            old_qty,
+            new_qty,
+            order_id,
+            f'Confirmed delivery audit for PO #{order_id}'
+        ))
+
+    mysql.connection.commit()
+    cur.close()
+
 def apply_purchase_order_to_inventory(order_id, received_by_user_id):
     cur = mysql.connection.cursor()
 
@@ -1690,57 +1733,268 @@ def apply_purchase_order_to_inventory(order_id, received_by_user_id):
 # =========================
 @app.route('/delivery-audit')
 @login_required
-@role_required('Manager', 'ShiftLead')
+@role_required('Manager')
 def delivery_audit_list():
     cur = mysql.connection.cursor()
-
     cur.execute("""
-        SELECT po.id,
-               s.supplier_name,
-               po.order_date,
-               po.expected_date,
-               po.received_date,
-               po.order_status,
-               COUNT(da.id) AS audit_line_count
+        SELECT
+            po.id,
+            s.supplier_name,
+            po.order_date,
+            po.expected_date,
+            po.received_date,
+            po.order_status,
+            po.audit_status
         FROM purchase_orders po
         JOIN suppliers s ON po.supplier_id = s.id
-        LEFT JOIN delivery_audits da ON da.purchase_order_id = po.id
-        GROUP BY po.id, s.supplier_name, po.order_date,
-                 po.expected_date, po.received_date, po.order_status
         ORDER BY po.id DESC
     """)
-
-    orders_raw = cur.fetchall()
+    rows = cur.fetchall()
     cur.close()
 
     orders = []
-    for row in orders_raw:
-        orders.append({
+    awaiting_audit = []
+    awaiting_approval = []
+    reviewed_orders = []
+
+    for row in rows:
+        order = {
             'id': row['id'],
             'supplier': row['supplier_name'],
             'order_date': fmt_date(row['order_date']),
             'expected_date': fmt_date(row['expected_date']),
             'received_date': fmt_date(row['received_date']),
             'status': row['order_status'],
-            'audit_line_count': row['audit_line_count'],
-            'has_audit': row['audit_line_count'] > 0,
-        })
+            'audit_status': row['audit_status']
+        }
 
-    return render_template('delivery_audit.html', orders=orders, order=None)
+        orders.append(order)
 
+        if row['order_status'] == 'Received' and row['audit_status'] == 'Pending':
+            awaiting_audit.append(order)
+        elif row['audit_status'] == 'Awaiting Approval':
+            awaiting_approval.append(order)
+        elif row['audit_status'] == 'Reviewed':
+            reviewed_orders.append(order)
+
+    return render_template(
+        'delivery_audit.html',
+        orders=orders,
+        awaiting_audit=awaiting_audit,
+        awaiting_approval=awaiting_approval,
+        reviewed_orders=reviewed_orders,
+        order=None
+    )
+
+@app.route('/sl-delivery-audit')
+@login_required
+@role_required('ShiftLead')
+def sl_delivery_audit_list():
+    cur = mysql.connection.cursor()
+    cur.execute("""
+        SELECT
+            po.id,
+            s.supplier_name,
+            po.order_date,
+            po.expected_date,
+            po.received_date,
+            po.order_status,
+            po.audit_status
+        FROM purchase_orders po
+        JOIN suppliers s ON po.supplier_id = s.id
+        WHERE po.order_status = 'Received'
+        ORDER BY po.id DESC
+    """)
+    rows = cur.fetchall()
+    cur.close()
+
+    awaiting_audit = []
+    awaiting_approval = []
+
+    for row in rows:
+        order = {
+            'id': row['id'],
+            'supplier': row['supplier_name'],
+            'order_date': fmt_date(row['order_date']),
+            'expected_date': fmt_date(row['expected_date']),
+            'received_date': fmt_date(row['received_date']),
+            'status': row['order_status'],
+            'audit_status': row['audit_status']
+        }
+
+        if row['audit_status'] == 'Pending':
+            awaiting_audit.append(order)
+        elif row['audit_status'] == 'Awaiting Approval':
+            awaiting_approval.append(order)
+
+    return render_template(
+        'sl-delivery_audit.html',
+        awaiting_audit=awaiting_audit,
+        awaiting_approval=awaiting_approval,
+        order=None
+    )
 
 @app.route('/delivery-audit/<int:order_id>', methods=['GET', 'POST'])
 @login_required
-@role_required('Manager', 'ShiftLead')
+@role_required('Manager')
 def delivery_audit_detail(order_id):
+    cur = mysql.connection.cursor()
+
+    # PO header + audit metadata
+    cur.execute("""
+        SELECT 
+            po.id,
+            po.order_date,
+            po.expected_date,
+            po.received_date,
+            po.order_status,
+            po.audit_status,
+            s.supplier_name,
+            MAX(da.received_at) AS audited_at,
+            MAX(u.name) AS audited_by_name
+        FROM purchase_orders po
+        JOIN suppliers s
+            ON po.supplier_id = s.id
+        LEFT JOIN delivery_audits da
+            ON da.purchase_order_id = po.id
+        LEFT JOIN users u
+            ON da.received_by = u.id
+        WHERE po.id = %s
+        GROUP BY
+            po.id,
+            po.order_date,
+            po.expected_date,
+            po.received_date,
+            po.order_status,
+            po.audit_status,
+            s.supplier_name
+    """, (order_id,))
+    order = cur.fetchone()
+
+    if not order:
+        cur.close()
+        return "Order not found", 404
+
+    # PO line items + audited quantities
+    cur.execute("""
+        SELECT
+            poi.inventory_item_id,
+            ii.item_name,
+            ii.category,
+            poi.quantity AS qty_ordered,
+            da.quantity_received AS qty_received,
+            ii.system_qty AS last_recorded_qty
+        FROM purchase_order_items poi
+        JOIN inventory_items ii
+            ON poi.inventory_item_id = ii.id
+        LEFT JOIN delivery_audits da
+            ON da.purchase_order_id = poi.purchase_order_id
+           AND da.inventory_item_id = poi.inventory_item_id
+        WHERE poi.purchase_order_id = %s
+        ORDER BY ii.item_name
+    """, (order_id,))
+    line_items = cur.fetchall()
+
+    audit_has_been_submitted = False
+    has_discrepancy = False
+    discrepancy_count = 0
+
+    for item in line_items:
+        qty_ordered = int(item['qty_ordered'] or 0)
+
+        if item['qty_received'] is None:
+            item['difference'] = None
+            continue
+
+        audit_has_been_submitted = True
+        qty_received = int(item['qty_received'])
+        difference = qty_received - qty_ordered
+        
+        item['difference'] = difference
+
+        if difference != 0:
+            has_discrepancy = True
+            discrepancy_count += 1
+
+    if request.method == 'POST':
+        for item in line_items:
+            raw = request.form.get(
+                f"qty_received_{item['inventory_item_id']}",
+                item['qty_ordered']
+            )
+            qty_received = int(raw) if raw not in (None, '') else 0
+
+            cur.execute("""
+                INSERT INTO delivery_audits (
+                    purchase_order_id,
+                    inventory_item_id,
+                    quantity_ordered,
+                    quantity_received,
+                    received_by
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE
+                    quantity_ordered = VALUES(quantity_ordered),
+                    quantity_received = VALUES(quantity_received),
+                    received_by = VALUES(received_by)
+            """, (
+                order_id,
+                item['inventory_item_id'],
+                item['qty_ordered'],
+                qty_received,
+                current_user.id
+            ))
+
+        cur.execute("""
+            UPDATE purchase_orders
+            SET audit_status = 'Confirmed'
+            WHERE id = %s
+        """, (order_id,))
+
+        mysql.connection.commit()
+
+        # Only now update inventory/activity log
+        apply_confirmed_audit_to_inventory(order_id, current_user.id)
+
+        cur.close()
+        return redirect(url_for('delivery_audit_list'))
+
+    order_data = {
+        'id': order['id'],
+        'supplier': order['supplier_name'],
+        'order_date': fmt_date(order['order_date']),
+        'expected_date': fmt_date(order['expected_date']),
+        'received_date': fmt_date(order['received_date']),
+        'status': order['order_status'],
+        'audit_status': order['audit_status'],
+        'received_by_name': order['audited_by_name'],
+        'received_at': fmt_date(order['audited_at']) if order['audited_at'] else None
+    }
+
+    cur.close()
+    return render_template(
+        'delivery_audit.html',
+        order=order_data,
+        line_items=line_items,
+        has_discrepancy=has_discrepancy,
+        discrepancy_count=discrepancy_count,
+        audit_has_been_submitted=audit_has_been_submitted
+    )
+
+
+@app.route('/sl-delivery-audit/<int:order_id>', methods=['GET', 'POST'])
+@login_required
+@role_required('ShiftLead')
+def sl_delivery_audit_detail(order_id):
     cur = mysql.connection.cursor()
 
     cur.execute("""
         SELECT po.id,
-               po.order_status,
                po.order_date,
                po.expected_date,
                po.received_date,
+               po.order_status,
+               po.audit_status,
                s.supplier_name
         FROM purchase_orders po
         JOIN suppliers s ON po.supplier_id = s.id
@@ -1752,152 +2006,71 @@ def delivery_audit_detail(order_id):
         cur.close()
         return "Order not found", 404
 
-    if request.method == 'POST':
-        cur.execute("""
-            SELECT poi.inventory_item_id,
-                   poi.quantity AS qty_ordered,
-                   da.id AS delivery_audit_id,
-                   da.quantity_received AS qty_received_existing
-            FROM purchase_order_items poi
-            LEFT JOIN delivery_audits da
-                   ON da.purchase_order_id = poi.purchase_order_id
-                  AND da.inventory_item_id = poi.inventory_item_id
-            WHERE poi.purchase_order_id = %s
-        """, (order_id,))
-        line_items = cur.fetchall()
-
-        try:
-            for item in line_items:
-                inventory_item_id = item['inventory_item_id']
-                qty_ordered = int(item['qty_ordered'])
-                old_received = int(item['qty_received_existing'] or 0)
-                raw_value = request.form.get(
-                    f'qty_received_{inventory_item_id}',
-                    str(qty_ordered)
-                )
-
-                try:
-                    new_received = max(0, int(raw_value))
-                except (ValueError, TypeError):
-                    new_received = old_received
-
-                delta = new_received - old_received
-
-                if item['delivery_audit_id']:
-                    cur.execute("""
-                        UPDATE delivery_audits
-                        SET quantity_ordered = %s,
-                            quantity_received = %s,
-                            received_by = %s,
-                            received_at = CURRENT_TIMESTAMP
-                        WHERE id = %s
-                    """, (
-                        qty_ordered,
-                        new_received,
-                        current_user.id,
-                        item['delivery_audit_id']
-                    ))
-                else:
-                    cur.execute("""
-                        INSERT INTO delivery_audits
-                            (purchase_order_id, inventory_item_id, quantity_ordered, quantity_received, received_by)
-                        VALUES (%s, %s, %s, %s, %s)
-                    """, (
-                        order_id,
-                        inventory_item_id,
-                        qty_ordered,
-                        new_received,
-                        current_user.id
-                    ))
-
-                if delta != 0:
-                    cur.execute(
-                        "SELECT system_qty FROM inventory_items WHERE id = %s",
-                        (inventory_item_id,)
-                    )
-                    inv_row = cur.fetchone()
-                    if not inv_row:
-                        raise ValueError(f'Inventory item {inventory_item_id} not found')
-
-                    old_qty = int(inv_row['system_qty'])
-                    new_qty = old_qty + delta
-                    if new_qty < 0:
-                        raise ValueError('Delivery audit adjustment would make inventory negative')
-
-                    cur.execute(
-                        "UPDATE inventory_items SET system_qty = %s WHERE id = %s",
-                        (new_qty, inventory_item_id)
-                    )
-
-                    action_type = 'Receive' if delta > 0 else 'Audit'
-                    reason = (
-                        f'Delivery audit submitted for PO #{order_id}'
-                        if old_received == 0 and delta > 0
-                        else f'Delivery audit adjustment for PO #{order_id}'
-                    )
-
-                    cur.execute("""
-                        INSERT INTO inventory_updates
-                            (inventory_item_id, updated_by, action_type, qty_change,
-                             old_qty, new_qty, purchase_order_id, reason)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                    """, (
-                        inventory_item_id,
-                        current_user.id,
-                        action_type,
-                        delta,
-                        old_qty,
-                        new_qty,
-                        order_id,
-                        reason
-                    ))
-
-            if order['order_status'] != 'Received':
-                cur.execute("""
-                    UPDATE purchase_orders
-                    SET order_status = 'Received',
-                        received_date = CURDATE()
-                    WHERE id = %s
-                """, (order_id,))
-
-            mysql.connection.commit()
-        except Exception:
-            mysql.connection.rollback()
-            cur.close()
-            raise
-
-        cur.close()
-        return redirect(url_for('delivery_audit_list'))
-
     cur.execute("""
         SELECT poi.inventory_item_id,
-               i.item_name,
-               i.category,
+               ii.item_name,
+               ii.category,
                poi.quantity AS qty_ordered,
                da.quantity_received AS qty_received,
-               da.received_at
+               ii.system_qty AS last_recorded_qty
         FROM purchase_order_items poi
-        JOIN inventory_items i ON poi.inventory_item_id = i.id
+        JOIN inventory_items ii ON poi.inventory_item_id = ii.id
         LEFT JOIN delivery_audits da
-            ON da.purchase_order_id = poi.purchase_order_id
-           AND da.inventory_item_id = poi.inventory_item_id
+          ON da.purchase_order_id = poi.purchase_order_id
+         AND da.inventory_item_id = poi.inventory_item_id
         WHERE poi.purchase_order_id = %s
-        ORDER BY i.item_name
+        ORDER BY ii.item_name
     """, (order_id,))
-
     line_items = cur.fetchall()
-    cur.close()
+
+    if request.method == 'POST':
+        for item in line_items:
+            raw = request.form.get(f"qty_received_{item['inventory_item_id']}", item['qty_ordered'])
+            qty_received = int(raw) if raw not in (None, '') else 0
+
+            cur.execute("""
+                INSERT INTO delivery_audits (
+                    purchase_order_id,
+                    inventory_item_id,
+                    quantity_ordered,
+                    quantity_received,
+                    received_by
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE
+                    quantity_ordered = VALUES(quantity_ordered),
+                    quantity_received = VALUES(quantity_received),
+                    received_by = VALUES(received_by)
+            """, (
+                order_id,
+                item['inventory_item_id'],
+                item['qty_ordered'],
+                qty_received,
+                current_user.id
+            ))
+
+        cur.execute("""
+            UPDATE purchase_orders
+            SET audit_status = 'Awaiting Approval'
+            WHERE id = %s
+        """, (order_id,))
+
+        mysql.connection.commit()
+        cur.close()
+        return redirect(url_for('sl_delivery_audit_list'))
 
     order_data = {
         'id': order['id'],
-        'status': order['order_status'],
         'supplier': order['supplier_name'],
         'order_date': fmt_date(order['order_date']),
         'expected_date': fmt_date(order['expected_date']),
         'received_date': fmt_date(order['received_date']),
+        'status': order['order_status'],
+        'audit_status': order['audit_status']
     }
 
-    return render_template('delivery_audit.html', order=order_data, line_items=line_items)
+    cur.close()
+    return render_template('sl-delivery_audit.html', order=order_data, line_items=line_items)
 
 
 # =========================
@@ -1905,7 +2078,7 @@ def delivery_audit_detail(order_id):
 # =========================
 @app.route('/api/delivery-audit/<int:order_id>')
 @login_required
-@role_required('Manager', 'ShiftLead')
+@role_required('Manager')
 def get_delivery_audit(order_id):
     cur = mysql.connection.cursor()
 
@@ -1958,7 +2131,6 @@ def get_delivery_audit(order_id):
         },
         'items': rows
     })
-
 
 # =========================
 # INVENTORY UPDATE (API)
