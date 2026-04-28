@@ -2651,6 +2651,12 @@ select:focus {
 /* ==== Michelle's section start ==== */
 /* ===== SHARED LAYOUT ===== */
 
+/* FORCE SAME FONT AS SIDEBAR */
+.man5-main-rectangle,
+.man5-main-rectangle * {
+  font-family: "Inria Serif", serif !important;
+}
+
 .man5-manage-users {
   color: #000000;
   text-align: center;
