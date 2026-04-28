@@ -10,204 +10,205 @@
 </head>
 <body>
   <div class="container-fluid p-0">
-
-    <!-- ══ SIDEBAR (UPDATED) ══ -->
-    <nav class="sidebar-wrapper">
-
+ 
+    <!-- ══ SIDEBAR (identical structure to man-dash.html) ══ -->
+    <div class="sidebar-wrapper">
       <div>
-        <div class="logo">
-          Kung Fu Tea<br>Manager Portal
-        </div>
+        <div class="logo">Kung Fu Tea<br>Manager Portal</div>
 
         <div class="sidebar-nav">
-
-          <div class="nav-section-title">OVERVIEW</div>
+          <div class="nav-section-title">Overview</div>
           <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
 
-          <div class="nav-section-title">INVENTORY</div>
+          <div class="nav-section-title">Inventory</div>
           <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
           <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
           <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
 
-          <div class="nav-section-title">ORDERS</div>
+          <div class="nav-section-title">Orders</div>
           <a class="nav-btn active" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
           <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
 
-          <div class="nav-section-title">INSIGHTS</div>
+          <div class="nav-section-title">Insights</div>
           <a class="nav-btn" href="{{ url_for('dashboard') }}">Analytics</a>
           <a class="nav-btn" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
 
-          <div class="nav-section-title">ADMIN</div>
+          <div class="nav-section-title">Admin</div>
           <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
-
         </div>
       </div>
 
-      <div>
-        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-      </div>
+      <a class="logout-btn" href="{{ url_for('logout') }}">Logout</a>
+    </div>
 
-    </nav>
+
+  </nav>
 
     <!-- ══ MAIN CONTENT ══ -->
     <main class="main-content-area">
       <div class="content-container-centered">
-
+ 
         <!-- Heading banner -->
         <div class="rectangle-5 mb-5">
           <h1 class="purchase-order-management">Purchase Order Management</h1>
         </div>
 
+        <p class="form-subtitle">
+          Step 1 of 4: Create a purchase order and send it for fulfillment.
+        </p>
+ 
         <!-- Form card -->
-        <form method="POST" action="{{ url_for('create_purchase_order_page') }}">
-          <div class="form-card">
+    <form method="POST" action="{{ url_for('create_purchase_order_page') }}">
 
-            <span class="form-close-btn" onclick="cancelOrder()">×</span>
+        <div class="form-card">
+           
+          <span class="form-close-btn" onclick="cancelOrder()">×</span>
 
-            <h2 class="form-card-title">Create Purchase Order</h2>
-
-            <!-- ── Supplier ── -->
-            <div>
-              <div class="form-section-label">Supplier:</div>
-              <div class="supplier-row">
-                <select id="supplierSelect" name="supplier_id" onchange="onSupplierChange()">
-                  <option value="" selected hidden>Supplier Name</option>
-                  {% for s in suppliers %}
-                    <option
-                      value="{{ s.id }}"
-                      data-name="{{ s.name }}"
-                      data-address="{{ s.address }}">
-                      {{ s.name }}
+          <h2 class="form-card-title">Create Purchase Order</h2>
+ 
+          <!-- ── Supplier ── -->
+          <div>
+            <div class="form-section-label">Supplier:</div>
+            <div class="supplier-row">
+              <select id="supplierSelect" name="supplier_id" onchange="onSupplierChange()">
+                <option value="" selected hidden>Supplier Name</option>
+                {% for s in suppliers %}
+                    <option 
+                        value="{{ s.id }}"
+                        data-name="{{ s.name }}"
+                        data-address="{{ s.address }}">
+                        {{ s.name }}
                     </option>
-                  {% endfor %}
+                {% endfor %}
                 </select>
-                <button type="button" class="btn-supplier" onclick="openSupplierModal('add')">+ Add Supplier</button>
-                <button type="button" class="btn-supplier" onclick="openSupplierModal('edit')">+ Edit Supplier</button>
-              </div>
+              <button type="button" class="btn-supplier" onclick="openSupplierModal('add')">+ Add Supplier</button>
+              <button type="button" class="btn-supplier" onclick="openSupplierModal('edit')">+ Edit Supplier</button>
             </div>
-
-            <!-- ── Products ── -->
-            <div>
-              <div class="products-header">
-                <div class="form-section-label" style="margin-bottom:0">Products:</div>
-                <button type="button" class="btn-add-product" onclick="addProductRow()">+ Add Product</button>
-              </div>
-
-              <div id="productRowsContainer">
-                <!-- Row 1 -->
-                <div class="product-row">
-                  <select class="product-select">
+          </div>
+ 
+          <!-- ── Products ── -->
+          <div>
+            <div class="products-header">
+              <div class="form-section-label" style="margin-bottom:0">Products:</div>
+              <button type="button" class="btn-add-product" onclick="addProductRow()">+ Add Product</button>
+            </div>
+ 
+            <div id="productRowsContainer">
+              <!-- Row 1 -->
+              <div class="product-row">
+                <select class="product-select">
                     <option value="" disabled selected>Product Name</option>
                     {% for p in products %}
-                      <option value="{{ p.id }}">{{ p.name }}</option>
+                        <option value="{{ p.id }}">{{ p.name }}</option>
                     {% endfor %}
-                  </select>
-                  <input type="number" class="product-qty-input" placeholder="Qty" min="1" />
-                  <span class="row-delete-btn" onclick="removeProductRow(this)">X</span>
-                </div>
-
-                <!-- Row 2 -->
-                <div class="product-row">
-                  <select class="product-select">
+                </select>
+                <input type="number" class="product-qty-input" placeholder="Qty" min="1" />
+                <span class="row-delete-btn" onclick="removeProductRow(this)">X</span>
+              </div>
+              <!-- Row 2 -->
+              <div class="product-row">
+                <select class="product-select">
                     <option value="" disabled selected>Product Name</option>
                     {% for p in products %}
-                      <option value="{{ p.id }}">{{ p.name }}</option>
+                        <option value="{{ p.id }}">{{ p.name }}</option>
                     {% endfor %}
-                  </select>
-                  <input type="number" class="product-qty-input" placeholder="Qty" min="1" />
-                  <span class="row-delete-btn" onclick="removeProductRow(this)">X</span>
-                </div>
+                </select>
+                <input type="number" class="product-qty-input" placeholder="Qty" min="1" />
+                <span class="row-delete-btn" onclick="removeProductRow(this)">X</span>
               </div>
             </div>
-
-            <!-- ── Timestamp + Expected Date ── -->
-            <div class="dates-row">
-              <div class="date-field">
-                <div class="form-section-label" style="margin-bottom:0">Timestamp:</div>
-                <input id="timestampInput" type="date" class="date-input" onchange="handleDateChange()" />
-              </div>
-              <div class="date-field">
-                <div class="form-section-label" style="margin-bottom:0">Expected Date:</div>
-                <input id="expectedDateInput" type="date" class="date-input" onchange="handleExpectedDateChange()" />
-              </div>
+          </div>
+ 
+          <!-- ── Timestamp + Expected Date ── -->
+          <div class="dates-row">
+            <div class="date-field">
+              <div class="form-section-label" style="margin-bottom:0">Timestamp:</div>
+              <input id="timestampInput" type="date" class="date-input"
+                onchange="handleDateChange()" />
             </div>
-
-            <!-- ── Error + Submit ── -->
-            <p class="form-error" id="formError">
-              Please fill in all required fields and add at least one product.
-            </p>
-
-            <div class="submit-row">
-              <button type="button" class="btn-submit-order" onclick="submitOrder()">Add Purchase Order</button>
+            <div class="date-field">
+              <div class="form-section-label" style="margin-bottom:0">Expected Date:</div>
+              <input id="expectedDateInput" type="date" class="date-input"
+                onchange="handleExpectedDateChange()" />
             </div>
-
-          </div><!-- end .form-card -->
-        </form>
-
-      </div><!-- end .content-container-centered -->
+          </div>
+ 
+          <!-- ── Error + Submit ── -->
+          <p class="form-error" id="formError">
+            Please fill in all required fields and add at least one product.
+          </p>
+ 
+          <div class="submit-row">
+            <button type="button" class="btn-submit-order" onclick="submitOrder()">Create Purchase Order</button>
+          </div>
+ 
+        </div><!-- end .form-card -->
+    </form>
+      
+       </div><!-- end .content-container-centered -->
     </main>
-
+ 
     <!-- ══ SUPPLIER INFORMATION MODAL ══ -->
     <div id="supplierModalWrapper">
       <div id="supplierModalOverlay" onclick="closeSupplierModal()"></div>
-
+ 
       <div class="supplier-modal-card">
         <span class="supplier-modal-close" onclick="closeSupplierModal()">x</span>
         <h3 class="supplier-modal-title">Supplier Information</h3>
-
+ 
         <div class="supplier-modal-field">
           <label for="inputSupplierName">Supplier Name</label>
           <input id="inputSupplierName" type="text" placeholder="Type here…" />
           <span id="supplierNameError">Name is required.</span>
         </div>
-
+ 
         <div class="supplier-modal-field">
           <label for="inputSupplierAddress">Supplier Address</label>
           <input id="inputSupplierAddress" type="text" placeholder="Type here…" />
         </div>
-
+ 
         <div class="supplier-modal-actions">
-          <button
-            type="button"
-            class="btn-supplier-delete"
-            id="supplierDeleteBtn"
-            onclick="deleteSupplier()"
-            style="display:none;">
+          <button type="button"
+                  class="btn-supplier-delete"
+                  id="supplierDeleteBtn"
+                  onclick="deleteSupplier()"
+                  style="display:none;">
             Delete
           </button>
 
-          <button
-            type="button"
-            class="btn-supplier-submit"
-            id="supplierSubmitBtn"
-            onclick="confirmSupplier()">
+          <button type="button"
+                  class="btn-supplier-submit"
+                  id="supplierSubmitBtn"
+                  onclick="confirmSupplier()">
             <span id="supplierSubmitLabel">Save</span>
           </button>
         </div>
       </div>
     </div>
-
+ 
   </div><!-- end .container-fluid -->
-
+ 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-
+    
+    
     function cancelOrder() {
-      window.location.href = "{{ url_for('purchaseOrders') }}";
+        window.location.href = "{{ url_for('purchaseOrders') }}";
     }
 
+    
     function onSupplierChange() {
       /* Nothing visual to toggle — native select shows the chosen value */
     }
-
+ 
     function handleDateChange() {
       /* Native date input shows value natively — no placeholder toggling needed */
     }
-
+ 
     function handleExpectedDateChange() {
       /* Native date input shows value natively — no placeholder toggling needed */
     }
-
+ 
     /* ── Product rows ── */
     const PRODUCTS = [
       'Black Tea','Chia Seeds','Grass Jelly','Green Tea',
@@ -215,12 +216,12 @@
       'Lychee Jelly','Mango Bubbles','Mango Syrup','Milk Powder',
       'Oolong Tea','Straws','Tapioca Balls','Taro Powder','Thai Powder'
     ];
-
+ 
     function buildProductOptions(selected = '') {
       return `<option value="" disabled ${selected ? '' : 'selected'}>Product Name</option>`
         + PRODUCTS.map(p => `<option ${p === selected ? 'selected' : ''}>${p}</option>`).join('');
     }
-
+ 
     function addProductRow() {
       const container = document.getElementById('productRowsContainer');
 
@@ -236,165 +237,162 @@
         </select>
         <input type="number" class="product-qty-input" placeholder="Qty" min="1" />
         <span class="row-delete-btn" onclick="removeProductRow(this)">X</span>
-      `;
+     `;
 
-      container.appendChild(row);
-    }
-
-    function removeProductRow(btn) {
-      btn.closest('.product-row')?.remove();
-    }
-
+    container.appendChild(row);
+}
+ 
+    function removeProductRow(btn) { btn.closest('.product-row')?.remove(); }
+ 
     /* ── Supplier modal ── */
     let modalMode = 'add';
 
     function openSupplierModal(mode) {
-      modalMode = mode;
+        modalMode = mode;
 
-      const wrapper = document.getElementById('supplierModalWrapper');
-      const nameInput = document.getElementById('inputSupplierName');
-      const addressInput = document.getElementById('inputSupplierAddress');
-      const errorEl = document.getElementById('supplierNameError');
-      const submitLabel = document.getElementById('supplierSubmitLabel');
-      const deleteBtn = document.getElementById('supplierDeleteBtn');
-      const select = document.getElementById('supplierSelect');
+        const wrapper = document.getElementById('supplierModalWrapper');
+        const nameInput = document.getElementById('inputSupplierName');
+        const addressInput = document.getElementById('inputSupplierAddress');
+        const errorEl = document.getElementById('supplierNameError');
+        const submitLabel = document.getElementById('supplierSubmitLabel');
+        const deleteBtn = document.getElementById('supplierDeleteBtn');
+        const select = document.getElementById('supplierSelect');
 
-      if (!wrapper || !nameInput || !addressInput || !errorEl || !submitLabel || !select) {
-        console.error('Supplier modal elements are missing.');
-        return;
-      }
-
-      errorEl.style.display = 'none';
-      nameInput.classList.remove('input-error');
-
-      if (mode === 'add') {
-        nameInput.value = '';
-        addressInput.value = '';
-        submitLabel.textContent = 'Add Supplier';
-        if (deleteBtn) deleteBtn.style.display = 'none';
-      } else if (mode === 'edit') {
-        if (!select.value) {
-          alert('Please select a supplier first.');
+        if (!wrapper || !nameInput || !addressInput || !errorEl || !submitLabel || !select) {
+          console.error('Supplier modal elements are missing.');
           return;
         }
 
-        const selectedOption = select.options[select.selectedIndex];
-        nameInput.value = selectedOption.dataset.name || selectedOption.textContent.trim();
-        addressInput.value = selectedOption.dataset.address || '';
-        submitLabel.textContent = 'Save Changes';
-        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
-      }
+        errorEl.style.display = 'none';
+        nameInput.classList.remove('input-error');
 
-      wrapper.classList.add('modal-visible');
-      nameInput.focus();
-    }
+        if (mode === 'add') {
+          nameInput.value = '';
+          addressInput.value = '';
+          submitLabel.textContent = 'Add Supplier';
+          if (deleteBtn) deleteBtn.style.display = 'none';
+        } else if (mode === 'edit') {
+          if (!select.value) {
+            alert('Please select a supplier first.');
+            return;
+          }
 
-    function closeSupplierModal() {
-      document.getElementById('supplierModalWrapper').classList.remove('modal-visible');
-    }
-
-    async function deleteSupplier() {
-      const select = document.getElementById('supplierSelect');
-      const supplierId = select.value;
-
-      if (!supplierId) {
-        alert('Please select a supplier first.');
-        return;
-      }
-
-      const confirmed = confirm('Are you sure you want to delete this supplier?');
-      if (!confirmed) return;
-
-      try {
-        const response = await fetch(`/suppliers/${supplierId}`, {
-          method: 'DELETE'
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          alert(data.error || 'Could not delete supplier.');
-          return;
-        }
-
-        select.options[select.selectedIndex].remove();
-        select.value = '';
-        closeSupplierModal();
-      } catch (err) {
-        alert('Something went wrong while deleting the supplier.');
-        console.error(err);
-      }
-    }
-
-    async function confirmSupplier() {
-      const nameInput = document.getElementById('inputSupplierName');
-      const addressInput = document.getElementById('inputSupplierAddress');
-      const errorEl = document.getElementById('supplierNameError');
-      const select = document.getElementById('supplierSelect');
-
-      const name = nameInput.value.trim();
-      const address = addressInput.value.trim();
-
-      if (!name) {
-        errorEl.style.display = 'inline';
-        nameInput.classList.add('input-error');
-        nameInput.focus();
-        return;
-      }
-
-      errorEl.style.display = 'none';
-      nameInput.classList.remove('input-error');
-
-      let url = '/suppliers';
-      let method = 'POST';
-
-      if (modalMode === 'edit') {
-        const supplierId = select.value;
-        url = `/suppliers/${supplierId}`;
-        method = 'PATCH';
-      }
-
-      try {
-        const response = await fetch(url, {
-          method: method,
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: name,
-            address: address
-          })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          alert(data.error || 'Could not save supplier.');
-          return;
-        }
-
-        if (modalMode === 'add') {
-          const newOption = document.createElement('option');
-          newOption.value = data.id;
-          newOption.textContent = data.name;
-          newOption.dataset.name = data.name;
-          newOption.dataset.address = address;
-          select.appendChild(newOption);
-          select.value = data.id;
-        } else {
           const selectedOption = select.options[select.selectedIndex];
-          selectedOption.textContent = name;
-          selectedOption.dataset.name = name;
-          selectedOption.dataset.address = address;
+          nameInput.value = selectedOption.dataset.name || selectedOption.textContent.trim();
+          addressInput.value = selectedOption.dataset.address || '';
+          submitLabel.textContent = 'Save Changes';
+          if (deleteBtn) deleteBtn.style.display = 'inline-flex';
         }
 
-        closeSupplierModal();
-      } catch (err) {
-        alert('Something went wrong while saving the supplier.');
-        console.error(err);
+        wrapper.classList.add('modal-visible');
+        nameInput.focus();
       }
+  function closeSupplierModal() {
+    document.getElementById('supplierModalWrapper').classList.remove('modal-visible');
+  }
+  async function deleteSupplier() {
+    const select = document.getElementById('supplierSelect');
+    const supplierId = select.value;
+
+    if (!supplierId) {
+      alert('Please select a supplier first.');
+      return;
     }
 
+    const confirmed = confirm('Are you sure you want to delete this supplier?');
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`/suppliers/${supplierId}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || 'Could not delete supplier.');
+        return;
+      }
+
+      select.options[select.selectedIndex].remove();
+      select.value = '';
+      closeSupplierModal();
+    } catch (err) {
+      alert('Something went wrong while deleting the supplier.');
+      console.error(err);
+    }
+  }
+
+  async function confirmSupplier() {
+    const nameInput = document.getElementById('inputSupplierName');
+    const addressInput = document.getElementById('inputSupplierAddress');
+    const errorEl = document.getElementById('supplierNameError');
+    const select = document.getElementById('supplierSelect');
+
+    const name = nameInput.value.trim();
+    const address = addressInput.value.trim();
+
+    if (!name) {
+      errorEl.style.display = 'inline';
+      nameInput.classList.add('input-error');
+      nameInput.focus();
+      return;
+    }
+
+    errorEl.style.display = 'none';
+    nameInput.classList.remove('input-error');
+
+    let url = '/suppliers';
+    let method = 'POST';
+
+    if (modalMode === 'edit') {
+      const supplierId = select.value;
+      url = `/suppliers/${supplierId}`;
+      method = 'PATCH';
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name,
+          address: address
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || 'Could not save supplier.');
+        return;
+      }
+
+      if (modalMode === 'add') {
+        const newOption = document.createElement('option');
+        newOption.value = data.id;
+        newOption.textContent = data.name;
+        newOption.dataset.name = data.name;
+        newOption.dataset.address = address;
+        select.appendChild(newOption);
+        select.value = data.id;
+      } else {
+        const selectedOption = select.options[select.selectedIndex];
+        selectedOption.textContent = name;
+        selectedOption.dataset.name = name;
+        selectedOption.dataset.address = address;
+      }
+
+      closeSupplierModal();
+    } catch (err) {
+      alert('Something went wrong while saving the supplier.');
+      console.error(err);
+    }
+  }
+
+ 
     function _addOption(sel, name, address) {
       const opt = document.createElement('option');
       opt.value = opt.textContent = name;
@@ -402,54 +400,54 @@
       sel.appendChild(opt);
       sel.value = name;
     }
-
+ 
     /* ── Submit order ── */
-    async function submitOrder() {
-      const supplier = document.getElementById('supplierSelect').value;
-      const orderDate = document.getElementById('timestampInput').value;
-      const expectedDate = document.getElementById('expectedDateInput').value;
+async function submitOrder() {
+  const supplier = document.getElementById('supplierSelect').value;
+  const orderDate = document.getElementById('timestampInput').value;
+  const expectedDate = document.getElementById('expectedDateInput').value;
 
-      const productRows = document.querySelectorAll('.product-row');
+  const productRows = document.querySelectorAll('.product-row');
 
-      let products = [];
+  let products = [];
 
-      productRows.forEach(row => {
-        const productSelect = row.querySelector('.product-select');
-        const qtyInput = row.querySelector('.product-qty-input');
+  productRows.forEach(row => {
+    const productSelect = row.querySelector('.product-select');
+    const qtyInput = row.querySelector('.product-qty-input');
 
-        if (productSelect.value && qtyInput.value) {
-          products.push({
-            product_id: parseInt(productSelect.value),
-            qty: parseInt(qtyInput.value)
-          });
-        }
+    if (productSelect.value && qtyInput.value) {
+      products.push({
+        product_id: parseInt(productSelect.value),
+        qty: parseInt(qtyInput.value)
       });
-
-      if (!supplier || !orderDate || products.length === 0) {
-        document.getElementById('formError').classList.add('visible');
-        return;
-      }
-
-      const response = await fetch("/purchase-orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          supplier_id: parseInt(supplier),
-          date: orderDate,
-          expectedDate: expectedDate,
-          products: products
-        })
-      });
-
-      if (response.ok) {
-        window.location.href = "{{ url_for('purchaseOrders') }}";
-      } else {
-        alert("Error creating order");
-      }
     }
+  });
 
+  if (!supplier || !orderDate || products.length === 0) {
+    document.getElementById('formError').classList.add('visible');
+    return;
+  }
+
+  const response = await fetch("/purchase-orders", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      supplier_id: parseInt(supplier),
+      date: orderDate,
+      expectedDate: expectedDate,
+      products: products
+    })
+  });
+
+  if (response.ok) {
+    window.location.href = "{{ url_for('purchaseOrders') }}";
+  } else {
+    alert("Error creating order");
+  }
+}
+ 
   </script>
 </body>
 </html>
