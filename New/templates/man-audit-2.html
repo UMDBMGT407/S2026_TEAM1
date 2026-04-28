@@ -131,14 +131,14 @@
       <form method="POST" action="{{ url_for('man_audit_2', audit_id=audit.id, category=selected_category) }}">
         <input type="hidden" name="audit_id" value="{{ audit.id }}">
 
-        <div class="man2-table-card p-4 table-scroll-container">
+        <div class="man2-table-card p-4">
           <div class="man2-table-header">
             <div class="man2-col-ingredient">Ingredient</div>
             <div class="man2-col-center">System Qty</div>
             <div class="man2-col-center">Physical Count</div>
             <div class="man2-col-center">Difference</div>
           </div>
-
+          <div class="table-scroll-container">
           {% for item in inventory_items %}
           {% set diff = item.physical_count - item.system_qty %}
           <div class="man2-table-row">
@@ -156,6 +156,7 @@
             <div class="man2-col-center {% if diff != 0 %}text-danger{% endif %}">
               {{ diff }}
             </div>
+          </div>
           </div>
           {% endfor %}
         </div>
