@@ -64,36 +64,48 @@ body {
 .sidebar-nav {
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;   /* ADD THIS */
+  max-height: calc(100vh - 145px);
+  padding-right: 4px;
 }
 
 .nav-section-title {
-  font-size: 12px;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  opacity: 0.8;
-  margin: 10px 12px 4px;
-  font-family: "Inria Serif", serif;
+  color: #ead8ca;
+  opacity: 0.95;
+  margin: 14px 18px 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(234, 216, 202, 0.45);
+  font-weight: bold;
 }
 
 .nav-btn {
   display: block;
-  width: 100%;
+  width: auto;          /* CHANGE THIS */
+  margin: 3px 0 3px 10px;
+  padding: 8px 12px 8px 14px;
+  border-left: 3px solid rgba(234, 216, 202, 0.45);
+  border-radius: 0 999px 999px 0;
+  color: white;
   text-decoration: none;
-  color: inherit;
-  padding: 12px 14px;
-  border-radius: 999px;
-  margin: 2px 0;
-  font-size: 18px;
-  font-family: "Inria Serif", serif;
-  background: transparent;
-  text-align: left;
-  box-sizing: border-box;
+  font-size: 15px;
+  font-family: "Inria Serif", Georgia, serif;
+  white-space: normal;  /* ADD THIS */
 }
 
-.nav-btn.active,
 .nav-btn:hover {
-  background: #f0e6dd;
+  background: rgba(234, 216, 202, 0.18);
+  color: white;
+}
+
+.nav-btn.active {
+  background: #ead8ca;
   color: #964f4c;
+  border-left: 5px solid #ead8ca;
+  font-weight: bold;
 }
 
 .logout-btn {
