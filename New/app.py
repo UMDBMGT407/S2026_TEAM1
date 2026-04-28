@@ -1078,7 +1078,7 @@ def add_inventory_item_direct():
 
 
 # =========================
-# DASHBOARD
+# ANALYTICS
 # =========================
 
 @app.route('/dashboard')
@@ -1112,7 +1112,75 @@ def dashboard():
                            alerts=restock_items,
                            categories=unique_categories,
                            selected_category=category)
+
+@app.route('/api/analytics-data')
+@login_required
+def analytics_data():
+    start_str = request.args.get('start')
+    end_str = request.args.get('end')
+    category = request.args.get('category', 'all')
+
+    # Fallback to last 7 days
+    if not start_str or not end_str:
+        end_dt = datetime.now()
+        start_dt = end_dt - timedelta(days=6)
+    else:
+        start_dt = datetime.strptime(start_str, '%Y-%m-%d')
+        end_dt = datetime.strptime(end_str, '%Y-%m-%d')
+
+    delta = (end_dt - start_dt).days
+    labels = [(start_dt + timedelta(days=i)).strftime('%m/%d') for i in range(delta + 1)]
+    days_list = [(start_dt + timedelta(days=i)).date() for i in range(delta + 1)]
+
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     
+    db_start = start_dt.strftime('%Y-%m-%d 00:00:00')
+    db_end = end_dt.strftime('%Y-%m-%d 23:59:59')
+
+    # --- 1. INVENTORY ACTIVITY LOGIC ---
+    usage_query = """
+        SELECT DATE(iu.created_at) as date, SUM(iu.qty_change) as total 
+        FROM inventory_updates iu
+        JOIN inventory_items ii ON iu.inventory_item_id = ii.id
+        WHERE iu.created_at BETWEEN %s AND %s
+    """
+    u_params = [db_start, db_end]
+    if category != 'all':
+        usage_query += " AND ii.category = %s"
+        u_params.append(category)
+    usage_query += " GROUP BY DATE(iu.created_at)"
+    
+    cur.execute(usage_query, u_params)
+    usage_map = {row['date']: float(row['total']) for row in cur.fetchall()}
+    usage_values = [usage_map.get(day, 0) for day in days_list]
+
+    # --- 2. AUDIT DISCREPANCY LOGIC ---
+    audit_query = """
+        SELECT DATE(a.approved_at) as audit_date, 
+            SUM(ai.physical_count - ai.system_qty) as total_diff
+        FROM audit_items ai
+        JOIN audits a ON ai.audit_id = a.id
+        JOIN inventory_items ii ON ai.inventory_item_id = ii.id
+        WHERE a.status = 'Approved' 
+        AND a.approved_at BETWEEN %s AND %s
+    """
+    a_params = [db_start, db_end]
+    if category != 'all':
+        audit_query += " AND ii.category = %s"
+        a_params.append(category)
+    audit_query += " GROUP BY DATE(a.approved_at)"
+
+    cur.execute(audit_query, a_params)
+    audit_map = {row['audit_date']: float(row['total_diff']) for row in cur.fetchall()}
+    audit_values = [audit_map.get(day, 0) for day in days_list]
+
+    cur.close()
+    return jsonify({
+        "labels": labels,
+        "usage": usage_values,
+        "audit": audit_values
+    })
+
 
 # =========================
 # MICHELLE PART
