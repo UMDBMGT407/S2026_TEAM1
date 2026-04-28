@@ -17,7 +17,9 @@ from flask_login import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
-
+import MySQLdb
+import json
+from datetime import datetime, timedelta
 
 # =========================
 # CREATE FLASK APP
@@ -1690,7 +1692,8 @@ def delete_supplier(id):
 # LEON PART (DELIVERY + INVENTORY EXTENSIONS)
 # =========================
 
-import datetime
+#import datetime
+# ^ this is now done at the top
 
 
 # ── APPLY PURCHASE ORDER TO INVENTORY ─────────────────
