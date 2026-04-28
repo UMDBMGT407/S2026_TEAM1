@@ -2017,7 +2017,7 @@ select:focus {
   justify-content: center;
   align-items: center;
   padding: 10px 20px;
-  width: 100%;
+  width: 100%; 
 }
 
 .table-grid-header {
@@ -2035,6 +2035,7 @@ select:focus {
   text-align: left;
   padding-right: 50px;
 }
+
 
 #ordersScrollContainer {
   max-height: 420px;
@@ -2221,6 +2222,88 @@ select:focus {
   opacity: 0.85;
 }
 
+#receivedOrderModalWrapper {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+#receivedOrderModalWrapper.modal-visible {
+  display: block;
+}
+
+#receivedOrderModalOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.received-order-modal-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #e9d9cc;
+  border-radius: 30px;
+  padding: 32px 38px;
+  width: 430px;
+  text-align: center;
+  font-family: "Inria Serif", serif;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.received-order-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 22px;
+  color: #964f4c;
+  font-size: 26px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.received-order-modal-title {
+  color: #964f4c;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.received-order-modal-text {
+  color: #555;
+  font-size: 17px;
+  margin-bottom: 26px;
+}
+
+.received-order-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.btn-audit-order,
+.btn-audit-later {
+  flex: 1;
+  border-radius: 20px;
+  padding: 10px 18px;
+  font-family: "Inria Serif", serif;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-audit-order {
+  background: #964f4c;
+  color: #fff;
+  border: none;
+}
+
+.btn-audit-later {
+  background: #f8efe6;
+  color: #964f4c;
+  border: 1.5px solid #964f4c;
+}
 
 /* ════════════════════════════════════════════════════════════
    5–10.  CREATE PURCHASE ORDER  (create_purchase_order.html)
@@ -2246,6 +2329,13 @@ select:focus {
   font-size: 36px;
   font-weight: 700;
   margin: 0 0 4px 0;
+}
+
+.form-subtitle {
+  font-family: "Inria Serif", serif;
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 16px;
 }
 
 .form-section-label {
@@ -3414,11 +3504,18 @@ select:focus {
   border-radius: 30px;
 }
 
-.da-description {
-  margin-bottom: 16px;
-  color: #555;
+/* TEXT / INTRO */
+.da-description,
+.da-intro-text {
+  font-family: "Inria Serif", serif;
   font-size: 16px;
+  color: #555;
+  margin-bottom: 16px;
 }
+
+/* =========================
+   TABLE (LIST VIEW)
+========================= */
 
 .da-table-card {
   width: 100%;
@@ -3454,18 +3551,9 @@ select:focus {
   background: #f5ede7;
 }
 
-.badge-received,
-.badge-pending,
-.badge-audited,
-.badge-not-audited,
-.badge-ordered,
-.badge-cancelled {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
+/* =========================
+   BADGES
+========================= */
 
 .badge-received,
 .badge-audited {
@@ -3489,6 +3577,23 @@ select:focus {
   color: #721c24;
 }
 
+.badge-received,
+.badge-pending,
+.badge-audited,
+.badge-not-audited,
+.badge-ordered,
+.badge-cancelled {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
 .da-btn {
   display: inline-block;
   padding: 6px 18px;
@@ -3506,6 +3611,43 @@ select:focus {
   color: #fff;
   opacity: 0.85;
 }
+
+.da-submit-btn,
+.da-cancel-btn {
+  display: inline-block;
+  padding: 10px 32px;
+  border-radius: 20px;
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.da-submit-btn {
+  background: #964f4c;
+  border: none;
+  color: #fff;
+}
+
+.da-submit-btn:hover {
+  opacity: 0.88;
+}
+
+.da-cancel-btn {
+  background: #e9d9cc;
+  border: 1.5px solid #b36a66;
+  color: #964f4c;
+}
+
+.da-cancel-btn:hover {
+  background: #f5e7dc;
+  color: #964f4c;
+}
+
+/* =========================
+   DETAIL PAGE
+========================= */
 
 .po-info-bar {
   display: flex;
@@ -3550,8 +3692,6 @@ select:focus {
 }
 
 .da-detail-header {
-  padding-top: 14px;
-  padding-bottom: 14px;
   background: #964f4c;
   color: #f0e6dd;
   font-size: 17px;
@@ -3565,33 +3705,37 @@ select:focus {
 .da-qty-input {
   width: 80px;
   height: 36px;
-  padding: 0;
-  background: #fff;
   border: 1.5px solid #c58d88;
   border-radius: 14px;
-  color: #964f4c;
+  text-align: center;
   font-family: "Inria Serif", serif;
   font-size: 15px;
-  text-align: center;
+  color: #964f4c;
+  background: #fff;
 }
 
-.over {
-  color: #27ae60;
-  font-weight: 700;
+/* =========================
+   STATUS COLORS
+========================= */
+
+.over  { color: #27ae60; font-weight: 700; }
+.short { color: #e74c3c; font-weight: 700; }
+.match { color: #888; }
+
+.da-muted,
+.da-muted-text {
+  color: #999;
+  font-family: "Inria Serif", serif;
 }
 
-.short {
-  color: #e74c3c;
-  font-weight: 700;
-}
-
-.match {
+.da-last-recorded {
   color: #888;
+  font-size: 13px;
 }
 
-.da-muted {
-  color: #aaa;
-}
+/* =========================
+   ALERT / NOTES
+========================= */
 
 .note-box {
   margin-bottom: 16px;
@@ -3604,51 +3748,77 @@ select:focus {
   font-size: 15px;
 }
 
-.da-last-recorded {
+/* =========================
+   EMPTY STATES
+========================= */
+
+.da-empty-row,
+.da-empty-state {
+  text-align: center;
+  padding: 24px;
   color: #888;
-  font-size: 13px;
+  font-family: "Inria Serif", serif;
+  background: #f8efe6;
+  border-top: 1px solid #ddb3ae;
 }
 
-.da-submit-btn,
-.da-cancel-btn {
-  display: inline-block;
-  padding: 10px 32px;
-  border-radius: 20px;
+/* =========================
+   ACCORDION
+========================= */
+
+.da-accordion-item {
+  border: none;
+  background: transparent;
+  margin-bottom: 14px;
+}
+
+.accordion-button {
+  background: #964f4c;
+  color: #f0e6dd;
   font-family: "Inria Serif", serif;
   font-size: 18px;
   font-weight: 700;
-  text-decoration: none;
-  cursor: pointer;
+  border-radius: 16px !important;
+  box-shadow: none !important;
 }
 
-.da-submit-btn {
+.accordion-button:not(.collapsed) {
   background: #964f4c;
-  border: none;
-  color: #fff;
+  color: #f0e6dd;
 }
 
-.da-submit-btn:hover {
-  opacity: 0.88;
+.accordion-button:focus {
+  box-shadow: none;
 }
 
-.da-cancel-btn {
-  background: #e9d9cc;
-  border: 1.5px solid #b36a66;
-  color: #964f4c;
+.accordion-body {
+  padding: 14px 0 0 0;
 }
 
-.da-cancel-btn:hover {
-  background: #f5e7dc;
-  color: #964f4c;
-}
-
-.da-empty-state {
-  padding: 32px;
-  color: #888;
+.da-warning-banner {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: #f8d7da;
+  border-left: 4px solid #e74c3c;
+  border-radius: 6px;
+  color: #721c24;
   font-family: "Inria Serif", serif;
-  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
 }
 
+.da-confirmation-warning {
+  margin-top: 18px;
+  margin-bottom: 10px;
+  padding: 12px 16px;
+  background: #fff3cd;
+  border-left: 4px solid #f39c12;
+  border-radius: 6px;
+  color: #856404;
+  font-family: "Inria Serif", serif;
+  font-size: 15px;
+
+}
 
 /* =========================
    FIRST DASHBOARD (fd-)
