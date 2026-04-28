@@ -108,14 +108,14 @@
         </div>
       </div>
 
-      <div class="sl3-table-card table-scroll-container">
+      <div class="sl3-table-card">
         <div class="sl3-table-header">
           <div class="sl3-ingredient-col">Ingredient</div>
           <div class="sl3-qty-col">System Qty</div>
           <div class="sl3-count-col">Physical Count</div>
           <div class="sl3-diff-col">Difference</div>
         </div>
-
+        <div class="table-scroll-container">
         {% for item in items %}
         {% set diff = item.physical_count - item.system_qty %}
         <div class="sl3-table-row">
@@ -129,6 +129,7 @@
           </div>
         </div>
         {% endfor %}
+        </div>
       </div>
 
       <div class="sl3-action-buttons">
