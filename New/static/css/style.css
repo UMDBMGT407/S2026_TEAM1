@@ -850,7 +850,7 @@ select:focus {
   user-select: none;
 }
 
-/* ===== DASHBOARD ANALYTICS PAGE ===== */
+/* ===== ANALYTICS PAGE ===== */
 
 .rectangle-5, .dashboard-analytics {
   width: 100% !important;
@@ -865,6 +865,19 @@ select:focus {
   font-weight: 700;
   margin: 0;
   text-align: center;
+}
+
+.toggle-view-btn {
+    min-width: 250px;
+    transition: all 0.2s ease;
+    border: 1.5px solid #964f4c !important;
+}
+
+.toggle-view-btn.active-toggle {
+    background-color: #7f413f !important; /* Darker Maroon */
+    color: #ffffff !important;
+    box-shadow: inset 0 4px 6px rgba(0,0,0,0.2);
+    transform: translateY(2px);
 }
 
 .usage-trends {
@@ -916,12 +929,29 @@ select:focus {
   width: 100%;
 }
 
+/* Compact Button Styling */
+.compact-btn {
+    min-width: 180px !important;
+    height: 38px !important;
+    padding: 0 15px !important;
+    font-size: 14px !important;
+    border-radius: 20px !important;
+}
+
+/* Compact Select/Input Styling */
+.compact-select {
+    height: 32px !important;
+    font-size: 14px !important;
+    padding: 0 8px !important;
+    min-width: 130px !important;
+}
+
 .usage-trends-title, .current-inventory-title, 
 .audit-patterns-title, .restock-alerts-title {
   position: static !important;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   padding-bottom: 10px;
   color: #000000;
   margin: 0;
