@@ -207,7 +207,7 @@ CREATE TABLE `inventory_updates` (
   `id` int NOT NULL AUTO_INCREMENT,
   `inventory_item_id` int NOT NULL,
   `updated_by` int NOT NULL,
-  `action_type` enum('Add','Sub','Correct','Receive','Audit') NOT NULL,
+  `action_type` enum('Add','Sub','Correct','Receive', 'Restock', 'Audit') NOT NULL,
   `qty_change` int NOT NULL,
   `old_qty` int NOT NULL,
   `new_qty` int NOT NULL,
