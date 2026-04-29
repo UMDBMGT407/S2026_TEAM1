@@ -1728,7 +1728,7 @@ def apply_confirmed_audit_to_inventory(order_id, user_id):
             INSERT INTO inventory_updates
                 (inventory_item_id, updated_by, action_type, qty_change, old_qty, new_qty, purchase_order_id, reason)
             VALUES
-                (%s, %s, 'Receive', %s, %s, %s, %s, %s)
+                (%s, %s, 'Restock', %s, %s, %s, %s, %s)
         """, (
             item['inventory_item_id'],
             user_id,
@@ -1771,7 +1771,7 @@ def apply_purchase_order_to_inventory(order_id, received_by_user_id):
         cur.execute("""
             INSERT INTO inventory_updates
             (inventory_item_id, updated_by, action_type, qty_change, old_qty, new_qty, purchase_order_id, reason)
-            VALUES (%s, %s, 'Receive', %s, %s, %s, %s, %s)
+            VALUES (%s, %s, 'Restock', %s, %s, %s, %s, %s)
         """, (
             item['inventory_item_id'],
             received_by_user_id,
