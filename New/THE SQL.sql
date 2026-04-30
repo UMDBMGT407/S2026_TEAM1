@@ -115,6 +115,7 @@ CREATE TABLE purchase_orders (
     expected_date DATE,
     received_date DATE,
     order_status ENUM('Pending', 'Ordered', 'Received', 'Cancelled') DEFAULT 'Pending',
+    audit_status VARCHAR(50) DEFAULT 'Pending',
     CONSTRAINT fk_purchase_orders_supplier
         FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
         ON UPDATE CASCADE
@@ -147,7 +148,7 @@ CREATE TABLE inventory_updates (
     id INT AUTO_INCREMENT PRIMARY KEY,
     inventory_item_id INT NOT NULL,
     updated_by INT NOT NULL,
-    action_type ENUM('Add', 'Sub', 'Correct', 'Receive', 'Audit') NOT NULL,
+    action_type ENUM('Add', 'Sub', 'Correct', 'Receive', 'Audit', 'Restock') NOT NULL,
     qty_change FLOAT NOT NULL,
     old_qty FLOAT NOT NULL,
     new_qty FLOAT NOT NULL,
@@ -185,6 +186,7 @@ CREATE TABLE delivery_audits (
     received_by INT NOT NULL,
     received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     notes TEXT,
+    CONSTRAINT uq_delivery_audits_po_item UNIQUE (purchase_order_id, inventory_item_id),
     CONSTRAINT fk_delivery_audits_po
         FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders(id)
         ON UPDATE CASCADE
