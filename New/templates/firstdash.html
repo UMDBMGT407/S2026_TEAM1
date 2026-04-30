@@ -278,9 +278,168 @@
 
         </section>
 
+        <section class="manager-ai-section">
+          <div class="manager-ai-header">
+            <div>
+              <div class="manager-ai-kicker">AI Assistant</div>
+              <h2>Inventory Chatbot</h2>
+              <p>Ask about low stock, reorder timing, recent delivery issues, or inventory activity.</p>
+            </div>
+            <button type="button" class="manager-ai-clear" id="managerAiClearBtn">Clear Chat</button>
+          </div>
+
+          <div class="manager-ai-chat" aria-live="polite">
+            <div class="manager-ai-messages" id="managerAiMessages">
+              <div class="manager-ai-row manager-ai-row-bot">
+                <div class="manager-ai-avatar">AI</div>
+                <div class="manager-ai-bubble manager-ai-bubble-bot">
+                  Hi! I can review the live inventory database and help you decide what needs manager attention.
+                </div>
+              </div>
+            </div>
+
+            <div class="manager-ai-quick-prompts" aria-label="Suggested chatbot questions">
+              <button type="button" data-prompt="What items are out of stock or critically low?">Low stock</button>
+              <button type="button" data-prompt="What should I reorder this week?">Reorder list</button>
+              <button type="button" data-prompt="Are there any delivery discrepancies I should review?">Delivery issues</button>
+              <button type="button" data-prompt="Give me a concise manager inventory summary.">Daily summary</button>
+            </div>
+
+            <form class="manager-ai-input-row" id="managerAiForm">
+              <textarea
+                id="managerAiInput"
+                class="manager-ai-input"
+                rows="1"
+                placeholder="Ask about inventory, orders, audits, or suppliers..."
+              ></textarea>
+              <button type="submit" class="manager-ai-send" id="managerAiSendBtn">Send</button>
+            </form>
+          </div>
+        </section>
+
       </main>
     </div>
   </div>
 
+  <script>
+    const managerAiHistoryKey = 'kft_manager_dashboard_ai_history';
+    const managerAiMessages = document.getElementById('managerAiMessages');
+    const managerAiInput = document.getElementById('managerAiInput');
+    const managerAiForm = document.getElementById('managerAiForm');
+    const managerAiSendBtn = document.getElementById('managerAiSendBtn');
+    const managerAiClearBtn = document.getElementById('managerAiClearBtn');
+
+    function getManagerAiHistory() {
+      try {
+        return JSON.parse(sessionStorage.getItem(managerAiHistoryKey)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveManagerAiHistory(history) {
+      sessionStorage.setItem(managerAiHistoryKey, JSON.stringify(history));
+    }
+
+    function appendManagerAiMessage(role, text) {
+      const row = document.createElement('div');
+      row.className = `manager-ai-row manager-ai-row-${role === 'user' ? 'user' : 'bot'}`;
+
+      const bubble = document.createElement('div');
+      bubble.className = `manager-ai-bubble manager-ai-bubble-${role === 'user' ? 'user' : 'bot'}`;
+      bubble.textContent = text;
+
+      const avatar = document.createElement('div');
+      avatar.className = 'manager-ai-avatar';
+      avatar.textContent = role === 'user' ? 'You' : 'AI';
+
+      if (role === 'user') {
+        row.appendChild(bubble);
+        row.appendChild(avatar);
+      } else {
+        row.appendChild(avatar);
+        row.appendChild(bubble);
+      }
+
+      managerAiMessages.appendChild(row);
+      managerAiMessages.scrollTop = managerAiMessages.scrollHeight;
+    }
+
+    function renderManagerAiHistory() {
+      getManagerAiHistory().forEach((message) => {
+        appendManagerAiMessage(message.role, message.content);
+      });
+    }
+
+    function setManagerAiLoading(isLoading) {
+      managerAiSendBtn.disabled = isLoading;
+      managerAiInput.disabled = isLoading;
+      managerAiSendBtn.textContent = isLoading ? 'Thinking...' : 'Send';
+    }
+
+    async function sendManagerAiMessage(text) {
+      const history = getManagerAiHistory();
+      history.push({ role: 'user', content: text });
+      saveManagerAiHistory(history);
+      appendManagerAiMessage('user', text);
+      setManagerAiLoading(true);
+
+      try {
+        const response = await fetch('/api/manager-ai-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, history })
+        });
+        const data = await response.json();
+        const reply = data.error || data.reply || 'I could not generate a response.';
+        appendManagerAiMessage('assistant', reply);
+
+        if (!data.error) {
+          history.push({ role: 'assistant', content: reply });
+          saveManagerAiHistory(history);
+        }
+      } catch {
+        appendManagerAiMessage('assistant', 'Network error. Please try again.');
+      } finally {
+        setManagerAiLoading(false);
+        managerAiInput.focus();
+      }
+    }
+
+    managerAiForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const text = managerAiInput.value.trim();
+      if (!text) return;
+      managerAiInput.value = '';
+      managerAiInput.style.height = 'auto';
+      sendManagerAiMessage(text);
+    });
+
+    managerAiInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        managerAiForm.requestSubmit();
+      }
+    });
+
+    managerAiInput.addEventListener('input', () => {
+      managerAiInput.style.height = 'auto';
+      managerAiInput.style.height = Math.min(managerAiInput.scrollHeight, 130) + 'px';
+    });
+
+    document.querySelectorAll('.manager-ai-quick-prompts button').forEach((button) => {
+      button.addEventListener('click', () => {
+        managerAiInput.value = button.dataset.prompt;
+        managerAiForm.requestSubmit();
+      });
+    });
+
+    managerAiClearBtn.addEventListener('click', () => {
+      sessionStorage.removeItem(managerAiHistoryKey);
+      managerAiMessages.querySelectorAll('.manager-ai-row:not(:first-child)').forEach((row) => row.remove());
+    });
+
+    renderManagerAiHistory();
+  </script>
 </body>
 </html>
