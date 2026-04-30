@@ -2841,6 +2841,26 @@ select:focus {
   margin: 0;
 }
 
+.man5-header {
+ background: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+}
+.man5-table-text {
+  font-family: "Inria Serif", serif;
+  font-size: 18px;
+  color: #000000;
+}
+.man5-mini-title {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+}
+
 /* ===== SEARCH BAR ===== */
 /* added for B2 */
 
