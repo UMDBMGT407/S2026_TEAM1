@@ -14,38 +14,36 @@
 <div class="container-fluid p-0">
     <nav class="sidebar-wrapper">
 
-  <div>
-    <div class="logo">
-      Kung Fu Tea<br>Operations Portal
+      <div class="logo">
+        Kung Fu Tea<br>Operations Portal
+      </div>
+  
+      <div class="sidebar-nav">
+  
+        <div class="nav-section-title">OVERVIEW</div>
+        <a class="nav-btn" href="{{ url_for('shiftlead_dashboard') }}">Dashboard</a>
+  
+        <div class="nav-section-title">SHIFT TASKS</div>
+  
+        <a class="nav-btn" href="{{ url_for('inventory') }}">
+          View Inventory
+        </a>
+  
+        <a class="nav-btn active">
+          Run Inventory Audit
+        </a>
+  
+        <a class="nav-btn" href="{{ url_for('sl_delivery_audit_list') }}">
+          Delivery Audit
+        </a>
+  
+      </div>
+  
+    <div class="sidebar-bottom">
+      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
     </div>
-
-    <div class="sidebar-nav">
-
-      <div class="nav-section-title">OVERVIEW</div>
-      <a class="nav-btn" href="{{ url_for('shiftlead_dashboard') }}">Dashboard</a>
-
-      <div class="nav-section-title">SHIFT TASKS</div>
-
-      <a class="nav-btn" href="{{ url_for('inventory') }}">
-        View Inventory
-      </a>
-
-      <a class="nav-btn active">
-        Run Inventory Audit
-      </a>
-
-      <a class="nav-btn" href="{{ url_for('sl_delivery_audit_list') }}">
-        Delivery Audit
-      </a>
-
-    </div>
-  </div>
-
-  <div class="sidebar-bottom">
-    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-  </div>
-
-</nav>
+  
+  </nav>
 
   <main class="main-content-area">
     <div class="content-container-centered">
