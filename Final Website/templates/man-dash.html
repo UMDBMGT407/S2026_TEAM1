@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  
+  <div class="container-fluid p-0">
+
+    <!-- ✅ UPDATED NAVBAR ONLY -->
+    <nav class="sidebar-wrapper">
+
+        <div class="logo">
+          Kung Fu Tea<br>Manager Portal
+        </div>
+
+        <div class="sidebar-nav">
+
+          <div class="nav-section-title">OVERVIEW</div>
+          <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
+
+          <div class="nav-section-title">INVENTORY</div>
+          <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
+          <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
+          <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
+
+          <div class="nav-section-title">ORDERS</div>
+          <a class="nav-btn" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
+          <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
+
+          <div class="nav-section-title">INSIGHTS</div>
+          <a class="nav-btn active" href="{{ url_for('dashboard') }}">Analytics</a>
+          <a class="nav-btn" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
+
+          <div class="nav-section-title">ADMIN</div>
+          <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
+
+        </div>
+
+      <div class="sidebar-bottom">
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+      </div>
+
+    </nav>
+
+    <!-- MAIN (UNCHANGED) -->
+    <main class="col main-content-area">
+      <div class="content-container-centered">
+
+        <!-- Page Heading -->
+        <div class="header-container mb-4">
+            <h1 class="page-heading">Analytics</h1>
+        </div>
+
+        <div class="d-flex justify-content-center gap-2 mb-4">
+          <button class="fd-btn fd-btn-secondary toggle-view-btn compact-btn active-toggle" id="viewBtnUsage" onclick="switchView('usage')">
+              Inventory
+          </button>
+          <button class="fd-btn fd-btn-secondary toggle-view-btn compact-btn" id="viewBtnAudit" onclick="switchView('audit')">
+              Audits
+          </button>
+        </div>
+
+        <div class="dashboard-card p-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h2 class="usage-trends-title" id="mainChartTitle" style="font-size: 24px;">Inventory Activity</h2>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <input type="date" id="filterStart" class="filter-select compact-select" onchange="applyFilters()">
+                    <span style="color: #964f4c; font-weight: bold; font-size: 14px;">to</span>
+                    <input type="date" id="filterEnd" class="filter-select compact-select" onchange="applyFilters()">
+                    
+                    <select id="filterCategory" class="filter-select compact-select" onchange="applyFilters()">
+                        <option value="all">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}">{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div style="height: 320px; width: 100%; background: #fcefe4; border-radius: 12px; padding: 10px;">
+              <canvas id="analyticsChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard-card p-4 mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="usage-trends-title" id="tableTitle" style="font-size: 22px;">Item Breakdown</h2>
+            </div>
+            <div class="inven-table-card-bg">
+                <div class="analytics-table-header" id="analyticsTableHeader">
+                    <div>#</div>
+                    <div style="text-align: left; padding-left: 20px;">Item / Category</div>
+                    <div>Total Movement</div>
+                    <div>Status</div>
+                </div>
+                <div class="inventory-scroll-area" id="analyticsTableBody" style="height: 300px;">
+                    </div>
+            </div>
+        </div>
+
+      </div>
+    </main>
+    
+  </div>
+
+  <script>
+
+    let myChart;
+    let globalData = {};
+    let currentMode = 'usage'; 
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const end = new Date();
+        const start = new Date();
+
+        start.setDate(end.getDate() - 30); 
+
+        document.getElementById('filterEnd').value = end.toISOString().split('T')[0];
+        document.getElementById('filterStart').value = start.toISOString().split('T')[0];
+
+        initChart();
+    });
+
+    async function initChart() {
+        const start = document.getElementById("filterStart").value;
+        const end = document.getElementById("filterEnd").value;
+        const cat = document.getElementById("filterCategory").value;
+
+        try {
+            // Fetch from your updated app.py route
+            const response = await fetch(`/api/analytics-data?start=${start}&end=${end}&category=${cat}`);
+            globalData = await response.json();
+
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            
+            // Destroy existing chart if it exists to prevent overlap
+            if (myChart) { myChart.destroy(); }
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: globalData.labels,
+                    datasets: [{
+                        label: 'Units Used',
+                        data: globalData.usage,
+                        borderColor: '#964f4c', // Maroon
+                        backgroundColor: 'rgba(150, 79, 76, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Allows the 320px height to take effect
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            ticks: { font: { size: 11 } } // Smaller font for flatter layout
+                        }
+                    }
+                }
+            });
+
+            updateAnalyticsTable();
+
+        } catch (err) {
+            console.error("Fetch failed:", err);
+        }
+    }
+
+    
+
+    // Updated function to handle the entire page transition
+    function switchView(mode) {
+        currentMode = mode;
+        const isUsage = (mode === 'usage');
+        
+        // 1. Fix the Heading
+        document.getElementById('mainChartTitle').innerText = isUsage ? 
+            'Inventory Activity' : 'Audit Discrepancies';
+
+        // 2. Darken the Active Button
+        document.getElementById('viewBtnUsage').classList.toggle('active-toggle', isUsage);
+        document.getElementById('viewBtnAudit').classList.toggle('active-toggle', !isUsage);
+
+        // 3. Update the Graph
+        if (myChart && globalData.labels) {
+            myChart.data.datasets[0].data = isUsage ? globalData.usage : globalData.audit;
+            myChart.data.datasets[0].label = isUsage ? 'Units Used' : 'Discrepancy Count';
+            myChart.data.datasets[0].borderColor = isUsage ? '#964f4c' : '#c07a00';
+            myChart.update();
+
+            updateAnalyticsTable();
+        }
+    }
+
+    // Ensure the filters still work with the new global switch
+    async function applyFilters() {
+        const start = document.getElementById("filterStart").value;
+        const end = document.getElementById("filterEnd").value;
+        const cat = document.getElementById("filterCategory").value;
+
+        const response = await fetch(`/api/analytics-data?start=${start}&end=${end}&category=${cat}`);
+        globalData = await response.json();
+
+        if (myChart) {
+            myChart.data.labels = globalData.labels;
+            switchView(currentMode); // Refreshes visuals and data
+        }
+    }
+
+    function updateAnalyticsTable() {
+        const tableHeader = document.getElementById('analyticsTableHeader');
+        const tableBody = document.getElementById('analyticsTableBody');
+        tableBody.innerHTML = ''; 
+
+        const isUsage = (currentMode === 'usage');
+        const items = isUsage ? globalData.item_breakdown : globalData.audit_breakdown;
+        
+        // Determine if we are showing Categories or specific Items
+        const catSelect = document.getElementById("filterCategory").value;
+        const nameColTitle = (catSelect === 'all') ? 'Category Name' : 'Item Name';
+
+        // 1. Build Dynamic Headers
+        if (isUsage) {
+            tableHeader.style.gridTemplateColumns = "60px 1.5fr 1fr 1fr 1.2fr 1fr";
+            tableHeader.innerHTML = `
+                <div>#</div>
+                <div style="text-align: left; padding-left: 20px;">${nameColTitle}</div>
+                <div>Restocks</div>
+                <div>Uses</div>
+                <div>Total Movement</div>
+                <div>Status</div>
+            `;
+        } else {
+            tableHeader.style.gridTemplateColumns = "60px 1.5fr 1fr 1.2fr 1fr";
+            tableHeader.innerHTML = `
+                <div>#</div>
+                <div style="text-align: left; padding-left: 20px;">${nameColTitle}</div>
+                <div>Times Audited</div>
+                <div>Total Discrepancy</div>
+                <div>Status</div>
+            `;
+        }
+
+        if (!items || items.length === 0) {
+            tableBody.innerHTML = `<div class="analytics-table-row" style="grid-template-columns: 1fr;"><div style="text-align:center;">No data for this selection</div></div>`;
+            return;
+        }
+
+        // 2. Build Dynamic Rows
+        items.forEach((item, index) => {
+            const row = document.createElement('div');
+            row.className = 'analytics-table-row';
+            
+            if (isUsage) {
+                row.style.gridTemplateColumns = "60px 1.5fr 1fr 1fr 1.2fr 1fr";
+                let badgeClass = "gold";
+                let badgeText = "Standard";
+                if (item.total > 20) { badgeClass = "red"; badgeText = "High Mvmt"; }
+
+                // Restocks shown in green (+), Uses shown in red (-)
+                row.innerHTML = `
+                    <div>${index + 1}</div>
+                    <div class="col-ingredient-name">${item.name}</div>
+                    <div style="color: #2e6b3b; font-weight: bold;">+${item.restocks || 0}</div>
+                    <div style="color: #b3261e; font-weight: bold;">-${item.uses || 0}</div>
+                    <div>${item.total || 0}</div>
+                    <div><span class="fd-pill ${badgeClass}">${badgeText}</span></div>
+                `;
+            } else {
+                row.style.gridTemplateColumns = "60px 1.5fr 1fr 1.2fr 1fr";
+                let badgeClass = "gold";
+                let badgeText = "Minor Variance";
+                
+                if (Math.abs(item.total) > 5) { badgeClass = "red"; badgeText = "Review Needed"; }
+                if (item.total == 0) { badgeClass = "green"; badgeText = "Perfect"; }
+
+                // Negative discrepancies highlight in red, positive in green
+                const diffColor = item.total < 0 ? '#b3261e' : (item.total > 0 ? '#2e6b3b' : '#333');
+                const sign = item.total > 0 ? '+' : '';
+
+                row.innerHTML = `
+                    <div>${index + 1}</div>
+                    <div class="col-ingredient-name">${item.name}</div>
+                    <div>${item.audit_count || 0}</div>
+                    <div style="color: ${diffColor}; font-weight: bold;">${sign}${item.total || 0}</div>
+                    <div><span class="fd-pill ${badgeClass}">${badgeText}</span></div>
+                `;
+            }
+            tableBody.appendChild(row);
+        });
+    }
+
+  </script>
+</body>
+</html>
