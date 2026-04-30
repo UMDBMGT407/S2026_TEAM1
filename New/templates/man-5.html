@@ -62,7 +62,7 @@
 <div class="content-container-centered">
 
 <div class="rectangle-5 mb-5">
-  <h1 class="man5-manage-users">Manage Users</h1>
+  <h1 class="page-title">Manage Users</h1>
 </div>
 
 <div class="row justify-content-center">
@@ -72,7 +72,7 @@
 <section class="man5-main-rectangle">
 
 <div class="man5-manage-users-topbar">
-  <h2 class="man5-manage-users2">Manage Users</h2>
+  <h2 class="man5-mini-title">Manage Users</h2>
 
   <div class="man5-add-new-user-rectangle">
     <div class="man5-add-new-user" onclick="openPopup()">+ Add New User</div>
@@ -94,19 +94,19 @@
 
 <div class="man5-status-box">
   <div class="man5-frame-2">
-    <div>Name</div>
-    <div>Role</div>
-    <div>Phone</div>
-    <div>Action</div>
+    <div class="man5-header">Name</div>
+    <div class="man5-header">Role</div>
+    <div class="man5-header">Phone</div>
+    <div class="man5-header">Action</div>
   </div>
 </div>
 
 {% for user in users %}
 <div class="man5-name-1">
   <div class="man5-frame-2">
-    <div>{{ user['name'] }}</div> <!--change in team-->
-    <div>{{ user['role'] }}</div> <!--change in team-->
-    <div>{{ user['phone'] }}</div> <!--change in team-->
+    <div class="man5-table-text">{{ user['name'] }}</div> <!--change in team-->
+    <div class="man5-table-text">{{ user['role'] }}</div> <!--change in team-->
+    <div class="man5-table-text">{{ user['phone'] }}</div> <!--change in team-->
     <div>
       <button onclick="editUser('{{ user['id'] }}','{{ user['name'] }}','{{ user['role'] }}','{{ user['phone'] }}')">Edit</button>
       <button onclick="deactivateUser('{{ user['id'] }}', this)">Deactivate</button>
@@ -121,16 +121,16 @@
 <!-- INACTIVE USERS -->
 <section class="man5-main-rectangle" style="margin-top:25px;">
 <div class="man5-manage-users-topbar">
-  <h2 class="man5-manage-users2">Inactive Users</h2>
+  <h2 class="man5-mini-title">Inactive Users</h2>
 </div>
 
 <div class="man5-inner-rec">
 <div class="man5-status-box">
   <div class="man5-frame-2">
-    <div>Name</div>
-    <div>Role</div>
-    <div>Phone</div>
-    <div>Action</div>
+    <div class="man5-header">Name</div>
+    <div class="man5-header">Role</div>
+    <div class="man5-header">Phone</div>
+    <div class="man5-header">Action</div>
   </div>
 </div>
 
