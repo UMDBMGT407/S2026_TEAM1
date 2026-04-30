@@ -45,8 +45,9 @@ body {
   padding: 20px 16px 16px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start; 
   box-sizing: border-box;
+  z-index: 1000;
 }
 
 .logo {
@@ -64,10 +65,31 @@ body {
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;   /* ADD THIS */
-  max-height: calc(100vh - 145px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+  flex-grow: 1; 
+  margin-bottom: 20px;
   padding-right: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: rgba(240, 230, 221, 0.1);
+  border-radius: 10px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: #ead8ca;
+  border-radius: 10px;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding-top: 15px;
+  flex-shrink: 0;
 }
 
 .nav-section-title {
