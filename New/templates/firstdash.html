@@ -117,7 +117,13 @@
         <section class="fd-content-grid">
 
           <div class="fd-panel">
-            <h2>Weekly Ingredient Usage</h2>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2>Weekly Ingredient Usage</h2>
+
+              <a href="{{ url_for('dashboard') }}" class="fd-btn fd-btn-primary py-1 px-3" style="font-size: 16px; text-decoration: none;">
+                View Detailed Analytics →
+              </a>
+            </div>
 
             <div class="fd-chart">
               <svg viewBox="0 0 700 250" preserveAspectRatio="none" aria-label="Usage trend chart">
