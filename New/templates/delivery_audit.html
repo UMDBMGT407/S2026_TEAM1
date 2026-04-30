@@ -12,29 +12,28 @@
 
   <!-- SIDEBAR -->
   <div class="sidebar-wrapper">
-    <div>
-      <div class="logo">Kung Fu Tea<br>Manager Portal</div>
 
-      <div class="sidebar-nav">
-        <div class="nav-section-title">Overview</div>
-        <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
+    <div class="logo">Kung Fu Tea<br>Manager Portal</div>
 
-        <div class="nav-section-title">Inventory</div>
-        <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
-        <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
-        <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
+    <div class="sidebar-nav">
+      <div class="nav-section-title">Overview</div>
+      <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
 
-        <div class="nav-section-title">Orders</div>
-        <a class="nav-btn" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
-        <a class="nav-btn active" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
+      <div class="nav-section-title">Inventory</div>
+      <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
+      <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
+      <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
 
-        <div class="nav-section-title">Insights</div>
-        <a class="nav-btn" href="{{ url_for('dashboard') }}">Analytics</a>
-        <a class="nav-btn" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
+      <div class="nav-section-title">Orders</div>
+      <a class="nav-btn" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
+      <a class="nav-btn active" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
 
-        <div class="nav-section-title">Admin</div>
-        <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
-      </div>
+      <div class="nav-section-title">Insights</div>
+      <a class="nav-btn" href="{{ url_for('dashboard') }}">Analytics</a>
+      <a class="nav-btn" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
+
+      <div class="nav-section-title">Admin</div>
+      <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
     </div>
 
     <div class="sidebar-bottom">
