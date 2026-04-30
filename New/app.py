@@ -3314,7 +3314,7 @@ def delivery_audit_detail(order_id):
         apply_confirmed_audit_to_inventory(order_id, current_user.id)
 
         cur.close()
-        return redirect(url_for('delivery_audit_list'))
+        return redirect(url_for('delivery_audit_list', confirmed='true'))
 
     order_data = {
         'id': order['id'],
