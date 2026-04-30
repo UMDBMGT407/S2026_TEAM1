@@ -136,11 +136,9 @@
             <div class="man2-col-ingredient">Ingredient</div>
             <div class="man2-col-center">System Qty</div>
             <div class="man2-col-center">Physical Count</div>
-            <div class="man2-col-center">Difference</div>
           </div>
             <div class="table-scroll-container">
           {% for item in inventory_items %}
-          {% set diff = item.physical_count - item.system_qty %}
           <div class="man2-table-row">
             <div class="man2-col-ingredient">{{ item.item_name }}</div>
             <div class="man2-col-center">{{ item.system_qty }}</div>
@@ -150,11 +148,9 @@
                 name="physical_count_{{ item.inventory_item_id }}"
                 type="number"
                 step="1"
-                value="{{ item.physical_count }}"
+                value="{{ item.physical_count if item.physical_count is not none else '' }}"
+                required        
               >
-            </div>
-            <div class="man2-col-center {% if diff != 0 %}text-danger{% endif %}">
-              {{ diff }}
             </div>
           </div>
           {% endfor %}
