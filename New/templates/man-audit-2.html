@@ -148,6 +148,7 @@
                 name="physical_count_{{ item.inventory_item_id }}"
                 type="number"
                 step="1"
+                min="0"
                 value="{{ item.physical_count if item.physical_count is not none else '' }}"
                 required        
               >
