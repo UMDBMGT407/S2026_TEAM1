@@ -331,6 +331,39 @@ body {
   width: 100%;
 }
 
+.inventory-filter-label {
+  color: #964f4c;
+  font-family: "Inria Serif", serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.inventory-pill-select {
+  background-color: #fcefe4;
+  color: #964f4c;
+  border: 1.5px solid #b47b76;
+  border-radius: 28px;
+  height: 45px;
+  padding: 0 40px 0 20px;
+  font-family: "Inria Serif", serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23964f4c'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 20px;
+  outline: none;
+  box-shadow: none;
+}
+
+.inventory-pill-select:hover {
+  background-color: #f5e7dc;
+}
+
 .page-action-btn {
   min-width: 160px; height: 45px;
   border-radius: 28px; font-weight: 700;
