@@ -4253,6 +4253,50 @@ select:focus {
 
 }
 
+#auditConfirmedModalWrapper {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+#auditConfirmedModalWrapper.modal-visible {
+  display: block;
+}
+
+#auditConfirmedModalOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.audit-confirmed-modal-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 430px;
+  transform: translate(-50%, -50%);
+  background: #e9d9cc;
+  border-radius: 30px;
+  padding: 32px 38px;
+  text-align: center;
+  font-family: "Inria Serif", serif;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.audit-confirmed-modal-title {
+  color: #964f4c;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.audit-confirmed-modal-text {
+  color: #555;
+  font-size: 17px;
+  margin-bottom: 26px;
+}
+
 /* =========================
    FIRST DASHBOARD (fd-)
    Based on maybe.html
