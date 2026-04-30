@@ -25,6 +25,7 @@ from flask_login import (
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
 import json
+import os
 from datetime import datetime, timedelta
 #predictive imports
 from decimal import Decimal, InvalidOperation
@@ -3563,6 +3564,386 @@ def delete_inventory_item(item_id):
     cur.close()
 
     return jsonify(message='Deleted')
+
+
+# =========================
+# MANAGER DASHBOARD AI CHATBOT
+# =========================
+MANAGER_AI_GEMINI_MODEL = 'gemini-2.5-flash'
+MANAGER_AI_LOW_STOCK_THRESHOLD = 5
+MANAGER_AI_HIGH_STOCK_THRESHOLD = 50
+
+
+def manager_ai_get_api_key():
+    api_key = os.environ.get('GEMINI_API_KEY', '').strip()
+    if api_key:
+        return api_key
+
+    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    if not os.path.exists(env_path):
+        return ''
+
+    with open(env_path, 'r', encoding='utf-8') as env_file:
+        for raw_line in env_file:
+            line = raw_line.strip()
+            if not line or line.startswith('#') or '=' not in line:
+                continue
+
+            key, value = line.split('=', 1)
+            if key.strip() == 'GEMINI_API_KEY':
+                return value.strip().strip('"').strip("'")
+
+    return ''
+
+
+def manager_ai_get_inventory_snapshot(cur):
+    snap = {}
+
+    cur.execute("""
+        SELECT id, item_name, category, system_qty
+        FROM inventory_items
+        ORDER BY category, item_name
+    """)
+    snap['all_items'] = [dict(row) for row in cur.fetchall()]
+
+    snap['zero_stock'] = [
+        item for item in snap['all_items']
+        if item['system_qty'] == 0
+    ]
+    snap['low_stock'] = [
+        item for item in snap['all_items']
+        if 0 < item['system_qty'] <= MANAGER_AI_LOW_STOCK_THRESHOLD
+    ]
+    snap['high_stock'] = [
+        item for item in snap['all_items']
+        if item['system_qty'] >= MANAGER_AI_HIGH_STOCK_THRESHOLD
+    ]
+
+    cur.execute("""
+        SELECT po.id,
+               s.supplier_name,
+               po.order_date,
+               po.expected_date,
+               po.received_date,
+               po.order_status,
+               po.audit_status
+        FROM purchase_orders po
+        JOIN suppliers s ON po.supplier_id = s.id
+        WHERE po.order_status != 'Cancelled'
+          AND (
+              po.order_status IN ('Pending', 'Ordered')
+              OR po.order_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+          )
+        ORDER BY po.order_date DESC
+    """)
+    snap['purchase_orders'] = [dict(row) for row in cur.fetchall()]
+
+    cur.execute("""
+        SELECT po.id AS po_id,
+               ii.item_name,
+               ii.category,
+               poi.quantity AS qty_ordered,
+               po.order_status
+        FROM purchase_order_items poi
+        JOIN purchase_orders po ON poi.purchase_order_id = po.id
+        JOIN inventory_items ii ON poi.inventory_item_id = ii.id
+        WHERE po.order_status IN ('Pending', 'Ordered')
+        ORDER BY po.id, ii.item_name
+    """)
+    snap['open_po_line_items'] = [dict(row) for row in cur.fetchall()]
+
+    cur.execute("""
+        SELECT da.purchase_order_id,
+               ii.item_name,
+               da.quantity_ordered,
+               da.quantity_received,
+               (da.quantity_received - da.quantity_ordered) AS discrepancy,
+               u.name AS received_by,
+               da.received_at
+        FROM delivery_audits da
+        JOIN inventory_items ii ON da.inventory_item_id = ii.id
+        JOIN users u ON da.received_by = u.id
+        WHERE da.received_at >= DATE_SUB(NOW(), INTERVAL 14 DAY)
+          AND da.quantity_received != da.quantity_ordered
+        ORDER BY da.received_at DESC
+        LIMIT 20
+    """)
+    snap['recent_discrepancies'] = [dict(row) for row in cur.fetchall()]
+
+    cur.execute("""
+        SELECT ii.item_name,
+               op.prediction_quantity,
+               op.prediction_order_by_date,
+               ii.system_qty AS current_qty
+        FROM order_predictions op
+        JOIN inventory_items ii ON op.inventory_item_id = ii.id
+        WHERE op.prediction_order_by_date >= CURDATE()
+        ORDER BY op.prediction_order_by_date ASC
+    """)
+    snap['predictions'] = [dict(row) for row in cur.fetchall()]
+
+    cur.execute("""
+        SELECT ii.item_name,
+               iu.action_type,
+               iu.qty_change,
+               iu.old_qty,
+               iu.new_qty,
+               u.name AS updated_by,
+               iu.created_at
+        FROM inventory_updates iu
+        JOIN inventory_items ii ON iu.inventory_item_id = ii.id
+        JOIN users u ON iu.updated_by = u.id
+        WHERE iu.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        ORDER BY iu.created_at DESC
+        LIMIT 25
+    """)
+    snap['recent_activity'] = [dict(row) for row in cur.fetchall()]
+
+    cur.execute("""
+        SELECT id, supplier_name, supplier_address
+        FROM suppliers
+        ORDER BY supplier_name
+    """)
+    snap['suppliers'] = [dict(row) for row in cur.fetchall()]
+
+    cur.execute("""
+        SELECT po.id,
+               s.supplier_name,
+               po.order_date,
+               po.received_date,
+               po.audit_status
+        FROM purchase_orders po
+        JOIN suppliers s ON po.supplier_id = s.id
+        WHERE po.order_status = 'Received'
+          AND po.audit_status IN ('Pending', 'Awaiting Approval')
+        ORDER BY po.received_date DESC
+    """)
+    snap['pending_audits'] = [dict(row) for row in cur.fetchall()]
+
+    snap['generated_at'] = dt.datetime.now().strftime('%Y-%m-%d %H:%M')
+    return snap
+
+
+def manager_ai_format_items(items):
+    if not items:
+        return "  (none)"
+    return "\n".join(
+        f"  - {item['item_name']} ({item['category']}) - qty: {item['system_qty']}"
+        for item in items
+    )
+
+
+def manager_ai_build_system_prompt(snapshot):
+    context = [
+        f"TODAY: {dt.datetime.now().strftime('%B %d, %Y')}",
+        "STORE: Kung Fu Tea",
+        "",
+        "=== ZERO STOCK (must reorder) ===",
+        manager_ai_format_items(snapshot['zero_stock']),
+        "",
+        f"=== LOW STOCK (<={MANAGER_AI_LOW_STOCK_THRESHOLD} units) ===",
+        manager_ai_format_items(snapshot['low_stock']),
+    ]
+
+    if snapshot['pending_audits']:
+        pending_audits = "\n".join(
+            f"  - PO #{row['id']} from {row['supplier_name']} "
+            f"(received {row['received_date']}) - audit: {row['audit_status']}"
+            for row in snapshot['pending_audits']
+        )
+        context += ["", "=== DELIVERY AUDITS AWAITING ACTION ===", pending_audits]
+
+    if snapshot['recent_discrepancies']:
+        discrepancies = "\n".join(
+            f"  - {row['item_name']}: ordered {row['quantity_ordered']}, "
+            f"received {row['quantity_received']} "
+            f"({'+' if row['discrepancy'] > 0 else ''}{row['discrepancy']}) "
+            f"on {str(row['received_at'])[:10]}"
+            for row in snapshot['recent_discrepancies']
+        )
+        context += ["", "=== RECENT DELIVERY DISCREPANCIES (last 14 days) ===", discrepancies]
+
+    if snapshot['open_po_line_items']:
+        open_lines = "\n".join(
+            f"  - PO #{row['po_id']} [{row['order_status']}]: "
+            f"{row['item_name']} x {row['qty_ordered']}"
+            for row in snapshot['open_po_line_items']
+        )
+        context += ["", "=== OPEN PURCHASE ORDER LINE ITEMS ===", open_lines]
+
+    if snapshot['recent_activity']:
+        recent_activity = "\n".join(
+            f"  - {row['updated_by']} [{row['action_type']}] {row['item_name']}: "
+            f"{row['old_qty']} to {row['new_qty']} "
+            f"({'+' if row['qty_change'] >= 0 else ''}{row['qty_change']})"
+            for row in snapshot['recent_activity']
+        )
+        context += ["", "=== INVENTORY ACTIVITY (last 7 days) ===", recent_activity]
+
+    if snapshot['predictions']:
+        predictions = "\n".join(
+            f"  - {row['item_name']}: reorder {row['prediction_quantity']} units "
+            f"by {row['prediction_order_by_date']} (current: {row['current_qty']})"
+            for row in snapshot['predictions']
+        )
+        context += ["", "=== REORDER PREDICTIONS ===", predictions]
+
+    if snapshot['high_stock']:
+        context += [
+            "",
+            f"=== OVERSTOCK (>={MANAGER_AI_HIGH_STOCK_THRESHOLD} units) ===",
+            manager_ai_format_items(snapshot['high_stock'])
+        ]
+
+    if snapshot['purchase_orders']:
+        purchase_orders = "\n".join(
+            f"  - PO #{row['id']} - {row['supplier_name']} - "
+            f"ordered {row['order_date']}, status: {row['order_status']}, "
+            f"audit: {row['audit_status']}"
+            for row in snapshot['purchase_orders']
+        )
+        context += ["", "=== RECENT PURCHASE ORDERS ===", purchase_orders]
+
+    if snapshot['suppliers']:
+        suppliers = "\n".join(
+            f"  - {row['supplier_name']} - {row['supplier_address']}"
+            for row in snapshot['suppliers']
+        )
+        context += ["", "=== SUPPLIERS ===", suppliers]
+
+    inventory_context = "\n".join(context)
+
+    return (
+        "You are the Inventory AI Assistant for Kung Fu Tea. "
+        "You are speaking with the store manager, who has authority over "
+        "purchasing, suppliers, and inventory operations.\n\n"
+        "Your job:\n"
+        "- Flag low or zero stock with specific reorder recommendations.\n"
+        "- Highlight delivery audit discrepancies and suggest follow-up steps.\n"
+        "- Warn about overstock and possible spoilage or cash tied up.\n"
+        "- Name specific suppliers and quantities when the database supports it.\n"
+        "- Summarize recent inventory activity and flag anomalies.\n"
+        "- Be concise, data-driven, and action-oriented.\n\n"
+        "LIVE INVENTORY SNAPSHOT (from database at time of this request):\n"
+        "-----------------------------------------------------------------\n"
+        f"{inventory_context}\n"
+        "-----------------------------------------------------------------\n\n"
+        "RULES:\n"
+        "- Base answers strictly on the snapshot above. Never invent numbers.\n"
+        "- If data is missing or unclear, say so.\n"
+        "- Keep responses under 200 words unless a full report is requested.\n"
+        "- Use short bullet lists when helpful."
+    )
+
+
+def manager_ai_build_gemini_contents(raw_history, user_message):
+    contents = []
+    for turn in raw_history[-20:]:
+        role = turn.get('role')
+        content = (turn.get('content') or '').strip()
+        if not content:
+            continue
+        if role == 'user':
+            gemini_role = 'user'
+        elif role == 'assistant':
+            gemini_role = 'model'
+        else:
+            continue
+        contents.append({
+            'role': gemini_role,
+            'parts': [{'text': content}]
+        })
+
+    if not contents or contents[-1]['parts'][0]['text'] != user_message:
+        contents.append({
+            'role': 'user',
+            'parts': [{'text': user_message}]
+        })
+
+    return contents
+
+
+def manager_ai_call_gemini(system_prompt, contents):
+    import urllib.error
+    import urllib.request
+
+    api_key = manager_ai_get_api_key()
+    if not api_key:
+        raise RuntimeError('GEMINI_API_KEY is not set. Add it to your .env file.')
+
+    url = (
+        'https://generativelanguage.googleapis.com/v1beta/models/'
+        f'{MANAGER_AI_GEMINI_MODEL}:generateContent?key={api_key}'
+    )
+    payload = {
+        'systemInstruction': {
+            'parts': [{'text': system_prompt}]
+        },
+        'contents': contents,
+        'generationConfig': {
+            'temperature': 0.4,
+            'maxOutputTokens': 512
+        }
+    }
+    encoded_payload = json.dumps(payload).encode('utf-8')
+    request_obj = urllib.request.Request(
+        url,
+        data=encoded_payload,
+        headers={'Content-Type': 'application/json'},
+        method='POST'
+    )
+
+    try:
+        with urllib.request.urlopen(request_obj, timeout=30) as response:
+            response_data = json.loads(response.read().decode('utf-8'))
+    except urllib.error.HTTPError as error:
+        details = error.read().decode('utf-8')
+        try:
+            parsed = json.loads(details)
+            message = parsed.get('error', {}).get('message', details)
+        except json.JSONDecodeError:
+            message = details
+        raise RuntimeError(message)
+
+    candidates = response_data.get('candidates') or []
+    if not candidates:
+        raise RuntimeError('Gemini returned no response.')
+
+    parts = candidates[0].get('content', {}).get('parts') or []
+    reply = ''.join(part.get('text', '') for part in parts).strip()
+    if not reply:
+        raise RuntimeError('Gemini returned an empty response.')
+    return reply
+
+
+@app.route('/api/manager-ai-chat', methods=['POST'])
+@login_required
+@role_required('Manager')
+def manager_ai_chat():
+    data = request.get_json(silent=True) or {}
+    user_message = (data.get('message') or '').strip()
+    raw_history = data.get('history') or []
+
+    if not user_message:
+        return jsonify({'error': 'Please enter a message.'}), 400
+
+    cur = mysql.connection.cursor()
+    try:
+        snapshot = manager_ai_get_inventory_snapshot(cur)
+    except Exception as error:
+        cur.close()
+        return jsonify({'error': f'Database error: {str(error)}'}), 500
+    cur.close()
+
+    system_prompt = manager_ai_build_system_prompt(snapshot)
+    contents = manager_ai_build_gemini_contents(raw_history, user_message)
+
+    try:
+        reply = manager_ai_call_gemini(system_prompt, contents)
+    except Exception as error:
+        return jsonify({'error': f'AI error: {str(error)}'}), 500
+
+    return jsonify({'reply': reply})
 
 
 # =========================
