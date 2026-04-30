@@ -40,7 +40,7 @@ CREATE TABLE inventory_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     item_name VARCHAR(100) NOT NULL UNIQUE,
     category VARCHAR(50) NOT NULL,
-    system_qty INT NOT NULL DEFAULT 0,
+    system_qty FLOAT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -82,8 +82,8 @@ CREATE TABLE audit_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     audit_id INT NOT NULL,
     inventory_item_id INT NOT NULL,
-    system_qty INT NOT NULL,
-    physical_count INT NULL,
+    system_qty FLOAT NOT NULL,
+    physical_count FLOAT NOT NULL,
     CONSTRAINT fk_audit_items_audit
         FOREIGN KEY (audit_id) REFERENCES audits(id)
         ON UPDATE CASCADE
@@ -129,7 +129,7 @@ CREATE TABLE purchase_order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     purchase_order_id INT NOT NULL,
     inventory_item_id INT NOT NULL,
-    quantity INT NOT NULL,
+    quantity FLOAT NOT NULL,
     CONSTRAINT fk_purchase_order_items_order
         FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders(id)
         ON UPDATE CASCADE
@@ -148,9 +148,9 @@ CREATE TABLE inventory_updates (
     inventory_item_id INT NOT NULL,
     updated_by INT NOT NULL,
     action_type ENUM('Add', 'Sub', 'Correct', 'Receive', 'Audit') NOT NULL,
-    qty_change INT NOT NULL,
-    old_qty INT NOT NULL,
-    new_qty INT NOT NULL,
+    qty_change FLOAT NOT NULL,
+    old_qty FLOAT NOT NULL,
+    new_qty FLOAT NOT NULL,
     audit_id INT NULL,
     purchase_order_id INT NULL,
     reason VARCHAR(255) NULL,
@@ -180,8 +180,8 @@ CREATE TABLE delivery_audits (
     id INT AUTO_INCREMENT PRIMARY KEY,
     purchase_order_id INT NOT NULL,
     inventory_item_id INT NOT NULL,
-    quantity_ordered INT NOT NULL,
-    quantity_received INT NOT NULL,
+    quantity_ordered FLOAT NOT NULL,
+    quantity_received FLOAT NOT NULL,
     received_by INT NOT NULL,
     received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     notes TEXT,
@@ -205,7 +205,7 @@ CREATE TABLE delivery_audits (
 CREATE TABLE order_predictions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     inventory_item_id INT NOT NULL,
-    prediction_quantity INT NOT NULL,
+    prediction_quantity FLOAT NOT NULL,
     prediction_order_by_date DATE NOT NULL,
     prediction_date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_order_predictions_inventory
@@ -219,9 +219,11 @@ CREATE TABLE order_predictions (
 -- =========================
 CREATE TABLE pos_transactions (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id VARCHAR(64) NOT NULL UNIQUE,
     transaction_date DATETIME NOT NULL,
     transaction_amount DECIMAL(10,2) NOT NULL,
     drink_id INT NOT NULL,
+    quantity FLOAT NOT NULL DEFAULT 1,
     CONSTRAINT fk_pos_transactions_drink
         FOREIGN KEY (drink_id) REFERENCES drinks(id)
         ON UPDATE CASCADE
@@ -276,65 +278,73 @@ INSERT INTO users (name, email, password, role, phone) VALUES
 -- INVENTORY ITEMS DATA
 -- =========================
 INSERT INTO inventory_items (item_name, category, system_qty) VALUES
-('Tapioca Pearls', 'Toppings', 10),
-('Black Tea', 'Tea', 6),
-('Mango Syrup', 'Syrup', 5),
-('Large Cups', 'Packaging', 20),
-('Milk Powder', 'Powder', 8),
-('Brown Sugar', 'Powder', 4),
-('Hot Medium Cups', 'Packaging', 14),
-('Matcha Powder', 'Powder', 3),
-('Aloe Vera', 'Toppings', 2),
-('Assam Black Tea Leaves', 'Tea', 1),
-('Black Sugar Syrup', 'Syrup', 6),
-('Brown Sugar Syrup', 'Syrup', 3),
-('Bubble Tea Cups (Large)', 'Packaging', 4),
-('Bubble Tea Cups (Medium)', 'Packaging', 0),
-('Bubble Tea Lids', 'Packaging', 0),
-('Bubble Tea Straws', 'Packaging', 0),
-('Cane Sugar', 'Sweetener', 0),
-('Cheese Milk Foam Powder', 'Powder', 0),
-('Cheese Milk Foam Premix', 'Powder', 0),
-('Chia Seeds', 'Toppings', 0),
-('Coconut Jelly', 'Toppings', 0),
-('Coffee Jelly', 'Toppings', 0),
-('Creamer Powder', 'Powder', 0),
-('Crystal Boba', 'Toppings', 0),
-('Earl Grey Tea Leaves', 'Tea', 0),
-('Fresh Milk (Whole)', 'Dairy', 0),
-('Fruit Jam - Grape', 'Jam', 0),
-('Fruit Jam - Mango', 'Jam', 0),
-('Fruit Jam - Passion Fruit', 'Jam', 0),
-('Fruit Jam - Peach', 'Jam', 0),
-('Fruit Jam - Strawberry', 'Jam', 0),
-('Grass Jelly', 'Toppings', 0),
-('Green Tea Leaves', 'Tea', 0),
-('Honey', 'Sweetener', 0),
-('Ice (Bagged)', 'Other', 0),
-('Jasmine Green Tea Leaves', 'Tea', 0),
-('Lychee Jelly', 'Toppings', 0),
-('Milk Powder (Non-Dairy)', 'Powder', 0),
-('Oolong Tea Leaves', 'Tea', 0),
-('Oreo Crumble', 'Toppings', 0),
-('Passion Fruit Syrup', 'Syrup', 0),
-('Pineapple Syrup', 'Syrup', 0),
-('Pudding Mix', 'Powder', 0),
-('Red Bean', 'Toppings', 0),
-('Roasted Oolong Tea Leaves', 'Tea', 0),
-('Salted Cream Foam Powder', 'Powder', 0),
-('Simple Syrup', 'Syrup', 0),
-('Thai Tea Leaves', 'Tea', 0),
-('Tapioca Pearls (Boba)', 'Toppings', 0),
-('Tiramisu Powder', 'Powder', 0),
-('Wintermelon Syrup', 'Syrup', 0),
-('Yakult', 'Dairy', 0);
+('Tapioca Pearls', 'Toppings', 7.5),
+('Black Tea', 'Tea', 5.5),
+('Mango Syrup', 'Syrup', 4.0),
+('Large Cups', 'Packaging', 180),
+('Milk Powder', 'Powder', 6.5),
+('Brown Sugar', 'Powder', 5.0),
+('Hot Medium Cups', 'Packaging', 120),
+('Matcha Powder', 'Powder', 3.5),
+('Aloe Vera', 'Toppings', 3.0),
+('Assam Black Tea Leaves', 'Tea', 4.5),
+('Black Sugar Syrup', 'Syrup', 4.0),
+('Brown Sugar Syrup', 'Syrup', 4.5),
+('Bubble Tea Cups (Large)', 'Packaging', 240),
+('Bubble Tea Cups (Medium)', 'Packaging', 260),
+('Bubble Tea Lids', 'Packaging', 520),
+('Bubble Tea Straws', 'Packaging', 480),
+('Cane Sugar', 'Sweetener', 8.0),
+('Cheese Milk Foam Powder', 'Powder', 3.0),
+('Cheese Milk Foam Premix', 'Powder', 2.0),
+('Chia Seeds', 'Toppings', 2.5),
+('Coconut Jelly', 'Toppings', 3.5),
+('Coffee Jelly', 'Toppings', 2.5),
+('Creamer Powder', 'Powder', 6.0),
+('Crystal Boba', 'Toppings', 2.0),
+('Earl Grey Tea Leaves', 'Tea', 2.5),
+('Fresh Milk (Whole)', 'Dairy', 14.0),
+('Fruit Jam - Grape', 'Jam', 2.0),
+('Fruit Jam - Mango', 'Jam', 3.5),
+('Fruit Jam - Passion Fruit', 'Jam', 2.5),
+('Fruit Jam - Peach', 'Jam', 2.0),
+('Fruit Jam - Strawberry', 'Jam', 3.0),
+('Grass Jelly', 'Toppings', 2.5),
+('Green Tea Leaves', 'Tea', 5.0),
+('Honey', 'Sweetener', 3.5),
+('Ice (Bagged)', 'Other', 18.0),
+('Jasmine Green Tea Leaves', 'Tea', 4.0),
+('Lychee Jelly', 'Toppings', 2.5),
+('Milk Powder (Non-Dairy)', 'Powder', 5.5),
+('Oolong Tea Leaves', 'Tea', 3.5),
+('Oreo Crumble', 'Toppings', 2.0),
+('Passion Fruit Syrup', 'Syrup', 3.0),
+('Pineapple Syrup', 'Syrup', 2.0),
+('Pudding Mix', 'Powder', 2.5),
+('Red Bean', 'Toppings', 2.0),
+('Roasted Oolong Tea Leaves', 'Tea', 2.5),
+('Salted Cream Foam Powder', 'Powder', 2.5),
+('Simple Syrup', 'Syrup', 8.0),
+('Thai Tea Leaves', 'Tea', 4.0),
+('Tapioca Pearls (Boba)', 'Toppings', 4.5),
+('Tiramisu Powder', 'Powder', 2.0),
+('Wintermelon Syrup', 'Syrup', 3.5),
+('Yakult', 'Dairy', 24.0);
 
 -- =========================
 -- DRINKS DATA
 -- =========================
 INSERT INTO drinks (drink_name) VALUES
-('Winter Melon Milk Tea'),
-('Brown Sugar Boba Latte');
+('Kung Fu Milk Tea'),
+('Taro Milk Tea'),
+('Thai Milk Tea'),
+('Honey Green Tea'),
+('Passion Fruit Green Tea'),
+('Mango Slush'),
+('Oreo Wow'),
+('Cocoa Cream Wow'),
+('Matcha Milk Cap'),
+('Strawberry Lemonade');
 
 -- =========================
 -- SUPPLIER DATA
@@ -456,56 +466,439 @@ INSERT INTO order_predictions (
 -- POS TRANSACTIONS DATA
 -- =========================
 INSERT INTO pos_transactions (
+    transaction_id,
     transaction_date,
     transaction_amount,
-    drink_id
+    drink_id,
+    quantity
 ) VALUES
 (
+    'TXN-SEED-0001',
     '2026-04-08 10:15:00',
     6.75,
-    (SELECT id FROM drinks WHERE drink_name = 'Winter Melon Milk Tea')
+    (SELECT id FROM drinks WHERE drink_name = 'Strawberry Lemonade'),
+    1
 ),
 (
+    'TXN-SEED-0002',
     '2026-04-08 14:40:00',
     7.25,
-    (SELECT id FROM drinks WHERE drink_name = 'Brown Sugar Boba Latte')
+    (SELECT id FROM drinks WHERE drink_name = 'Thai Milk Tea'),
+    2
 );
 
 -- =========================
 -- DRINK / PRODUCT MAPPING DATA
 -- =========================
-INSERT INTO drink_product (drink_id, inventory_item_id) VALUES
-(
-    (SELECT id FROM drinks WHERE drink_name = 'Winter Melon Milk Tea'),
-    (SELECT id FROM inventory_items WHERE item_name = 'Black Tea')
-),
-(
-    (SELECT id FROM drinks WHERE drink_name = 'Winter Melon Milk Tea'),
-    (SELECT id FROM inventory_items WHERE item_name = 'Wintermelon Syrup')
-),
-(
-    (SELECT id FROM drinks WHERE drink_name = 'Brown Sugar Boba Latte'),
-    (SELECT id FROM inventory_items WHERE item_name = 'Tapioca Pearls')
-),
-(
-    (SELECT id FROM drinks WHERE drink_name = 'Brown Sugar Boba Latte'),
-    (SELECT id FROM inventory_items WHERE item_name = 'Brown Sugar Syrup')
-);
-ALTER TABLE delivery_audits
-ADD CONSTRAINT unique_po_item_audit
-UNIQUE (purchase_order_id, inventory_item_id);
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Kung Fu Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Assam Black Tea Leaves'),
+    0.035;
 
-ALTER TABLE purchase_orders
-ADD COLUMN audit_status VARCHAR(50) DEFAULT 'Pending';
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Kung Fu Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Milk Powder'),
+    0.045;
 
--- 1. Clear existing activity to prevent duplicate key errors
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Kung Fu Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Simple Syrup'),
+    0.020;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Kung Fu Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Ice (Bagged)'),
+    0.080;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Kung Fu Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Cups (Medium)'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Kung Fu Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Lids'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Kung Fu Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Straws'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Taro Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Milk Powder'),
+    0.040;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Taro Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Creamer Powder'),
+    0.030;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Taro Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Simple Syrup'),
+    0.018;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Taro Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Ice (Bagged)'),
+    0.080;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Taro Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Cups (Medium)'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Taro Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Lids'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Taro Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Straws'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Thai Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Thai Tea Leaves'),
+    0.040;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Thai Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Creamer Powder'),
+    0.040;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Thai Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Cane Sugar'),
+    0.020;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Thai Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Ice (Bagged)'),
+    0.075;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Thai Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Cups (Medium)'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Thai Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Lids'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Thai Milk Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Straws'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Honey Green Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Green Tea Leaves'),
+    0.030;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Honey Green Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Honey'),
+    0.025;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Honey Green Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Ice (Bagged)'),
+    0.080;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Honey Green Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Cups (Medium)'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Honey Green Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Lids'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Passion Fruit Green Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Green Tea Leaves'),
+    0.028;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Passion Fruit Green Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Passion Fruit Syrup'),
+    0.028;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Passion Fruit Green Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Fruit Jam - Passion Fruit'),
+    0.018;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Passion Fruit Green Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Ice (Bagged)'),
+    0.085;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Passion Fruit Green Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Cups (Medium)'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Passion Fruit Green Tea'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Lids'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Mango Slush'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Mango Syrup'),
+    0.040;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Mango Slush'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Fruit Jam - Mango'),
+    0.030;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Mango Slush'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Ice (Bagged)'),
+    0.140;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Mango Slush'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Cups (Large)'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Mango Slush'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Lids'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Mango Slush'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Straws'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Oreo Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Fresh Milk (Whole)'),
+    0.080;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Oreo Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Milk Powder'),
+    0.030;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Oreo Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Oreo Crumble'),
+    0.035;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Oreo Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Simple Syrup'),
+    0.018;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Oreo Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Ice (Bagged)'),
+    0.090;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Oreo Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Cups (Large)'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Oreo Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Lids'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Oreo Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Straws'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Cocoa Cream Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Fresh Milk (Whole)'),
+    0.085;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Cocoa Cream Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Creamer Powder'),
+    0.025;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Cocoa Cream Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Salted Cream Foam Powder'),
+    0.030;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Cocoa Cream Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Simple Syrup'),
+    0.020;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Cocoa Cream Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Ice (Bagged)'),
+    0.090;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Cocoa Cream Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Cups (Large)'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Cocoa Cream Wow'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Lids'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Matcha Milk Cap'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Matcha Powder'),
+    0.028;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Matcha Milk Cap'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Fresh Milk (Whole)'),
+    0.060;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Matcha Milk Cap'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Cheese Milk Foam Powder'),
+    0.028;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Matcha Milk Cap'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Jasmine Green Tea Leaves'),
+    0.022;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Matcha Milk Cap'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Ice (Bagged)'),
+    0.075;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Matcha Milk Cap'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Cups (Medium)'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Matcha Milk Cap'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Lids'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Strawberry Lemonade'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Fruit Jam - Strawberry'),
+    0.032;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Strawberry Lemonade'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Simple Syrup'),
+    0.015;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Strawberry Lemonade'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Ice (Bagged)'),
+    0.090;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Strawberry Lemonade'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Cups (Large)'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Strawberry Lemonade'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Lids'),
+    1;
+
+INSERT INTO drink_product (drink_id, inventory_item_id, quantity)
+SELECT
+    (SELECT id FROM drinks WHERE drink_name = 'Strawberry Lemonade'),
+    (SELECT id FROM inventory_items WHERE item_name = 'Bubble Tea Straws'),
+    1;
+
+-- =========================
+-- EXTENDED AUDIT / ACTIVITY SEED DATA
+-- Mirrors the extra New/THE SQL.sql April history block
+-- =========================
+
+-- Clear existing audit/activity history so the richer April seed data can load cleanly.
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE inventory_updates;
 TRUNCATE TABLE audit_items;
 TRUNCATE TABLE audits;
 SET FOREIGN_KEY_CHECKS = 1;
 
--- 2. Create 8 Approved Audits for April
+-- Create 8 approved audits for April.
 INSERT INTO audits (id, conducted_by, approved_by, status, created_at, submitted_at, approved_at) VALUES
 (10, 2, 1, 'Approved', '2026-04-03 18:00:00', '2026-04-03 18:30:00', '2026-04-03 19:00:00'),
 (11, 2, 1, 'Approved', '2026-04-07 18:00:00', '2026-04-07 18:30:00', '2026-04-07 19:00:00'),
@@ -516,7 +909,7 @@ INSERT INTO audits (id, conducted_by, approved_by, status, created_at, submitted
 (16, 2, 1, 'Approved', '2026-04-24 18:00:00', '2026-04-24 18:30:00', '2026-04-24 19:00:00'),
 (17, 2, 1, 'Approved', '2026-04-28 10:00:00', '2026-04-28 10:30:00', '2026-04-28 11:00:00');
 
--- 3. Insert Audit Discrepancies (Mapped to IDs 10-17 to avoid conflicts)
+-- Insert audit discrepancies.
 INSERT INTO audit_items (audit_id, inventory_item_id, system_qty, physical_count) VALUES
 (10, 1, 35, 32), (10, 2, 30, 30), (10, 3, 10, 8),
 (11, 1, 23, 23), (11, 4, 150, 145), (11, 2, 22, 25),
@@ -526,7 +919,7 @@ INSERT INTO audit_items (audit_id, inventory_item_id, system_qty, physical_count
 (15, 2, 32, 30), (15, 4, 90, 85), (15, 3, 20, 20),
 (16, 1, 23, 20), (16, 8, 5, 5);
 
--- 4. Insert 20 Inventory Updates (Activity Log)
+-- Insert 20 inventory activity rows.
 INSERT INTO inventory_updates (inventory_item_id, updated_by, action_type, qty_change, old_qty, new_qty, created_at) VALUES
 (1, 1, 'Sub', -15, 50, 35, '2026-04-01 10:00:00'),
 (2, 1, 'Add', 20, 10, 30, '2026-04-02 09:30:00'),
@@ -561,6 +954,7 @@ SELECT * FROM inventory_updates;
 SELECT * FROM suppliers;
 SELECT * FROM purchase_orders;
 SELECT * FROM purchase_order_items;
+SELECT * FROM delivery_audits;
 SELECT * FROM order_predictions;
 SELECT * FROM pos_transactions;
 SELECT * FROM drink_product;
