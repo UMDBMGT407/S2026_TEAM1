@@ -253,7 +253,7 @@ def create_audit(user_id):
             INSERT INTO audit_items (audit_id, inventory_item_id, system_qty, physical_count)
             VALUES (%s, %s, %s, %s)
             """,
-            (audit_id, item['id'], item['system_qty'], item['system_qty'])
+            (audit_id, item['id'], item['system_qty'], None)
         )
 
     mysql.connection.commit()
