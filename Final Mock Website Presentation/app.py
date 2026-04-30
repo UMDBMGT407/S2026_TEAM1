@@ -1085,13 +1085,15 @@ def inventory():
     selected_category = request.args.get('category', 'all')
     cur = mysql.connection.cursor()
     
-    cur.execute("SELECT DISTINCT category FROM inventory_items WHERE category IS NOT NULL ORDER BY category")
+    # Only fetch active categories
+    cur.execute("SELECT DISTINCT category FROM inventory_items WHERE category IS NOT NULL AND status = 'Active' ORDER BY category")
     unique_categories = [row['category'] for row in cur.fetchall()]
     
+    # Only fetch active items
     if selected_category != 'all':
-        cur.execute("SELECT id, item_name, system_qty, created_at, category FROM inventory_items WHERE LOWER(category) = %s", (selected_category.lower(),))
+        cur.execute("SELECT id, item_name, system_qty, created_at, category FROM inventory_items WHERE LOWER(category) = %s AND status = 'Active'", (selected_category.lower(),))
     else:
-        cur.execute("SELECT id, item_name, system_qty, created_at, category FROM inventory_items")
+        cur.execute("SELECT id, item_name, system_qty, created_at, category FROM inventory_items WHERE status = 'Active'")
         
     inventory_data = cur.fetchall()
     cur.close()
@@ -1115,22 +1117,47 @@ def add_inventory_item_direct():
 
     cur = mysql.connection.cursor()
     
-    cur.execute("SELECT id FROM inventory_items WHERE LOWER(item_name) = LOWER(%s)", (name,))
-    if cur.fetchone():
-        cur.close()
-        return jsonify(error=f"'{name}' already exists in the inventory."), 409
-
+    # Check if the item exists (active OR retired)
+    cur.execute("SELECT id, status FROM inventory_items WHERE LOWER(item_name) = LOWER(%s)", (name,))
+    existing_item = cur.fetchone()
+    
     try:
-        cur.execute(
-            "INSERT INTO inventory_items (item_name, system_qty, category, created_at) VALUES (%s, %s, %s, NOW())",
-            (name, qty, category)
-        )
-        mysql.connection.commit()
-        new_id = cur.lastrowid
+        if existing_item:
+            if existing_item['status'] == 'Active':
+                cur.close()
+                return jsonify(error=f"'{name}' already exists in the active inventory."), 409
+            else:
+                # Reactivate a previously retired item instead of duplicating it
+                cur.execute(
+                    "UPDATE inventory_items SET status = 'Active', system_qty = %s, category = %s WHERE id = %s",
+                    (qty, category, existing_item['id'])
+                )
+                mysql.connection.commit()
+                new_id = existing_item['id']
+        else:
+            # Create a brand new item
+            cur.execute(
+                "INSERT INTO inventory_items (item_name, system_qty, category, status, created_at) VALUES (%s, %s, %s, 'Active', NOW())",
+                (name, qty, category)
+            )
+            mysql.connection.commit()
+            new_id = cur.lastrowid
+            
         cur.close()
         return jsonify(message='Added', id=new_id)
     except Exception as e:
         return jsonify(error="A database error occurred."), 500
+
+@app.route('/inventory/<int:item_id>', methods=['DELETE'])
+@login_required
+@role_required('Manager', 'ShiftLead')
+def retire_inventory_item(item_id): 
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE inventory_items SET status = 'Retired' WHERE id = %s", (item_id,))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify(message='Retired')
 
 
 # =========================
