@@ -20,7 +20,7 @@ from functools import wraps
 import MySQLdb
 import json
 from datetime import datetime, timedelta
-//predictive imports
+#predictive imports
 from decimal import Decimal, InvalidOperation
 import math
 import lightgbm as lgb
