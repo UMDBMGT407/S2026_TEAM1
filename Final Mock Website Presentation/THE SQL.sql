@@ -944,6 +944,9 @@ INSERT INTO inventory_updates (inventory_item_id, updated_by, action_type, qty_c
 (8, 1, 'Sub', -3, 3, 0, '2026-04-28 11:30:00'),
 (4, 1, 'Sub', -20, 110, 90, '2026-04-28 14:00:00');
 
+ALTER TABLE inventory_items 
+ADD COLUMN status ENUM('Active', 'Retired') NOT NULL DEFAULT 'Active';
+
 -- =========================
 -- CHECK DATA
 -- =========================
