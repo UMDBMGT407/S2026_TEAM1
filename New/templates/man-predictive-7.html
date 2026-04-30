@@ -11,7 +11,7 @@
 <body class="predictive-page">
   <div class="container-fluid p-0 predictive-page-shell">
     <nav class="sidebar-wrapper">
-      <div>
+      
         <div class="logo">
           {% if current_user.role == 'Manager' %}
             Kung Fu Tea<br>Manager Portal
@@ -58,7 +58,6 @@
             <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
           {% endif %}
         </div>
-      </div>
 
       <div class="sidebar-bottom">
         <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
