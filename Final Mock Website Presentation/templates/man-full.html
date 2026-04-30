@@ -335,23 +335,27 @@
     }
 
     async function submitDeleteIngredient() {
-        const select = document.getElementById("deleteIngredientSelect");
-        const rowIdStr = select.value; 
-        const itemId = rowIdStr.replace('row-', ''); 
+      const select = document.getElementById("deleteIngredientSelect");
+      const rowIdStr = select.value; 
+      const itemId = rowIdStr.replace('row-', ''); 
+      
+      // Grab the actual name of the item from the dropdown
+      const itemName = select.options[select.selectedIndex].text;
 
-        if (!itemId) { showToast("Please select an ingredient."); return; }
+      if (!itemId) { showToast("Please select an ingredient."); return; }
 
-        const response = await fetch(`/inventory/${itemId}`, {
-            method: 'DELETE'
-        });
+      const response = await fetch(`/inventory/${itemId}`, {
+          method: 'DELETE' // It still uses DELETE HTTP method, but our backend handles the soft-delete
+      });
 
-        if (response.ok) {
-            closeDeleteIngredientPopup();
-            reloadWithToast("Item deleted successfully.");
-        } else {
-            showToast("Error deleting item.");
-        }
-    }
+      if (response.ok) {
+          closeDeleteIngredientPopup();
+          // Dynamic Toast!
+          reloadWithToast(`${itemName} retired successfully.`);
+      } else {
+          showToast("Error retiring item.");
+      }
+  }
 
 
     function openAddIngredientPopup() {
