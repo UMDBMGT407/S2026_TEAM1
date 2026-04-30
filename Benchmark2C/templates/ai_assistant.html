@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Assistant | Kung Fu Tea</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="container-fluid p-0">
+
+  <!-- SIDEBAR — matches firstdash.html exactly -->
+  <div class="sidebar-wrapper">
+    <div>
+      <div class="logo">Kung Fu Tea<br>Manager Portal</div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section-title">Overview</div>
+        <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
+
+        <div class="nav-section-title">Inventory</div>
+        <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
+        <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
+        <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
+
+        <div class="nav-section-title">Orders</div>
+        <a class="nav-btn" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
+        <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
+
+        <div class="nav-section-title">Insights</div>
+        <a class="nav-btn" href="{{ url_for('dashboard') }}">Analytics</a>
+        <a class="nav-btn" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
+        <a class="nav-btn active" href="{{ url_for('ai_assistant_page') }}">AI Assistant</a>
+
+        <div class="nav-section-title">Admin</div>
+        <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
+      </div>
+    </div>
+
+    <a class="logout-btn" href="{{ url_for('logout') }}">Logout</a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="col main-content-area">
+    <div class="content-container-centered">
+
+      <div class="rectangle-5 mb-4">
+        <h1 class="page-title">AI Inventory Assistant</h1>
+      </div>
+
+      <!-- ROLE BANNER + PROVIDER TOGGLE -->
+      <div class="ai-role-banner">
+        <span class="ai-role-badge ai-role-manager">Manager</span>
+        <span class="ai-role-desc">
+          Full access — stock levels, purchase orders, delivery discrepancies, reorder predictions.
+        </span>
+        <div class="ai-provider-toggle">
+          <button class="ai-provider-btn active" id="btn-groq"
+                  onclick="setProvider('groq')" title="Free — no cost">
+            Groq <span class="ai-provider-tag">Free</span>
+          </button>
+          <button class="ai-provider-btn" id="btn-anthropic"
+                  onclick="setProvider('anthropic')" title="Requires Anthropic API key">
+            Claude
+          </button>
+        </div>
+        <button class="ai-clear-btn" onclick="clearHistory()">Clear Chat</button>
+      </div>
+
+      <!-- CHAT CARD -->
+      <div class="ai-chat-card">
+
+        <!-- MESSAGE WINDOW -->
+        <div class="ai-chat-messages" id="chatMessages">
+          <div class="ai-bubble-row ai-bubble-row--bot">
+            <div class="ai-avatar ai-avatar--bot">AI</div>
+            <div class="ai-bot-bubble">
+              Hello, Manager! I have live access to your inventory database.
+              Ask me about stock levels, what to reorder, delivery discrepancies,
+              or get a full supply summary. How can I help?
+            </div>
+          </div>
+          <div id="historyContainer"></div>
+        </div>
+
+        <!-- TYPING INDICATOR -->
+        <div class="ai-typing-row" id="typingIndicator" style="display:none;">
+          <div class="ai-avatar ai-avatar--bot">AI</div>
+          <div class="ai-typing-bubble">
+            <span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span>
+          </div>
+        </div>
+
+        <!-- INPUT BAR -->
+        <div class="ai-input-bar">
+          <textarea id="userInput" class="ai-input" rows="1"
+            placeholder="Ask about stock levels, reorder needs, delivery discrepancies…"
+            onkeydown="handleKey(event)"></textarea>
+          <button class="ai-send-btn" onclick="sendMessage()" id="sendBtn">Send</button>
+        </div>
+
+        <!-- QUICK PROMPTS -->
+        <div class="ai-quick-prompts">
+          <span class="ai-quick-label">Quick:</span>
+          <button class="ai-quick-btn" onclick="quickSend('What items are out of stock or critically low?')">Low stock</button>
+          <button class="ai-quick-btn" onclick="quickSend('Are there any delivery audit discrepancies I should review?')">Audit issues</button>
+          <button class="ai-quick-btn" onclick="quickSend('What should I reorder this week?')">Reorder list</button>
+          <button class="ai-quick-btn" onclick="quickSend('Give me a full inventory status summary.')">Full summary</button>
+          <button class="ai-quick-btn" onclick="quickSend('Are any items overstocked?')">Overstock</button>
+        </div>
+
+      </div><!-- /.ai-chat-card -->
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const HISTORY_KEY  = 'kft_ai_history_manager';
+const PROVIDER_KEY = 'kft_ai_provider';
+
+function getHistory()  { try { return JSON.parse(sessionStorage.getItem(HISTORY_KEY)) || []; } catch { return []; } }
+function saveHistory(h){ sessionStorage.setItem(HISTORY_KEY, JSON.stringify(h)); }
+function getProvider() { return sessionStorage.getItem(PROVIDER_KEY) || 'groq'; }
+
+function setProvider(p) {
+  sessionStorage.setItem(PROVIDER_KEY, p);
+  document.getElementById('btn-groq').classList.toggle('active', p === 'groq');
+  document.getElementById('btn-anthropic').classList.toggle('active', p === 'anthropic');
+}
+
+function buildBubble(role, text, provider) {
+  const esc = text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\n/g,'<br>').replace(/• /g,'&#8226; ');
+  const chip = provider
+    ? `<span class="ai-provider-chip ai-provider-chip--${provider}">${provider==='groq'?'Groq':'Claude'}</span>`
+    : '';
+  if (role === 'user') return `
+    <div class="ai-bubble-row ai-bubble-row--user">
+      <div class="ai-user-bubble">${esc}</div>
+      <div class="ai-avatar ai-avatar--user">You</div>
+    </div>`;
+  return `
+    <div class="ai-bubble-row ai-bubble-row--bot">
+      <div class="ai-avatar ai-avatar--bot">AI</div>
+      <div class="ai-bot-bubble">${chip}${esc}</div>
+    </div>`;
+}
+
+function scrollToBottom() {
+  const b = document.getElementById('chatMessages');
+  b.scrollTop = b.scrollHeight;
+}
+
+function renderHistory() {
+  const c = document.getElementById('historyContainer');
+  c.innerHTML = '';
+  getHistory().forEach(m => { c.innerHTML += buildBubble(m.role, m.content); });
+  scrollToBottom();
+}
+
+async function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text  = input.value.trim();
+  if (!text) return;
+
+  const c = document.getElementById('historyContainer');
+  c.innerHTML += buildBubble('user', text);
+  input.value = '';
+  input.style.height = 'auto';
+  scrollToBottom();
+
+  document.getElementById('typingIndicator').style.display = 'flex';
+  document.getElementById('sendBtn').disabled = true;
+  scrollToBottom();
+
+  const history  = getHistory();
+  const provider = getProvider();
+  history.push({ role: 'user', content: text });
+  saveHistory(history);
+
+  try {
+    const resp = await fetch('/api/ai-chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, history, provider })
+    });
+    const data = await resp.json();
+    document.getElementById('typingIndicator').style.display = 'none';
+    document.getElementById('sendBtn').disabled = false;
+
+    if (data.error) {
+      c.innerHTML += buildBubble('assistant', '⚠ ' + data.error);
+    } else {
+      history.push({ role: 'assistant', content: data.reply });
+      saveHistory(history);
+      c.innerHTML += buildBubble('assistant', data.reply, data.provider);
+    }
+  } catch {
+    document.getElementById('typingIndicator').style.display = 'none';
+    document.getElementById('sendBtn').disabled = false;
+    c.innerHTML += buildBubble('assistant', '⚠ Network error — please try again.');
+  }
+  scrollToBottom();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  const ta = document.getElementById('userInput');
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 140) + 'px';
+}
+
+function quickSend(text) { document.getElementById('userInput').value = text; sendMessage(); }
+
+function clearHistory() {
+  sessionStorage.removeItem(HISTORY_KEY);
+  document.getElementById('historyContainer').innerHTML = '';
+}
+
+window.addEventListener('DOMContentLoaded', () => { setProvider(getProvider()); renderHistory(); });
+</script>
+</body>
+</html>

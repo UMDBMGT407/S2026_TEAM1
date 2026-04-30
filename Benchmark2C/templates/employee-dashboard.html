@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <title>Employee Dashboard</title>
+</head>
+<body>
+
+<div class="container-fluid p-0">
+
+  <nav class="sidebar-wrapper">
+    <div>
+      <div class="logo">Kung Fu Tea<br>Employee Portal</div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section-title">Main</div>
+        <a class="nav-btn active" href="{{ url_for('employee_dashboard') }}">Dashboard</a>
+        <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
+      </div>
+    </div>
+
+    <div>
+      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </div>
+  </nav>
+
+  <main class="main-content-area">
+    <div class="content-container-centered employee-dashboard-page">
+
+      <section class="employee-hero">
+        <div>
+          <h1 class="employee-hero-title">Employee Dashboard</h1>
+          <p class="employee-hero-text">
+            This dashboard helps employees quickly understand which ingredients are used the most,
+            which items are currently the lowest, and when they should open the inventory page to
+            check the live numbers.
+          </p>
+        </div>
+
+        <a href="{{ url_for('inventory') }}" class="employee-open-btn">
+          Open Inventory
+        </a>
+      </section>
+
+      <section class="employee-card-grid">
+        <div class="employee-card">
+          <div class="employee-card-label">Top Ingredient This Week</div>
+          <div class="employee-card-value employee-green">{{ top_item }}</div>
+          <div class="employee-card-note">Highest total usage across all shifts</div>
+        </div>
+
+        <div class="employee-card">
+          <div class="employee-card-label">Lowest Ingredient Right Now</div>
+          <div class="employee-card-value employee-red">{{ lowest_item }}</div>
+          <div class="employee-card-note">Needs close monitoring during the shift</div>
+        </div>
+
+        <div class="employee-card">
+          <div class="employee-card-label">Ingredients to Watch</div>
+          <div class="employee-card-value employee-gold">{{ low_count }}</div>
+          <div class="employee-card-note">Items currently below 10 units</div>
+        </div>
+      </section>
+
+      <section class="employee-content-grid">
+
+        <div class="employee-panel">
+          <h2 class="employee-panel-title">Ingredient Usage This Week</h2>
+          <p class="employee-panel-subtitle">
+            A simple weekly trend so employees can understand what ingredients move the most.
+          </p>
+
+          <div class="employee-chart-box">
+            <svg viewBox="0 0 700 250" preserveAspectRatio="none" aria-label="Weekly ingredient usage chart">
+              <line x1="40" y1="220" x2="680" y2="220" stroke="#c9aba0" stroke-width="2" />
+              <line x1="40" y1="30" x2="40" y2="220" stroke="#c9aba0" stroke-width="2" />
+
+              {% if usage_trend_points %}
+              <polyline
+                fill="none"
+                stroke="#964f4c"
+                stroke-width="4"
+                points="{{ usage_trend_points }}"
+              />
+
+              {% for point in usage_points %}
+              <circle cx="{{ point.x }}" cy="{{ point.y }}" r="5" fill="#964f4c" />
+              <text x="{{ point.x - 10 }}" y="238" font-size="12" fill="#7b5d59">
+                {{ point.label }}
+              </text>
+              {% endfor %}
+
+              {% else %}
+              <text x="250" y="130" font-size="18" fill="#7b5d59">
+                No usage data this week
+              </text>
+              {% endif %}
+            </svg>
+
+            <div class="employee-axis-labels">
+              <span>Lower usage</span>
+              <span>Higher usage</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="employee-panel">
+          <h2 class="employee-panel-title">Quick Insights</h2>
+
+          <div class="employee-insight-list">
+
+            {% if top_item != 'N/A' %}
+            <div class="employee-insight-item employee-warning">
+              <div class="employee-insight-title">{{ top_item }} is used the most</div>
+              <div class="employee-insight-desc">
+                This item has the highest total movement in the activity log this week.
+              </div>
+            </div>
+            {% endif %}
+
+            {% if lowest_item != 'N/A' %}
+            <div class="employee-insight-item employee-critical">
+              <div class="employee-insight-title">{{ lowest_item }} is the lowest item</div>
+              <div class="employee-insight-desc">
+                This ingredient should be checked first on the live inventory page.
+              </div>
+            </div>
+            {% endif %}
+
+            {% if low_count > 0 %}
+            <div class="employee-insight-item employee-warning">
+              <div class="employee-insight-title">{{ low_count }} items need attention</div>
+              <div class="employee-insight-desc">
+                These items are below 10 units and should be monitored during the shift.
+              </div>
+            </div>
+            {% else %}
+            <div class="employee-insight-item employee-warning">
+              <div class="employee-insight-title">No low stock items right now</div>
+              <div class="employee-insight-desc">
+                Inventory does not show any items below the low-stock threshold.
+              </div>
+            </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </section>
+
+      <section class="employee-bottom-grid">
+
+        <div class="employee-panel">
+          <h2 class="employee-panel-title">Top 10 Ingredients Used This Week</h2>
+
+          <table class="employee-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Ingredient</th>
+                <th>Used</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for item in top_used_items %}
+              <tr>
+                <td><span class="employee-rank">{{ loop.index }}</span></td>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.used_qty }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="3">No usage data this week.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="employee-panel">
+          <h2 class="employee-panel-title">Top 10 Lowest Ingredients Right Now</h2>
+
+          <table class="employee-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Ingredient</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for item in lowest_items %}
+              <tr>
+                <td><span class="employee-rank">{{ loop.index }}</span></td>
+                <td>{{ item.item_name }}</td>
+                <td>
+                  {% if item.system_qty < 5 %}
+                    <span class="employee-pill employee-pill-red">Critical</span>
+                  {% elif item.system_qty < 10 %}
+                    <span class="employee-pill employee-pill-gold">Low</span>
+                  {% else %}
+                    <span class="employee-pill employee-pill-green">Watch</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="3">No inventory items found.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="employee-reminder">
+        <strong>Reminder:</strong> Employees can use this page to understand what is being used the
+        most and what is getting low, but the only action from this dashboard is to open the
+        inventory view and check the live numbers there.
+      </div>
+
+    </div>
+  </main>
+
+</div>
+</body>
+</html>

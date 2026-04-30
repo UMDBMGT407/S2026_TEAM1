@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Audit Summary Report</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container-fluid p-0">
+    <nav class="sidebar-wrapper">
+
+  <div>
+    <div class="logo">
+      Kung Fu Tea<br>Operations Portal
+    </div>
+
+    <div class="sidebar-nav">
+
+      <div class="nav-section-title">OVERVIEW</div>
+      <a class="nav-btn" href="{{ url_for('shiftlead_dashboard') }}">Dashboard</a>
+
+      <div class="nav-section-title">SHIFT TASKS</div>
+
+      <a class="nav-btn" href="{{ url_for('inventory') }}">
+        View Inventory
+      </a>
+
+      <a class="nav-btn active">
+        Run Inventory Audit
+      </a>
+
+      <a class="nav-btn" href="{{ url_for('sl_delivery_audit_list') }}">
+        Delivery Audit
+      </a>
+        <a class="nav-btn" href="{{ url_for('sl_ai_assistant_page') }}">AI Assistant</a>
+
+    </div>
+  </div>
+
+  <div>
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+  </div>
+
+</nav>
+
+  <main class="main-content-area">
+    <div class="content-container-centered">
+
+      <div class="rectangle-5">
+        <h1 class="page-title">Inventory Audit Summary Report</h1>
+      </div>
+<div class="audit-flow-card mb-4">
+  <div class="audit-steps">
+
+    <a href="{{ url_for('sl_audit_1') }}"
+       class="audit-step completed">
+      <div class="audit-step-circle">✓</div>
+      <div class="audit-step-label">Step 1</div>
+      <div class="audit-step-name">Start Audit</div>
+    </a>
+
+    <div class="audit-step-line"></div>
+
+    <a href="{{ url_for('sl_audit_2', audit_id=audit.id) }}"
+       class="audit-step completed">
+      <div class="audit-step-circle">✓</div>
+      <div class="audit-step-label">Step 2</div>
+      <div class="audit-step-name">Count Items</div>
+    </a>
+
+    <div class="audit-step-line"></div>
+
+    <a href="{{ url_for('sl_audit_3', audit_id=audit.id) }}"
+       class="audit-step current">
+      <div class="audit-step-circle">3</div>
+      <div class="audit-step-label">Step 3</div>
+      <div class="audit-step-name">Review & Submit</div>
+    </a>
+
+  </div>
+
+  <div class="audit-step-help">
+    Review the audit summary carefully. Once submitted, the audit will wait for manager approval.
+  </div>
+</div>
+      <div class="sl3-summary-card">
+        <div class="sl3-summary-header">
+          Audit Date: {{ (audit.submitted_at or audit.created_at).strftime('%B %d, %Y') }}
+        </div>
+
+        <div class="sl3-summary-row">
+          <span>Conducted by:</span>
+          <span class="sl3-summary-value">{{ audit.conducted_by_name }}</span>
+        </div>
+
+        <div class="sl3-summary-row">
+          <span>Total Items Checked:</span>
+          <span class="sl3-summary-value">{{ total_items_checked }}</span>
+        </div>
+
+        <div class="sl3-summary-row">
+          <span>Discrepancies Found :</span>
+          <span class="sl3-summary-value red-text">{{ discrepancies_found }}</span>
+        </div>
+      </div>
+
+      <div class="sl3-table-card">
+        <div class="sl3-table-header">
+          <div class="sl3-ingredient-col">Ingredient</div>
+          <div class="sl3-qty-col">System Qty</div>
+          <div class="sl3-count-col">Physical Count</div>
+          <div class="sl3-diff-col">Difference</div>
+        </div>
+        <div class="table-scroll-container">
+        {% for item in items %}
+        {% set diff = item.physical_count - item.system_qty %}
+        <div class="sl3-table-row">
+          <div class="sl3-ingredient-col">{{ item.item_name }}</div>
+          <div class="sl3-qty-col">{{ item.system_qty }}</div>
+          <div class="sl3-count-col">
+            <div class="sl3-count-pill">{{ item.physical_count }}</div>
+          </div>
+          <div class="sl3-diff-col {% if diff != 0 %}red-text{% endif %}">
+            {{ diff }}
+          </div>
+        </div>
+        {% endfor %}
+        </div>
+      </div>
+
+      <div class="sl3-action-buttons">
+        <button class="sl3-export-btn" onclick="window.print()">Export Report</button>
+        <button class="sl3-close-btn" onclick="window.location.href='{{ url_for('sl_audit_1') }}'">
+          Close Audit
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+</body>
+</html>
