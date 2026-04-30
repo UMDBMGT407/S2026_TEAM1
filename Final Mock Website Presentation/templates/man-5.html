@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- TEAM STYLES -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style-man-dash.css') }}">
+  <!-- MY STYLES -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <title>Manage Users</title>
+</head>
+
+<body>
+
+<div class="container-fluid p-0">
+
+  <!-- SIDEBAR (UPDATED ONLY THIS PART) -->
+    <nav class="sidebar-wrapper">
+
+      <div class="logo">
+        Kung Fu Tea<br>Manager Portal
+      </div>
+
+      <div class="sidebar-nav">
+
+        <div class="nav-section-title">OVERVIEW</div>
+        <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
+
+        <div class="nav-section-title">INVENTORY</div>
+        <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
+        <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
+        <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
+
+        <div class="nav-section-title">ORDERS</div>
+        <a class="nav-btn" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
+        <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
+
+        <div class="nav-section-title">INSIGHTS</div>
+        <a class="nav-btn" href="{{ url_for('dashboard') }}">Analytics</a>
+        <a class="nav-btn" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
+
+        <div class="nav-section-title">ADMIN</div>
+        <a class="nav-btn active" href="{{ url_for('manage_users') }}">Manage Users</a>
+
+      </div>
+
+      <div class="sidebar-bottom">
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+      </div>
+
+    </nav>
+  
+  <!-- MAIN -->
+<main class="col main-content-area">
+<div class="content-container-centered">
+
+<div class="rectangle-5 mb-5">
+  <h1 class="page-title">Manage Users</h1>
+</div>
+
+<div class="row justify-content-center">
+<div class="col-lg-10">
+
+<!-- ACTIVE USERS -->
+<section class="man5-main-rectangle">
+
+<div class="man5-manage-users-topbar">
+  <h2 class="man5-mini-title">Manage Users</h2>
+
+  <div class="man5-add-new-user-rectangle">
+    <div class="man5-add-new-user" onclick="openPopup()">+ Add New User</div>
+  </div>
+</div>
+
+<div class="man5-search-row">
+  <div class="man5-search-box2">
+    <input 
+      type="text" 
+      placeholder="Search users..." 
+      onkeyup="filterUsers(this.value)"
+      style="border:none; outline:none; background:transparent; width:100%;"
+    >
+  </div>
+</div>
+
+<div class="man5-inner-rec" id="activeContainer">
+
+<div class="man5-status-box">
+  <div class="man5-frame-2">
+    <div class="man5-header">Name</div>
+    <div class="man5-header">Role</div>
+    <div class="man5-header">Phone</div>
+    <div class="man5-header">Action</div>
+  </div>
+</div>
+
+{% for user in users %}
+<div class="man5-name-1">
+  <div class="man5-frame-2">
+    <div class="man5-table-text">{{ user['name'] }}</div> <!--change in team-->
+    <div class="man5-table-text">{{ user['role'] }}</div> <!--change in team-->
+    <div class="man5-table-text">{{ user['phone'] }}</div> <!--change in team-->
+    <div>
+      <button onclick="editUser('{{ user['id'] }}','{{ user['name'] }}','{{ user['role'] }}','{{ user['phone'] }}')">Edit</button>
+      <button onclick="deactivateUser('{{ user['id'] }}', this)">Deactivate</button>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+</div>
+</section>
+
+<!-- INACTIVE USERS -->
+<section class="man5-main-rectangle" style="margin-top:25px;">
+<div class="man5-manage-users-topbar">
+  <h2 class="man5-mini-title">Inactive Users</h2>
+</div>
+
+<div class="man5-inner-rec">
+<div class="man5-status-box">
+  <div class="man5-frame-2">
+    <div class="man5-header">Name</div>
+    <div class="man5-header">Role</div>
+    <div class="man5-header">Phone</div>
+    <div class="man5-header">Action</div>
+  </div>
+</div>
+
+<div id="inactiveContainer"></div>
+
+</div>
+</section>
+
+</div>
+</div>
+</div>
+</main>
+</div>
+
+<!-- ADD POPUP -->
+<div id="popup" class="man5-popup-wrapper">
+<div class="man5-popup-box">
+  <h4>Add User</h4>
+
+  <input id="nameInput" placeholder="Name">
+  <input id="emailInput" placeholder="Email">
+  <input id="passwordInput" type="password" placeholder="Password">
+  <input id="phoneInput" placeholder="Phone">
+
+  <select id="roleInput">
+    <option value="Employee">Employee</option>
+    <option value="ShiftLead">Shift Lead</option>
+    <option value="Manager">Manager</option>
+  </select>
+
+  <button onclick="addUser()">Add</button>
+  <button onclick="closePopup()">Close</button>
+</div>
+</div>
+
+<!-- EDIT POPUP -->
+<div id="editPopup" class="man5-popup-wrapper">
+<div class="man5-popup-box">
+  <h4>Edit User</h4>
+
+  <input id="editName">
+  <input id="editPhone">
+
+  <select id="editRole">
+    <option value="Employee">Employee</option>
+    <option value="ShiftLead">Shift Lead</option>
+    <option value="Manager">Manager</option>
+  </select>
+
+  <button onclick="updateUser()">Update</button>
+  <button onclick="closeEdit()">Close</button>
+</div>
+</div>
+
+<script>
+
+let currentEditId = null;
+
+/* POPUPS */
+function openPopup(){ document.getElementById("popup").style.display="flex"; }
+function closePopup(){ document.getElementById("popup").style.display="none"; }
+function closeEdit(){ document.getElementById("editPopup").style.display="none"; }
+
+/* ADD USER */
+function addUser(){
+  fetch('/user',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      name: nameInput.value,
+      email: emailInput.value,
+      password: passwordInput.value,
+      role: roleInput.value,
+      phone: phoneInput.value
+    })
+  }).then(()=>location.reload());
+}
+
+/* EDIT */
+function editUser(id,name,role,phone){
+  currentEditId=id;
+  editName.value=name;
+  editRole.value=role;
+  editPhone.value=phone;
+  editPopup.style.display="flex";
+}
+
+function updateUser(){
+  fetch(`/user/${currentEditId}`,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      name: editName.value,
+      role: editRole.value,
+      phone: editPhone.value
+    })
+  }).then(()=>location.reload());
+}
+
+/* DEACTIVATE */
+function deactivateUser(id, btn){
+  const row = btn.closest(".man5-name-1");
+  const cells = row.querySelectorAll(".man5-frame-2 > div");
+
+  const user = {
+    id: id,
+    name: cells[0].innerText,
+    role: cells[1].innerText,
+    phone: cells[2].innerText
+  };
+
+  let inactive = JSON.parse(localStorage.getItem("inactiveUsers") || "[]");
+  inactive.push(user);
+  localStorage.setItem("inactiveUsers", JSON.stringify(inactive));
+
+  row.remove();
+  renderInactiveUsers();
+}
+
+/* RENDER INACTIVE */
+function renderInactiveUsers(){
+  const container = document.getElementById("inactiveContainer");
+  container.innerHTML = "";
+
+  let inactive = JSON.parse(localStorage.getItem("inactiveUsers") || "[]");
+
+  inactive.forEach(user => {
+    const row = document.createElement("div");
+    row.className = "man5-name-1";
+
+    row.innerHTML = `
+      <div class="man5-frame-2">
+        <div>${user.name}</div>
+        <div>${user.role}</div>
+        <div>${user.phone}</div>
+        <div>
+          <button onclick="reactivateUser('${user.id}')">Reactivate</button>
+          <button onclick="permanentDelete('${user.id}')">Delete</button>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(row);
+  });
+}
+
+/* REACTIVATE */
+function reactivateUser(id){
+  let inactive = JSON.parse(localStorage.getItem("inactiveUsers") || "[]");
+  const index = inactive.findIndex(u => u.id == id);
+  const user = inactive[index];
+
+  inactive.splice(index,1);
+  localStorage.setItem("inactiveUsers", JSON.stringify(inactive));
+
+  const container = document.getElementById("activeContainer");
+
+  const row = document.createElement("div");
+  row.className = "man5-name-1";
+
+  row.innerHTML = `
+    <div class="man5-frame-2">
+      <div>${user.name}</div>
+      <div>${user.role}</div>
+      <div>${user.phone}</div>
+      <div>
+        <button onclick="editUser('${user.id}','${user.name}','${user.role}','${user.phone}')">Edit</button>
+        <button onclick="deactivateUser('${user.id}', this)">Deactivate</button>
+      </div>
+    </div>
+  `;
+
+  container.appendChild(row);
+  renderInactiveUsers();
+}
+
+/* DELETE (REAL DB DELETE) */
+function permanentDelete(id){
+  fetch(`/user/${id}`,{
+    method:"DELETE"
+  }).then(()=>{
+    let inactive = JSON.parse(localStorage.getItem("inactiveUsers") || "[]");
+    inactive = inactive.filter(u => u.id != id);
+    localStorage.setItem("inactiveUsers", JSON.stringify(inactive));
+    renderInactiveUsers();
+  });
+}
+
+/* SEARCH */
+function filterUsers(q){
+  q = q.toLowerCase();
+  document.querySelectorAll(".man5-name-1").forEach(row=>{
+    row.style.display = row.innerText.toLowerCase().includes(q) ? "" : "none";
+  });
+}
+
+window.onload=renderInactiveUsers;
+
+</script>
+
+</body>
+</html>

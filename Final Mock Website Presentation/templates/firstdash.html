@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manager Dashboard</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <div class="sidebar-wrapper">
+    <div class="logo">Kung Fu Tea<br>Manager Portal</div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-title">Overview</div>
+      <a class="nav-btn active" href="{{ url_for('firstdash') }}">Dashboard</a>
+
+      <div class="nav-section-title">Inventory</div>
+      <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
+      <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
+      <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
+
+      <div class="nav-section-title">Orders</div>
+      <a class="nav-btn" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
+      <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
+
+      <div class="nav-section-title">Insights</div>
+      <a class="nav-btn" href="{{ url_for('dashboard') }}">Analytics</a>
+      <a class="nav-btn" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
+
+      <div class="nav-section-title">Admin</div>
+      <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
+    </div>
+
+    <div class="sidebar-bottom">
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </div>
+  </div>
+
+  <div class="main-content-area">
+    <div class="content-container-centered">
+      <main class="fd-main">
+
+        <section class="fd-hero">
+          <div>
+            <h1>Manager Dashboard</h1>
+            <p>Start here each day. Review urgent issues, then act from the shortcuts below.</p>
+          </div>
+
+          <div class="fd-hero-actions">
+            <a href="{{ url_for('man_audit_1') }}">
+              <button class="fd-btn fd-btn-primary">
+                {% if manager_draft_audit %}Continue Audit{% else %}Start Audit{% endif %}
+              </button>
+            </a>
+
+            <a href="{{ url_for('inventory') }}">
+              <button class="fd-btn fd-btn-secondary">View Inventory</button>
+            </a>
+
+            <a href="{{ url_for('purchaseOrders') }}">
+              <button class="fd-btn fd-btn-secondary">Create Order</button>
+            </a>
+          </div>
+        </section>
+
+        <section class="fd-card-grid">
+
+          <div class="fd-card">
+            <div class="fd-label">Low Stock Items</div>
+            <div class="fd-value fd-status-critical">{{ low_count }}</div>
+            <div class="fd-note">Items projected to run out soon</div>
+          </div>
+
+          <div class="fd-card">
+            <div class="fd-label">Pending Deliveries</div>
+            <div class="fd-value fd-status-warning">{{ pending_delivery_count }}</div>
+            <div class="fd-note">Received orders waiting for delivery audit</div>
+          </div>
+
+          <div class="fd-card">
+            <div class="fd-label">Last Audit</div>
+            <div class="fd-value">
+              {% if last_audit %}
+                {{ last_audit.approved_at.strftime('%b %d') if last_audit.approved_at else 'Approved' }}
+              {% else %}
+                None
+              {% endif %}
+            </div>
+            <div class="fd-note">
+              {% if last_audit %}
+                Completed by {{ last_audit.conducted_by_name }}
+              {% else %}
+                No approved audit yet
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="fd-card">
+            <div class="fd-label">Pending Audit Approval</div>
+            <div class="fd-value fd-status-good">
+              {% if pending_audit %}1{% else %}0{% endif %}
+            </div>
+            <div class="fd-note">
+              {% if pending_audit %}
+                Submitted by {{ pending_audit.conducted_by_name }}
+              {% else %}
+                No submitted audits waiting
+              {% endif %}
+            </div>
+          </div>
+
+        </section>
+
+        <section class="fd-content-grid">
+
+          <div class="fd-column-stack">
+            <div class="fd-panel">
+              <h2>Predictive Stock Forecast</h2>
+
+              <div class="fd-chart dashboard-predictive-chart">
+                <img
+                  class="dashboard-predictive-image"
+                  src="{{ url_for('predictive_forecast_chart', category='all') }}"
+                  alt="Predictive stock forecast chart"
+                >
+              </div>
+            </div>
+
+            <div class="fd-panel">
+              <h2>Top Items to Reorder</h2>
+
+              <table class="fd-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Out By</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for item in lowest_items %}
+                  <tr>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.stockout_date }}</td>
+                    <td>
+                      <span class="fd-pill {{ item.pill_class }}">{{ item.status_label }}</span>
+                    </td>
+                  </tr>
+                  {% else %}
+                  <tr>
+                    <td colspan="3">No inventory items found.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="fd-column-stack">
+            <div class="fd-panel">
+              <h2>Needs Attention</h2>
+
+              <div class="fd-alert-list">
+
+              {% if lowest_items %}
+                {% for item in lowest_items %}
+                <div class="fd-alert-item {{ item.status_class }}">
+                  <div class="fd-alert-title">{{ item.item_name }} may run out soon</div>
+                  <div class="fd-alert-desc">
+                    Projected to run out by {{ item.stockout_date }}. Order by {{ item.order_by_date }}.
+                  </div>
+                  <a class="shiftlead-inline-link" href="{{ url_for('predictive_reports') }}">Go to Stock Forecast →</a>
+                </div>
+                {% endfor %}
+              {% endif %}
+
+              {% if pending_delivery %}
+              <div class="fd-alert-item warning">
+                <div class="fd-alert-title">Delivery #{{ pending_delivery.id }} needs review</div>
+                <div class="fd-alert-desc">
+                  A received order still needs delivery audit confirmation.
+                </div>
+                <a class="shiftlead-inline-link" href="{{ url_for('delivery_audit_list') }}">Open Delivery Audit →</a>
+              </div>
+              {% endif %}
+
+              {% if pending_audit %}
+              <div class="fd-alert-item critical">
+                <div class="fd-alert-title">Audit waiting for manager approval</div>
+                <div class="fd-alert-desc">
+                  {{ pending_audit.conducted_by_name }} submitted an audit that needs approval.
+                </div>
+                <a class="shiftlead-inline-link" href="{{ url_for('man_audit_3', audit_id=pending_audit.id) }}">Review Audit →</a>
+              </div>
+              {% endif %}
+
+              {% if manager_draft_audit %}
+              <div class="fd-alert-item good">
+                <div class="fd-alert-title">You have a draft audit</div>
+                <div class="fd-alert-desc">
+                  Continue your unfinished manager audit.
+                </div>
+                <a class="shiftlead-inline-link" href="{{ url_for('man_audit_2', audit_id=manager_draft_audit.id) }}">Continue Audit →</a>
+              </div>
+              {% endif %}
+
+              {% if not lowest_items and not pending_delivery and not pending_audit and not manager_draft_audit %}
+              <div class="fd-alert-item good">
+                <div class="fd-alert-title">No urgent tasks right now</div>
+                <div class="fd-alert-desc">
+                  Inventory, deliveries, and audits currently look clear.
+                </div>
+              </div>
+              {% endif %}
+
+              </div>
+            </div>
+
+            <div class="fd-panel">
+              <h2>Recommended Next Steps</h2>
+
+              <div class="fd-task-list">
+
+                {% if lowest_items %}
+                <div class="fd-task-item">
+                  <div class="fd-task-title">1. Review projected runout items</div>
+                  <div class="fd-task-desc">
+                    Check items forecasted to run out soon and start ordering where needed.
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if pending_audit %}
+                <div class="fd-task-item">
+                  <div class="fd-task-title">2. Approve submitted audit</div>
+                  <div class="fd-task-desc">
+                    Review the pending audit submitted by {{ pending_audit.conducted_by_name }}.
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if pending_delivery %}
+                <div class="fd-task-item">
+                  <div class="fd-task-title">3. Verify incoming delivery</div>
+                  <div class="fd-task-desc">
+                    Complete the delivery audit for order #{{ pending_delivery.id }}.
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if manager_draft_audit %}
+                <div class="fd-task-item">
+                  <div class="fd-task-title">4. Continue your draft audit</div>
+                  <div class="fd-task-desc">
+                    Finish the audit you already started before beginning a new one.
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if not lowest_items and not pending_audit and not pending_delivery and not manager_draft_audit %}
+                <div class="fd-task-item">
+                  <div class="fd-task-title">Everything looks good</div>
+                  <div class="fd-task-desc">
+                    No urgent manager action is required right now.
+                  </div>
+                </div>
+                {% endif %}
+
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <section class="manager-ai-section">
+          <div class="manager-ai-header">
+            <div>
+              <div class="manager-ai-kicker">AI Assistant</div>
+              <h2>Inventory Chatbot</h2>
+              <p>Ask about low stock, reorder timing, recent delivery issues, or inventory activity.</p>
+            </div>
+            <button type="button" class="manager-ai-clear" id="managerAiClearBtn">Clear Chat</button>
+          </div>
+
+          <div class="manager-ai-chat" aria-live="polite">
+            <div class="manager-ai-messages" id="managerAiMessages">
+              <div class="manager-ai-row manager-ai-row-bot">
+                <div class="manager-ai-avatar">AI</div>
+                <div class="manager-ai-bubble manager-ai-bubble-bot">
+                  Hi! I can review the live inventory database and help you decide what needs manager attention.
+                </div>
+              </div>
+            </div>
+
+            <div class="manager-ai-quick-prompts" aria-label="Suggested chatbot questions">
+              <button type="button" data-prompt="What items are out of stock or critically low?">Low stock</button>
+              <button type="button" data-prompt="What should I reorder this week?">Reorder list</button>
+              <button type="button" data-prompt="Are there any delivery discrepancies I should review?">Delivery issues</button>
+              <button type="button" data-prompt="Give me a concise manager inventory summary.">Daily summary</button>
+            </div>
+
+            <form class="manager-ai-input-row" id="managerAiForm">
+              <textarea
+                id="managerAiInput"
+                class="manager-ai-input"
+                rows="1"
+                placeholder="Ask about inventory, orders, audits, or suppliers..."
+              ></textarea>
+              <button type="submit" class="manager-ai-send" id="managerAiSendBtn">Send</button>
+            </form>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const managerAiHistoryKey = 'kft_manager_dashboard_ai_history';
+    const managerAiMessages = document.getElementById('managerAiMessages');
+    const managerAiInput = document.getElementById('managerAiInput');
+    const managerAiForm = document.getElementById('managerAiForm');
+    const managerAiSendBtn = document.getElementById('managerAiSendBtn');
+    const managerAiClearBtn = document.getElementById('managerAiClearBtn');
+
+    function getManagerAiHistory() {
+      try {
+        return JSON.parse(sessionStorage.getItem(managerAiHistoryKey)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveManagerAiHistory(history) {
+      sessionStorage.setItem(managerAiHistoryKey, JSON.stringify(history));
+    }
+
+    function appendManagerAiMessage(role, text) {
+      const row = document.createElement('div');
+      row.className = `manager-ai-row manager-ai-row-${role === 'user' ? 'user' : 'bot'}`;
+
+      const bubble = document.createElement('div');
+      bubble.className = `manager-ai-bubble manager-ai-bubble-${role === 'user' ? 'user' : 'bot'}`;
+      bubble.textContent = text;
+
+      const avatar = document.createElement('div');
+      avatar.className = 'manager-ai-avatar';
+      avatar.textContent = role === 'user' ? 'You' : 'AI';
+
+      if (role === 'user') {
+        row.appendChild(bubble);
+        row.appendChild(avatar);
+      } else {
+        row.appendChild(avatar);
+        row.appendChild(bubble);
+      }
+
+      managerAiMessages.appendChild(row);
+      managerAiMessages.scrollTop = managerAiMessages.scrollHeight;
+    }
+
+    function renderManagerAiHistory() {
+      getManagerAiHistory().forEach((message) => {
+        appendManagerAiMessage(message.role, message.content);
+      });
+    }
+
+    function setManagerAiLoading(isLoading) {
+      managerAiSendBtn.disabled = isLoading;
+      managerAiInput.disabled = isLoading;
+      managerAiSendBtn.textContent = isLoading ? 'Thinking...' : 'Send';
+    }
+
+    async function sendManagerAiMessage(text) {
+      const history = getManagerAiHistory();
+      history.push({ role: 'user', content: text });
+      saveManagerAiHistory(history);
+      appendManagerAiMessage('user', text);
+      setManagerAiLoading(true);
+
+      try {
+        const response = await fetch('/api/manager-ai-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, history })
+        });
+        const data = await response.json();
+        const reply = data.error || data.reply || 'I could not generate a response.';
+        appendManagerAiMessage('assistant', reply);
+
+        if (!data.error) {
+          history.push({ role: 'assistant', content: reply });
+          saveManagerAiHistory(history);
+        }
+      } catch {
+        appendManagerAiMessage('assistant', 'Network error. Please try again.');
+      } finally {
+        setManagerAiLoading(false);
+        managerAiInput.focus();
+      }
+    }
+
+    managerAiForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const text = managerAiInput.value.trim();
+      if (!text) return;
+      managerAiInput.value = '';
+      managerAiInput.style.height = 'auto';
+      sendManagerAiMessage(text);
+    });
+
+    managerAiInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        managerAiForm.requestSubmit();
+      }
+    });
+
+    managerAiInput.addEventListener('input', () => {
+      managerAiInput.style.height = 'auto';
+      managerAiInput.style.height = Math.min(managerAiInput.scrollHeight, 130) + 'px';
+    });
+
+    document.querySelectorAll('.manager-ai-quick-prompts button').forEach((button) => {
+      button.addEventListener('click', () => {
+        managerAiInput.value = button.dataset.prompt;
+        managerAiForm.requestSubmit();
+      });
+    });
+
+    managerAiClearBtn.addEventListener('click', () => {
+      sessionStorage.removeItem(managerAiHistoryKey);
+      managerAiMessages.querySelectorAll('.manager-ai-row:not(:first-child)').forEach((row) => row.remove());
+    });
+
+    renderManagerAiHistory();
+  </script>
+</body>
+</html>

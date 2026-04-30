@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Predictive Reports</title>
+</head>
+<body class="predictive-page">
+  <div class="container-fluid p-0 predictive-page-shell">
+    <nav class="sidebar-wrapper">
+      
+        <div class="logo">
+          {% if current_user.role == 'Manager' %}
+            Kung Fu Tea<br>Manager Portal
+          {% elif current_user.role == 'ShiftLead' %}
+            Kung Fu Tea<br>Operations Portal
+          {% else %}
+            Kung Fu Tea<br>Employee Portal
+          {% endif %}
+        </div>
+
+        <div class="sidebar-nav">
+          {% if current_user.role == 'Manager' %}
+            <div class="nav-section-title">OVERVIEW</div>
+            <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
+
+            <div class="nav-section-title">INVENTORY</div>
+            <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
+            <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
+            <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
+
+            <div class="nav-section-title">ORDERS</div>
+            <a class="nav-btn" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
+            <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
+
+            <div class="nav-section-title">INSIGHTS</div>
+            <a class="nav-btn" href="{{ url_for('dashboard') }}">Analytics</a>
+            <a class="nav-btn active" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
+
+            <div class="nav-section-title">ADMIN</div>
+            <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
+
+          {% elif current_user.role == 'ShiftLead' %}
+            <div class="nav-section-title">OVERVIEW</div>
+            <a class="nav-btn" href="{{ url_for('shiftlead_dashboard') }}">Dashboard</a>
+
+            <div class="nav-section-title">SHIFT TASKS</div>
+            <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
+            <a class="nav-btn" href="{{ url_for('sl_audit_1') }}">Run Inventory Audit</a>
+            <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
+
+          {% else %}
+            <div class="nav-section-title">MAIN</div>
+            <a class="nav-btn" href="{{ url_for('employee_dashboard') }}">Dashboard</a>
+            <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
+          {% endif %}
+        </div>
+
+      <div class="sidebar-bottom">
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+      </div>
+    </nav>
+
+    <main class="col main-content-area">
+      <div class="content-container-centered predictive-layout">
+        <div class="rectangle-5 mb-5 predictive-header-banner">
+          <h1 class="dashboard-analytics predictive-page-title">Stock Forecast</h1>
+        </div>
+
+        {% if blank_recipe_names %}
+          <section class="predictive-alert-banner" role="alert" aria-live="polite">
+            <div class="predictive-alert-title">Blank recipes detected.</div>
+            <p class="predictive-alert-text">
+              Use the <strong>Add Recipe</strong> button to fill out these recipes:
+              {{ blank_recipe_names|join(', ') }}.
+            </p>
+          </section>
+        {% endif %}
+
+        <input
+          id="upload-data-input"
+          type="file"
+          accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          hidden
+        />
+
+        <section class="dashboard-card predictive-table-card">
+          <div class="table-responsive predictive-table-wrapper">
+            <table class="predictive-table table mb-0 align-middle" id="predictive-main-table">
+              <thead>
+                <tr>
+                  <th scope="col" class="predictive-sortable-header" data-sort-key="ingredient" tabindex="0" aria-sort="none">Ingredient</th>
+                  <th scope="col" class="predictive-sortable-header" data-sort-key="system_qty" tabindex="0" aria-sort="none">System Qty</th>
+                  <th scope="col" class="predictive-sortable-header" data-sort-key="stockout_date" tabindex="0" aria-sort="none">Out By Date</th>
+                  <th scope="col" class="predictive-sortable-header" data-sort-key="status" tabindex="0" aria-sort="none">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if predictive_items %}
+                  {% for item in predictive_items %}
+                    <tr
+                      data-sort-ingredient="{{ item.item_name|lower }}"
+                      data-sort-system-qty="{{ item.system_qty }}"
+                      data-sort-stockout-date="{{ item.stockout_date }}"
+                      data-sort-status="{{ item.status_label }}">
+                      <td>
+                        <div class="predictive-item-name">{{ item.item_name }}</div>
+                        <div class="predictive-item-category">{{ item.category }}</div>
+                      </td>
+                      <td>{{ item.system_qty }}</td>
+                      <td>{{ item.stockout_date }}</td>
+                      <td class="predictive-status {{ item.status_class }}">{{ item.status_label }}</td>
+                    </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td class="predictive-empty-state" colspan="4">No inventory items match the selected category.</td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="row g-4 predictive-bottom-row align-items-stretch">
+          <div class="col-12 col-xl-7">
+            <section class="dashboard-card predictive-analytics-card h-100">
+              <div class="controls-row predictive-controls-row">
+                <select class="dropdown-box predictive-filter-select" id="predictive-category-filter" aria-label="Filter by category">
+                  <option value="all" {% if selected_category == 'all' %}selected{% endif %}>Category: All</option>
+                  {% for category in categories %}
+                    <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>Category: {{ category }}</option>
+                  {% endfor %}
+                </select>
+
+                <div class="predictive-actions">
+                  <button class="btn-create-order predictive-toolbar-btn" id="add-recipe-btn" type="button">Add Recipe</button>
+                  <button class="btn-create-order predictive-toolbar-btn predictive-secondary-btn" id="upload-data-btn" type="button">Upload Data</button>
+                </div>
+              </div>
+
+              <div class="predictive-chart-card">
+                <img
+                  class="predictive-chart-image img-fluid"
+                  src="{{ url_for('predictive_forecast_chart', category=selected_category) }}"
+                  alt="Predictive ingredient forecast chart"
+                />
+              </div>
+            </section>
+          </div>
+
+          <div class="col-12 col-xl-5">
+            <section class="dashboard-card predictive-order-card h-100">
+              <h2 class="predictive-section-title">Recommended Order</h2>
+              <div class="predictive-order-divider" aria-hidden="true"></div>
+
+              {% if recommended_orders %}
+                <div class="predictive-order-nav">
+                  <button class="predictive-order-nav-btn" id="predictive-order-prev" type="button" aria-label="Previous recommended order">Previous</button>
+                  <div class="predictive-order-count" id="predictive-order-count">1 of {{ recommended_orders|length }}</div>
+                  <button class="predictive-order-nav-btn" id="predictive-order-next" type="button" aria-label="Next recommended order">Next</button>
+                </div>
+
+                <div class="predictive-order-details">
+                  <div class="predictive-order-product-card">
+                    <div class="predictive-detail-label">Product</div>
+                    <div class="predictive-order-product-name" id="predictive-order-product">{{ recommended_order.item_name }}</div>
+                  </div>
+
+                  <div class="predictive-order-stats-grid">
+                    <div class="predictive-detail-item">
+                      <div class="predictive-detail-label">Current Qty</div>
+                      <div class="predictive-detail-value" id="predictive-order-current">{{ recommended_order.system_qty }}</div>
+                    </div>
+                    <div class="predictive-detail-item predictive-detail-item-accent">
+                      <div class="predictive-detail-label">Suggested Order Qty</div>
+                      <div class="predictive-detail-value" id="predictive-order-quantity">{{ recommended_order.rounded_prediction_quantity }}</div>
+                    </div>
+                    <div class="predictive-detail-item">
+                      <div class="predictive-detail-label">Projected Stockout</div>
+                      <div class="predictive-detail-value" id="predictive-order-stockout">{{ recommended_order.stockout_date }}</div>
+                    </div>
+                    <div class="predictive-detail-item">
+                      <div class="predictive-detail-label">Order By</div>
+                      <div class="predictive-detail-value" id="predictive-order-date">{{ recommended_order.order_by_date }}</div>
+                    </div>
+                  </div>
+
+                  <div class="predictive-detail-item predictive-detail-item-meta">
+                    <div class="predictive-detail-label">Forecast Updated</div>
+                    <div class="predictive-detail-value" id="predictive-order-updated">{{ recommended_order.prediction_created_at }}</div>
+                  </div>
+                </div>
+
+                <a
+                  class="btn-create-order predictive-create-order-btn"
+                  href="{{ url_for('create_purchase_order_page') }}">
+                  Create Order
+                </a>
+              {% else %}
+                <div class="predictive-order-details predictive-order-empty">
+                  <p class="predictive-detail-item">No prediction records are available for this category yet.</p>
+                </div>
+              {% endif %}
+            </section>
+          </div>
+        </div>
+
+        <div class="recipe-modal-overlay hidden" id="recipe-modal-overlay" aria-hidden="true">
+          <div class="form-card predictive-modal-card" role="dialog" aria-modal="true" aria-labelledby="recipe-modal-title">
+            <button
+              class="form-close-btn predictive-modal-close"
+              id="recipe-modal-close"
+              type="button"
+              aria-label="Close add recipe popup">
+              X
+            </button>
+
+            <div class="predictive-modal-title-row">
+              <h2 class="form-card-title predictive-modal-title" id="recipe-modal-title">Add or Modify Recipe</h2>
+              <div class="predictive-info-tooltip">
+                <button
+                  class="predictive-info-trigger"
+                  type="button"
+                  aria-label="Learn what this pop-up is for">
+                  i
+                </button>
+                <div class="predictive-info-content" role="note">
+                  Use this window to tell the system what ingredients are used in each drink. This allows it to predict stockouts and make recommendations for future orders.
+                </div>
+              </div>
+            </div>
+
+            {% if blank_recipe_names %}
+              <div class="predictive-missing-recipes">
+                <div class="predictive-missing-recipes-title">Recipes still needing setup:</div>
+                <div class="predictive-missing-recipes-list">
+                  {% for recipe_name in blank_recipe_names %}
+                    <span class="predictive-missing-recipe-chip">{{ recipe_name }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            <section class="predictive-modal-section">
+              <label class="form-section-label predictive-modal-label" for="recipe-popup-drink-input">Drink</label>
+
+              <div class="predictive-drink-field">
+                <input
+                  class="predictive-modal-input"
+                  id="recipe-popup-drink-input"
+                  type="text"
+                  placeholder="Drink Name"
+                  aria-label="Drink selection"
+                  autocomplete="off"
+                />
+
+                <button
+                  class="predictive-drink-trigger"
+                  id="recipe-popup-drink-trigger"
+                  type="button"
+                  aria-label="Show drink suggestions">
+                  ▼
+                </button>
+              </div>
+
+              <div class="recipe-popup-drink-menu hidden" id="recipe-popup-drink-menu">
+                {% for drink in drinks %}
+                  <button
+                    class="recipe-popup-drink-option"
+                    type="button"
+                    data-value="{{ drink.drink_name }}">
+                    {{ drink.drink_name }}
+                  </button>
+                {% endfor %}
+              </div>
+            </section>
+
+            <section class="predictive-modal-section">
+              <div class="predictive-products-header">
+                <div class="form-section-label predictive-modal-label mb-0">Products</div>
+              </div>
+
+              <div class="predictive-products-list" id="recipe-popup-rows">
+                <div class="recipe-popup-row">
+                  <select class="product-select recipe-popup-name-select" aria-label="Product selection 1">
+                    <option value="" selected disabled>Product Name</option>
+                    {% for item in inventory_items %}
+                      <option value="{{ item.id }}">{{ item.item_name }}</option>
+                    {% endfor %}
+                  </select>
+
+                  <button class="row-delete-btn recipe-popup-remove" type="button" aria-label="Remove product">X</button>
+                </div>
+              </div>
+
+              <button class="btn-add-product recipe-popup-add-product-wrap" id="recipe-popup-add-product" type="button">Add Product</button>
+            </section>
+
+            <div class="submit-row predictive-modal-actions">
+              <button class="btn-submit-order recipe-popup-update-wrap" id="recipe-popup-update" type="button">Update Recipe</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script id="recipe-inventory-items-data" type="application/json">{{ inventory_items|tojson }}</script>
+  <script id="predictive-recommended-orders-data" type="application/json">{{ recommended_orders|tojson }}</script>
+
+  <script>
+    const addRecipeBtn = document.getElementById('add-recipe-btn');
+    const recipeModalOverlay = document.getElementById('recipe-modal-overlay');
+    const recipeModalClose = document.getElementById('recipe-modal-close');
+    const uploadDataBtn = document.getElementById('upload-data-btn');
+    const uploadDataInput = document.getElementById('upload-data-input');
+    const recipePopupSelects = document.querySelectorAll('.recipe-popup-name-select');
+    const recipePopupRows = document.getElementById('recipe-popup-rows');
+    const recipePopupAddProduct = document.getElementById('recipe-popup-add-product');
+    const recipePopupDrinkInput = document.getElementById('recipe-popup-drink-input');
+    const recipePopupDrinkTrigger = document.getElementById('recipe-popup-drink-trigger');
+    const recipePopupDrinkMenu = document.getElementById('recipe-popup-drink-menu');
+    const recipePopupUpdateBtn = document.getElementById('recipe-popup-update');
+    const predictiveCategoryFilter = document.getElementById('predictive-category-filter');
+    const predictiveOrderPrevBtn = document.getElementById('predictive-order-prev');
+    const predictiveOrderNextBtn = document.getElementById('predictive-order-next');
+    const predictiveOrderCount = document.getElementById('predictive-order-count');
+    const predictiveOrderProduct = document.getElementById('predictive-order-product');
+    const predictiveOrderCurrent = document.getElementById('predictive-order-current');
+    const predictiveOrderQuantity = document.getElementById('predictive-order-quantity');
+    const predictiveOrderStockout = document.getElementById('predictive-order-stockout');
+    const predictiveOrderDate = document.getElementById('predictive-order-date');
+    const predictiveOrderUpdated = document.getElementById('predictive-order-updated');
+    const predictiveMainTable = document.getElementById('predictive-main-table');
+    const recipeInventoryItems = JSON.parse(
+      document.getElementById('recipe-inventory-items-data')?.textContent || '[]'
+    );
+    const predictiveRecommendedOrders = JSON.parse(
+      document.getElementById('predictive-recommended-orders-data')?.textContent || '[]'
+    );
+    const predictiveRecipeSaveUrl = "{{ url_for('upsert_predictive_recipe') }}";
+    const predictivePosImportUrl = "{{ url_for('import_predictive_pos_data') }}";
+    const predictiveBaseUrl = "{{ url_for('predictive_reports') }}";
+
+    const getRecipePopupDrinkOptions = () =>
+      Array.from(document.querySelectorAll('.recipe-popup-drink-option'));
+
+    const parsePredictiveSortDate = (dateText) => {
+      if (!dateText || dateText === 'No prediction') {
+        return Number.POSITIVE_INFINITY;
+      }
+
+      const dateParts = dateText.split('/').map((part) => Number(part));
+      if (dateParts.length !== 3 || dateParts.some((part) => Number.isNaN(part))) {
+        return Number.POSITIVE_INFINITY;
+      }
+
+      const [month, day, year] = dateParts;
+      return new Date(year, month - 1, day).getTime();
+    };
+
+    const getPredictiveStatusRank = (statusText) => {
+      const normalizedStatus = (statusText || '').toLowerCase();
+      if (normalizedStatus === 'critical') return 0;
+      if (normalizedStatus === 'low') return 1;
+      return 2;
+    };
+
+    if (predictiveMainTable) {
+      const predictiveTableBody = predictiveMainTable.querySelector('tbody');
+      const predictiveSortableHeaders = Array.from(
+        predictiveMainTable.querySelectorAll('.predictive-sortable-header')
+      );
+      const predictiveRowElements = Array.from(
+        predictiveTableBody?.querySelectorAll('tr[data-sort-ingredient]') || []
+      );
+      let predictiveSortState = {
+        key: 'stockout_date',
+        direction: 'asc',
+      };
+
+      const comparePredictiveRows = (leftRow, rightRow, sortKey, sortDirection) => {
+        const directionFactor = sortDirection === 'asc' ? 1 : -1;
+        let leftValue;
+        let rightValue;
+
+        if (sortKey === 'system_qty') {
+          leftValue = Number(leftRow.dataset.sortSystemQty || 0);
+          rightValue = Number(rightRow.dataset.sortSystemQty || 0);
+        } else if (sortKey === 'stockout_date') {
+          leftValue = parsePredictiveSortDate(leftRow.dataset.sortStockoutDate);
+          rightValue = parsePredictiveSortDate(rightRow.dataset.sortStockoutDate);
+        } else if (sortKey === 'status') {
+          leftValue = getPredictiveStatusRank(leftRow.dataset.sortStatus);
+          rightValue = getPredictiveStatusRank(rightRow.dataset.sortStatus);
+        } else {
+          leftValue = leftRow.dataset.sortIngredient || '';
+          rightValue = rightRow.dataset.sortIngredient || '';
+        }
+
+        if (leftValue < rightValue) return -1 * directionFactor;
+        if (leftValue > rightValue) return 1 * directionFactor;
+
+        const leftName = leftRow.dataset.sortIngredient || '';
+        const rightName = rightRow.dataset.sortIngredient || '';
+        return leftName.localeCompare(rightName);
+      };
+
+      const renderPredictiveTableSort = () => {
+        predictiveSortableHeaders.forEach((headerElement) => {
+          const isActive = headerElement.dataset.sortKey === predictiveSortState.key;
+          headerElement.classList.toggle('predictive-sort-active', isActive);
+          headerElement.dataset.sortDirection = isActive ? predictiveSortState.direction : 'none';
+          headerElement.setAttribute(
+            'aria-sort',
+            isActive
+              ? predictiveSortState.direction === 'asc'
+                ? 'ascending'
+                : 'descending'
+              : 'none'
+          );
+        });
+
+        const sortedRows = [...predictiveRowElements].sort((leftRow, rightRow) =>
+          comparePredictiveRows(
+            leftRow,
+            rightRow,
+            predictiveSortState.key,
+            predictiveSortState.direction
+          )
+        );
+
+        sortedRows.forEach((rowElement) => {
+          predictiveTableBody?.appendChild(rowElement);
+        });
+      };
+
+      predictiveSortableHeaders.forEach((headerElement) => {
+        const handleSortAction = () => {
+          const selectedSortKey = headerElement.dataset.sortKey;
+          if (!selectedSortKey) return;
+
+          if (predictiveSortState.key === selectedSortKey) {
+            predictiveSortState.direction =
+              predictiveSortState.direction === 'asc' ? 'desc' : 'asc';
+          } else {
+            predictiveSortState = {
+              key: selectedSortKey,
+              direction: selectedSortKey === 'stockout_date' ? 'asc' : 'asc',
+            };
+          }
+
+          renderPredictiveTableSort();
+        };
+
+        headerElement.addEventListener('click', handleSortAction);
+        headerElement.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') {
+            return;
+          }
+
+          event.preventDefault();
+          handleSortAction();
+        });
+      });
+
+      renderPredictiveTableSort();
+    }
+
+    const renderPredictiveOrder = (orderIndex) => {
+      if (!predictiveRecommendedOrders.length) {
+        return;
+      }
+
+      const normalizedIndex = ((orderIndex % predictiveRecommendedOrders.length) + predictiveRecommendedOrders.length) % predictiveRecommendedOrders.length;
+      const selectedOrder = predictiveRecommendedOrders[normalizedIndex];
+
+      if (predictiveOrderProduct) predictiveOrderProduct.textContent = selectedOrder.item_name;
+      if (predictiveOrderCurrent) predictiveOrderCurrent.textContent = selectedOrder.system_qty;
+      if (predictiveOrderQuantity) predictiveOrderQuantity.textContent = selectedOrder.rounded_prediction_quantity;
+      if (predictiveOrderStockout) predictiveOrderStockout.textContent = selectedOrder.stockout_date;
+      if (predictiveOrderDate) predictiveOrderDate.textContent = selectedOrder.order_by_date;
+      if (predictiveOrderUpdated) predictiveOrderUpdated.textContent = selectedOrder.prediction_created_at;
+      if (predictiveOrderCount) predictiveOrderCount.textContent = `${normalizedIndex + 1} of ${predictiveRecommendedOrders.length}`;
+
+      return normalizedIndex;
+    };
+
+    let predictiveOrderIndex = renderPredictiveOrder(0) || 0;
+
+    const syncRecipePopupSelectState = (selectElement) => {
+      selectElement.classList.toggle('placeholder-active', selectElement.value === '');
+    };
+
+    const setupRecipePopupSelect = (selectElement) => {
+      syncRecipePopupSelectState(selectElement);
+      selectElement.addEventListener('change', () => {
+        syncRecipePopupSelectState(selectElement);
+      });
+    };
+
+    recipePopupSelects.forEach((selectElement) => {
+      setupRecipePopupSelect(selectElement);
+    });
+
+    const getRecipePopupRowCount = () =>
+      recipePopupRows ? recipePopupRows.querySelectorAll('.recipe-popup-row').length : 0;
+
+    const createRecipePopupRow = () => {
+      const rowCount = getRecipePopupRowCount() + 1;
+      const rowElement = document.createElement('div');
+      const inventoryOptionsHtml = recipeInventoryItems
+        .map((item) => `<option value="${item.id}">${item.item_name}</option>`)
+        .join('');
+      rowElement.className = 'recipe-popup-row';
+      rowElement.innerHTML = `
+        <select class="product-select recipe-popup-name-select" aria-label="Product selection ${rowCount}">
+          <option value="" selected disabled>Product Name</option>
+          ${inventoryOptionsHtml}
+        </select>
+        <button class="row-delete-btn recipe-popup-remove" type="button" aria-label="Remove product">X</button>
+      `;
+      const newSelect = rowElement.querySelector('.recipe-popup-name-select');
+      if (newSelect) {
+        setupRecipePopupSelect(newSelect);
+      }
+      return rowElement;
+    };
+
+    if (recipePopupRows && recipePopupAddProduct) {
+      recipePopupAddProduct.addEventListener('click', () => {
+        const newRow = createRecipePopupRow();
+        recipePopupRows.appendChild(newRow);
+      });
+
+      recipePopupRows.addEventListener('click', (event) => {
+        const removeButton = event.target.closest('.recipe-popup-remove');
+        if (!removeButton) return;
+
+        const rowElement = removeButton.closest('.recipe-popup-row');
+        if (rowElement) {
+          rowElement.remove();
+        }
+      });
+    }
+
+    const openRecipeDrinkMenu = () => {
+      if (!recipePopupDrinkMenu) return;
+      recipePopupDrinkMenu.classList.remove('hidden');
+    };
+
+    const closeRecipeDrinkMenu = () => {
+      if (!recipePopupDrinkMenu) return;
+      recipePopupDrinkMenu.classList.add('hidden');
+    };
+
+    if (recipePopupDrinkInput && recipePopupDrinkTrigger) {
+      recipePopupDrinkInput.addEventListener('click', (event) => {
+        event.stopPropagation();
+      });
+
+      recipePopupDrinkTrigger.addEventListener('click', () => {
+        const wasHidden = recipePopupDrinkMenu.classList.contains('hidden');
+        recipePopupDrinkInput.focus();
+        if (wasHidden) {
+          openRecipeDrinkMenu();
+        } else {
+          closeRecipeDrinkMenu();
+        }
+      });
+
+      recipePopupDrinkTrigger.addEventListener('mousedown', (event) => {
+        // Keep focus behavior stable so selecting a dropdown option is reliable.
+        event.preventDefault();
+        event.stopPropagation();
+      });
+
+      recipePopupDrinkInput.addEventListener('focus', () => {
+        openRecipeDrinkMenu();
+      });
+
+      recipePopupDrinkInput.addEventListener('input', () => {
+        const currentValue = recipePopupDrinkInput.value.trim().toLowerCase();
+        getRecipePopupDrinkOptions().forEach((optionElement) => {
+          const optionValue = optionElement.dataset.value.toLowerCase();
+          const isVisible = !currentValue || optionValue.includes(currentValue);
+          optionElement.classList.toggle('hidden', !isVisible);
+        });
+        openRecipeDrinkMenu();
+      });
+
+      recipePopupDrinkInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeRecipeDrinkMenu();
+        }
+      });
+    }
+
+    if (recipePopupDrinkMenu) {
+      recipePopupDrinkMenu.addEventListener('mousedown', (event) => {
+        const optionElement = event.target.closest('.recipe-popup-drink-option');
+        if (!optionElement || !recipePopupDrinkInput) return;
+        event.preventDefault();
+        event.stopPropagation();
+        recipePopupDrinkInput.value = optionElement.dataset.value;
+        closeRecipeDrinkMenu();
+      });
+
+      recipePopupDrinkMenu.addEventListener('click', (event) => {
+        event.stopPropagation();
+      });
+    }
+
+    if (addRecipeBtn && recipeModalOverlay) {
+      addRecipeBtn.addEventListener('click', () => {
+        recipeModalOverlay.classList.remove('hidden');
+        recipeModalOverlay.setAttribute('aria-hidden', 'false');
+      });
+    }
+
+    if (recipeModalClose && recipeModalOverlay) {
+      recipeModalClose.addEventListener('click', () => {
+        recipeModalOverlay.classList.add('hidden');
+        recipeModalOverlay.setAttribute('aria-hidden', 'true');
+      });
+    }
+
+    if (recipeModalOverlay) {
+      recipeModalOverlay.addEventListener('click', (event) => {
+        if (event.target === recipeModalOverlay) {
+          recipeModalOverlay.classList.add('hidden');
+          recipeModalOverlay.setAttribute('aria-hidden', 'true');
+        }
+      });
+    }
+
+    if (uploadDataBtn && uploadDataInput) {
+      uploadDataBtn.addEventListener('click', () => {
+        uploadDataInput.click();
+      });
+
+      uploadDataInput.addEventListener('change', async () => {
+        const selectedFile = uploadDataInput.files && uploadDataInput.files[0];
+        if (!selectedFile) {
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        uploadDataBtn.disabled = true;
+        try {
+          const response = await fetch(predictivePosImportUrl, {
+            method: 'POST',
+            body: formData,
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || 'Failed to import POS data.');
+          }
+
+          window.alert(data.message || 'POS data imported successfully.');
+          window.location.reload();
+        } catch (error) {
+          window.alert(error.message || 'Unable to import POS data.');
+        } finally {
+          uploadDataBtn.disabled = false;
+          uploadDataInput.value = '';
+        }
+      });
+    }
+
+    if (predictiveCategoryFilter) {
+      predictiveCategoryFilter.addEventListener('change', () => {
+        const selectedCategory = predictiveCategoryFilter.value || 'all';
+        const nextUrl = new URL(window.location.href);
+        if (selectedCategory === 'all') {
+          nextUrl.searchParams.delete('category');
+        } else {
+          nextUrl.searchParams.set('category', selectedCategory);
+        }
+        window.location.href = `${predictiveBaseUrl}${nextUrl.search}`;
+      });
+    }
+
+    if (predictiveOrderPrevBtn && predictiveRecommendedOrders.length) {
+      predictiveOrderPrevBtn.addEventListener('click', () => {
+        predictiveOrderIndex = renderPredictiveOrder(predictiveOrderIndex - 1);
+      });
+    }
+
+    if (predictiveOrderNextBtn && predictiveRecommendedOrders.length) {
+      predictiveOrderNextBtn.addEventListener('click', () => {
+        predictiveOrderIndex = renderPredictiveOrder(predictiveOrderIndex + 1);
+      });
+    }
+
+    if (recipePopupUpdateBtn && recipePopupRows && recipePopupDrinkInput) {
+      recipePopupUpdateBtn.addEventListener('click', async () => {
+        const drinkName = recipePopupDrinkInput.value.trim();
+        if (!drinkName) {
+          window.alert('Please enter a drink name.');
+          return;
+        }
+
+        const productRows = Array.from(recipePopupRows.querySelectorAll('.recipe-popup-row'));
+        const products = productRows
+          .map((rowElement) => {
+            const productSelect = rowElement.querySelector('.recipe-popup-name-select');
+            const inventoryItemId = Number(productSelect?.value || 0);
+            if (!inventoryItemId) return null;
+            return {
+              inventory_item_id: inventoryItemId,
+            };
+          })
+          .filter(Boolean);
+
+        if (!products.length) {
+          window.alert('Please add at least one product.');
+          return;
+        }
+
+        recipePopupUpdateBtn.disabled = true;
+        try {
+          const response = await fetch(predictiveRecipeSaveUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              drink_name: drinkName,
+              products,
+            }),
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || 'Failed to save recipe.');
+          }
+
+          const existingDrinkOption = getRecipePopupDrinkOptions().find(
+            (optionElement) => optionElement.dataset.value.toLowerCase() === drinkName.toLowerCase()
+          );
+
+          if (!existingDrinkOption && recipePopupDrinkMenu) {
+            const newOptionElement = document.createElement('button');
+            newOptionElement.type = 'button';
+            newOptionElement.className = 'recipe-popup-drink-option';
+            newOptionElement.dataset.value = drinkName;
+            newOptionElement.textContent = drinkName;
+            recipePopupDrinkMenu.appendChild(newOptionElement);
+          }
+
+          window.alert(data.message || 'Recipe updated successfully.');
+          recipeModalOverlay?.classList.add('hidden');
+          recipeModalOverlay?.setAttribute('aria-hidden', 'true');
+        } catch (error) {
+          window.alert(error.message || 'Unable to save recipe.');
+        } finally {
+          recipePopupUpdateBtn.disabled = false;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
