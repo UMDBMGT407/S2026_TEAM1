@@ -5,7 +5,7 @@
 # =========================
 # IMPORTS
 # =========================
-from flask import Flask, request, render_template, redirect, url_for, abort, jsonify
+from flask import Flask, request, render_template, redirect, url_for, abort, jsonify, Response
 from flask_mysqldb import MySQL
 from flask_login import (
     LoginManager,
@@ -20,6 +20,19 @@ from functools import wraps
 import MySQLdb
 import json
 from datetime import datetime, timedelta
+//predictive imports
+from decimal import Decimal, InvalidOperation
+import math
+import lightgbm as lgb
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.optimize import nnls
+import datetime as dt
+import io
+import zipfile
+import xml.etree.ElementTree as ET
 
 # =========================
 # CREATE FLASK APP
@@ -1293,22 +1306,1254 @@ def update_user(id):
 # PREDICTIVE PART
 # =========================
 
+XLSX_MAIN_NS = {'a': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
+PREDICTIVE_SHIP_TIME_DAYS = 3
+PREDICTIVE_LOW_STOCK_THRESHOLD_DAYS = 7
+
+
+def get_excel_column_index(column_name):
+    result = 0
+    for char in column_name.upper():
+        if 'A' <= char <= 'Z':
+            result = (result * 26) + (ord(char) - ord('A') + 1)
+    return result - 1
+
+
+def get_xlsx_cell_value(cell, shared_strings):
+    cell_type = cell.attrib.get('t')
+
+    if cell_type == 'inlineStr':
+        return ''.join(text.text or '' for text in cell.findall('.//a:t', XLSX_MAIN_NS))
+
+    value_element = cell.find('a:v', XLSX_MAIN_NS)
+    if value_element is None or value_element.text is None:
+        return ''
+
+    raw_value = value_element.text
+    if cell_type == 's':
+        return shared_strings[int(raw_value)]
+
+    return raw_value
+
+
+def read_xlsx_rows(file_bytes):
+    try:
+        workbook_archive = zipfile.ZipFile(io.BytesIO(file_bytes))
+    except zipfile.BadZipFile as exc:
+        raise ValueError('Please upload a valid .xlsx file.') from exc
+
+    shared_strings = []
+    if 'xl/sharedStrings.xml' in workbook_archive.namelist():
+        shared_root = ET.fromstring(workbook_archive.read('xl/sharedStrings.xml'))
+        for string_item in shared_root.findall('a:si', XLSX_MAIN_NS):
+            shared_strings.append(
+                ''.join(text.text or '' for text in string_item.findall('.//a:t', XLSX_MAIN_NS))
+            )
+
+    workbook_root = ET.fromstring(workbook_archive.read('xl/workbook.xml'))
+    workbook_rels_root = ET.fromstring(workbook_archive.read('xl/_rels/workbook.xml.rels'))
+    relationship_targets = {
+        relationship.attrib['Id']: relationship.attrib['Target']
+        for relationship in workbook_rels_root.findall('{*}Relationship')
+    }
+
+    first_sheet = workbook_root.find('a:sheets/a:sheet', XLSX_MAIN_NS)
+    if first_sheet is None:
+        raise ValueError('The workbook does not contain any sheets.')
+
+    relationship_id = first_sheet.attrib.get(
+        '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id'
+    )
+    sheet_target = relationship_targets.get(relationship_id)
+    if not sheet_target:
+        raise ValueError('Unable to locate the worksheet data.')
+
+    sheet_path = sheet_target if sheet_target.startswith('xl/') else f"xl/{sheet_target}"
+    worksheet_root = ET.fromstring(workbook_archive.read(sheet_path))
+
+    headers_by_index = {}
+    parsed_rows = []
+
+    for row in worksheet_root.findall('a:sheetData/a:row', XLSX_MAIN_NS):
+        row_values = {}
+        for cell in row.findall('a:c', XLSX_MAIN_NS):
+            cell_reference = cell.attrib.get('r', '')
+            column_name = ''.join(char for char in cell_reference if char.isalpha())
+            if not column_name:
+                continue
+            row_values[get_excel_column_index(column_name)] = get_xlsx_cell_value(cell, shared_strings)
+
+        if not row_values:
+            continue
+
+        if not headers_by_index:
+            headers_by_index = {
+                index: str(value).strip()
+                for index, value in row_values.items()
+                if str(value).strip()
+            }
+            continue
+
+        parsed_rows.append({
+            header: row_values.get(index, '')
+            for index, header in headers_by_index.items()
+        })
+
+    if not headers_by_index:
+        raise ValueError('The workbook is missing a header row.')
+
+    return parsed_rows
+
+
+def get_row_value(row, *header_names):
+    normalized_row = {
+        str(key).replace(' ', '').strip().lower(): value
+        for key, value in row.items()
+    }
+
+    for header_name in header_names:
+        normalized_header = header_name.replace(' ', '').strip().lower()
+        if normalized_header in normalized_row:
+            return normalized_row[normalized_header]
+
+    return ''
+
+
+def parse_pos_date(date_value):
+    date_text = str(date_value or '').strip()
+    if not date_text:
+        raise ValueError('Missing Date value.')
+
+    for date_format in ('%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y'):
+        try:
+            return dt.datetime.strptime(date_text, date_format).date()
+        except ValueError:
+            continue
+
+    try:
+        return dt.date.fromisoformat(date_text)
+    except ValueError as exc:
+        raise ValueError(f"Unsupported Date value: {date_text}") from exc
+
+
+def parse_pos_time(time_value):
+    time_text = str(time_value or '').strip()
+    if not time_text:
+        return dt.time(0, 0, 0)
+
+    for time_format in ('%H:%M:%S', '%H:%M', '%I:%M:%S %p', '%I:%M %p'):
+        try:
+            return dt.datetime.strptime(time_text, time_format).time()
+        except ValueError:
+            continue
+
+    raise ValueError(f"Unsupported Time value: {time_text}")
+
+
+def parse_pos_total(total_value):
+    total_text = str(total_value or '').strip().replace('$', '').replace(',', '')
+    if not total_text:
+        raise ValueError('Missing Total value.')
+
+    try:
+        return Decimal(total_text)
+    except InvalidOperation as exc:
+        raise ValueError(f"Unsupported Total value: {total_text}") from exc
+
+
+def parse_pos_quantity(quantity_value):
+    quantity_text = str(quantity_value or '').strip()
+    if not quantity_text:
+        return 1.0
+
+    try:
+        quantity = float(quantity_text)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"Unsupported Quantity value: {quantity_text}") from exc
+
+    if quantity <= 0:
+        raise ValueError(f"Quantity must be positive: {quantity_text}")
+
+    return quantity
+
+
+def ensure_predictive_schema_support(cur):
+    required_columns = {
+        'transaction_id': (
+            "Database schema is missing pos_transactions.transaction_id. "
+            "Apply the SQL changes in GroupSQL.sql first."
+        ),
+        'quantity': (
+            "Database schema is missing pos_transactions.quantity. "
+            "Apply the SQL changes in GroupSQL.sql first."
+        ),
+    }
+
+    for column_name, error_message in required_columns.items():
+        cur.execute(f"SHOW COLUMNS FROM pos_transactions LIKE '{column_name}'")
+        if not cur.fetchone():
+            raise ValueError(error_message)
+
+
+def build_lightgbm_feature_row(activity_date, drink_id, start_date):
+    iso_calendar = activity_date.isocalendar()
+    return [
+        int(drink_id),                             # shared product column
+        int(activity_date.month),
+        int(activity_date.weekday()),
+        int(activity_date.day),
+        int(iso_calendar.week),
+        int(activity_date.timetuple().tm_yday),
+        int(activity_date.weekday() >= 5),
+        int((activity_date - start_date).days),
+    ]
+
+
+def import_pos_transactions(rows):
+    if not rows:
+        raise ValueError('The workbook does not contain any transaction rows.')
+
+    required_headers = {'transactionid', 'date', 'time', 'menuitem', 'total'}
+    normalized_headers = {
+        str(header).replace(' ', '').strip().lower()
+        for header in rows[0].keys()
+    }
+    missing_headers = sorted(required_headers - normalized_headers)
+    if missing_headers:
+        raise ValueError(
+            'The workbook is missing required columns: '
+            + ', '.join(missing_headers)
+        )
+
+    cleaned_rows = []
+    seen_file_transaction_ids = set()
+    skipped_count = 0
+
+    for row in rows:
+        transaction_id = str(get_row_value(row, 'Transaction ID', 'TransactionID') or '').strip()
+        menu_item = str(get_row_value(row, 'Menu Item', 'MenuItem') or '').strip()
+
+        if not transaction_id or not menu_item:
+            skipped_count += 1
+            continue
+
+        if transaction_id in seen_file_transaction_ids:
+            skipped_count += 1
+            continue
+
+        try:
+            transaction_date = dt.datetime.combine(
+                parse_pos_date(get_row_value(row, 'Date')),
+                parse_pos_time(get_row_value(row, 'Time')),
+            )
+            transaction_amount = parse_pos_total(get_row_value(row, 'Total'))
+            quantity = parse_pos_quantity(get_row_value(row, 'Quantity'))
+        except ValueError:
+            skipped_count += 1
+            continue
+
+        cleaned_rows.append({
+            'transaction_id': transaction_id,
+            'menu_item': menu_item,
+            'transaction_date': transaction_date,
+            'transaction_amount': transaction_amount,
+            'quantity': quantity,
+        })
+        seen_file_transaction_ids.add(transaction_id)
+
+    if not cleaned_rows:
+        raise ValueError('No valid POS transaction rows were found in the workbook.')
+
+    transaction_ids = [row['transaction_id'] for row in cleaned_rows]
+    cur = mysql.connection.cursor()
+
+    try:
+        ensure_predictive_schema_support(cur)
+
+        existing_transaction_ids = set()
+        if transaction_ids:
+            placeholders = ','.join(['%s'] * len(transaction_ids))
+            cur.execute(
+                f"SELECT transaction_id FROM pos_transactions WHERE transaction_id IN ({placeholders})",
+                tuple(transaction_ids)
+            )
+            existing_transaction_ids = {
+                row['transaction_id']
+                for row in cur.fetchall()
+            }
+
+        cur.execute("SELECT id, drink_name FROM drinks")
+        drinks_by_name = {
+            row['drink_name'].strip().lower(): row['id']
+            for row in cur.fetchall()
+        }
+
+        imported_count = 0
+        created_drinks = []
+        created_drink_names = set()
+
+        for row in cleaned_rows:
+            if row['transaction_id'] in existing_transaction_ids:
+                skipped_count += 1
+                continue
+
+            drink_lookup_key = row['menu_item'].lower()
+            drink_id = drinks_by_name.get(drink_lookup_key)
+
+            if not drink_id:
+                cur.execute(
+                    "INSERT INTO drinks (drink_name) VALUES (%s)",
+                    (row['menu_item'],)
+                )
+                drink_id = cur.lastrowid
+                drinks_by_name[drink_lookup_key] = drink_id
+
+                if row['menu_item'] not in created_drink_names:
+                    created_drinks.append(row['menu_item'])
+                    created_drink_names.add(row['menu_item'])
+
+            cur.execute(
+                """
+                INSERT INTO pos_transactions (
+                    transaction_id,
+                    transaction_date,
+                    transaction_amount,
+                    drink_id,
+                    quantity
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                """,
+                (
+                    row['transaction_id'],
+                    row['transaction_date'],
+                    row['transaction_amount'],
+                    drink_id,
+                    row['quantity'],
+                )
+            )
+            imported_count += 1
+
+        mysql.connection.commit()
+        return {
+            'imported_count': imported_count,
+            'skipped_count': skipped_count,
+            'created_drinks': created_drinks,
+        }
+    except Exception:
+        mysql.connection.rollback()
+        raise
+    finally:
+        cur.close()
+
+
+def infer_recipe_quantities_with_regression():
+    cur = mysql.connection.cursor()
+
+    try:
+        ensure_predictive_schema_support(cur)
+
+        cur.execute("SELECT id, drink_name FROM drinks ORDER BY id")
+        drinks = cur.fetchall()
+        drink_names = {row['id']: row['drink_name'] for row in drinks}
+
+        cur.execute("SELECT id, item_name FROM inventory_items ORDER BY id")
+        inventory_items = cur.fetchall()
+        ingredient_names = {row['id']: row['item_name'] for row in inventory_items}
+
+        cur.execute(
+            """
+            SELECT drink_id, inventory_item_id
+            FROM drink_product
+            ORDER BY inventory_item_id, drink_id
+            """
+        )
+        recipe_links = cur.fetchall()
+        if not recipe_links:
+            raise ValueError('No drink-to-ingredient mappings were found in drink_product.')
+
+        drinks_by_ingredient = {}
+        for row in recipe_links:
+            drinks_by_ingredient.setdefault(row['inventory_item_id'], []).append(row['drink_id'])
+
+        cur.execute(
+            """
+            SELECT DATE(transaction_date) AS activity_date,
+                   drink_id,
+                   SUM(COALESCE(quantity, 1)) AS sold_qty
+            FROM pos_transactions
+            GROUP BY DATE(transaction_date), drink_id
+            ORDER BY DATE(transaction_date), drink_id
+            """
+        )
+        pos_rows = cur.fetchall()
+        if not pos_rows:
+            raise ValueError('No POS transaction history is available for regression.')
+
+        sales_by_date = {}
+        for row in pos_rows:
+            activity_date = row['activity_date']
+            sales_by_date.setdefault(activity_date, {})[row['drink_id']] = float(row['sold_qty'] or 0.0)
+
+        cur.execute(
+            """
+            SELECT DATE(created_at) AS activity_date,
+                   inventory_item_id,
+                   SUM(ABS(qty_change)) AS used_qty
+            FROM inventory_updates
+            WHERE action_type = 'Sub'
+              AND qty_change < 0
+            GROUP BY DATE(created_at), inventory_item_id
+            ORDER BY DATE(created_at), inventory_item_id
+            """
+        )
+        usage_rows = cur.fetchall()
+        if not usage_rows:
+            raise ValueError('No negative inventory update history is available for regression.')
+
+        usage_by_ingredient = {}
+        for row in usage_rows:
+            usage_by_ingredient.setdefault(row['inventory_item_id'], {})[row['activity_date']] = float(
+                row['used_qty'] or 0.0
+            )
+
+        updated_pairs = []
+        skipped_ingredients = []
+
+        for ingredient_id, ingredient_drink_ids in drinks_by_ingredient.items():
+            usage_by_date = usage_by_ingredient.get(ingredient_id, {})
+            if not usage_by_date:
+                skipped_ingredients.append({
+                    'ingredient_id': ingredient_id,
+                    'ingredient_name': ingredient_names.get(ingredient_id, f'Ingredient {ingredient_id}'),
+                    'reason': 'No inventory usage history',
+                })
+                continue
+
+            observed_dates = sorted(usage_by_date.keys())
+            design_matrix = []
+            targets = []
+            for activity_date in observed_dates:
+                row_sales = [
+                    sales_by_date.get(activity_date, {}).get(drink_id, 0.0)
+                    for drink_id in ingredient_drink_ids
+                ]
+                if not any(value > 0 for value in row_sales):
+                    continue
+
+                design_matrix.append(row_sales)
+                targets.append(usage_by_date.get(activity_date, 0.0))
+
+            if not design_matrix or not targets:
+                skipped_ingredients.append({
+                    'ingredient_id': ingredient_id,
+                    'ingredient_name': ingredient_names.get(ingredient_id, f'Ingredient {ingredient_id}'),
+                    'reason': 'No overlapping POS and inventory history',
+                })
+                continue
+
+            coefficients, _ = nnls(design_matrix, targets)
+            ingredient_updated = False
+
+            for drink_id, coefficient in zip(ingredient_drink_ids, coefficients):
+                if coefficient <= 0:
+                    continue
+
+                estimated_quantity = round(float(coefficient), 4)
+                cur.execute(
+                    """
+                    UPDATE drink_product
+                    SET quantity = %s
+                    WHERE drink_id = %s AND inventory_item_id = %s
+                    """,
+                    (estimated_quantity, drink_id, ingredient_id)
+                )
+                updated_pairs.append({
+                    'drink_id': drink_id,
+                    'drink_name': drink_names.get(drink_id, f'Drink {drink_id}'),
+                    'ingredient_id': ingredient_id,
+                    'ingredient_name': ingredient_names.get(ingredient_id, f'Ingredient {ingredient_id}'),
+                    'quantity': estimated_quantity,
+                })
+                ingredient_updated = True
+
+            if not ingredient_updated:
+                skipped_ingredients.append({
+                    'ingredient_id': ingredient_id,
+                    'ingredient_name': ingredient_names.get(ingredient_id, f'Ingredient {ingredient_id}'),
+                    'reason': 'Regression returned only zero coefficients',
+                })
+
+        if not updated_pairs:
+            raise ValueError(
+                'Regression ran, but no recipe quantities could be estimated from the current POS '
+                'and inventory update history.'
+            )
+
+        print("\n=== Predictive Regression Results ===")
+        print(
+            f"Updated {len(updated_pairs)} drink/ingredient quantities across "
+            f"{len({row['drink_id'] for row in updated_pairs})} drinks and "
+            f"{len({row['ingredient_id'] for row in updated_pairs})} ingredients."
+        )
+        for row in updated_pairs:
+            print(
+                f"{row['drink_name']} -> {row['ingredient_name']}: {row['quantity']}"
+            )
+        if skipped_ingredients:
+            print("\nSkipped ingredients:")
+            for row in skipped_ingredients[:10]:
+                print(f"{row['ingredient_name']}: {row['reason']}")
+        print("=== End Predictive Regression Results ===\n")
+
+        mysql.connection.commit()
+        return {
+            'updated_pair_count': len(updated_pairs),
+            'updated_ingredient_count': len({row['ingredient_id'] for row in updated_pairs}),
+            'updated_drink_count': len({row['drink_id'] for row in updated_pairs}),
+            'updated_pairs_preview': updated_pairs[:10],
+            'skipped_ingredients': skipped_ingredients[:10],
+        }
+    except Exception:
+        mysql.connection.rollback()
+        raise
+    finally:
+        cur.close()
+
+
+def build_forecast_chart_response(title, forecast_dates=None, forecast_values=None, message=None):
+    figure, axis = plt.subplots(figsize=(8.6, 4.8))
+    figure.patch.set_facecolor('#fcefe4')
+    axis.set_facecolor('#fff8f4')
+
+    if message:
+        axis.text(
+            0.5,
+            0.5,
+            message,
+            ha='center',
+            va='center',
+            wrap=True,
+            fontsize=14,
+            color='#964f4c',
+            transform=axis.transAxes,
+        )
+        axis.set_xticks([])
+        axis.set_yticks([])
+    else:
+        x_positions = list(range(len(forecast_dates)))
+        axis.plot(
+            x_positions,
+            forecast_values,
+            color='#964f4c',
+            linewidth=2.5,
+            marker='o',
+            markersize=5,
+        )
+        axis.fill_between(x_positions, forecast_values, color='#964f4c', alpha=0.12)
+        axis.set_xticks(x_positions)
+        axis.set_xticklabels(
+            [forecast_date.strftime('%m/%d') for forecast_date in forecast_dates],
+            rotation=45,
+            ha='right',
+            fontsize=13,
+        )
+        axis.tick_params(axis='y', labelsize=12)
+        axis.set_ylabel('Projected Stock On Hand', fontsize=14)
+        axis.grid(axis='y', alpha=0.2)
+
+    axis.set_title(title, color='#2f1d1b', fontsize=16, pad=12)
+    for spine in axis.spines.values():
+        spine.set_color('#d9c1b3')
+
+    png_buffer = io.BytesIO()
+    figure.tight_layout()
+    figure.savefig(
+        png_buffer,
+        format='png',
+        dpi=160,
+        bbox_inches='tight',
+        facecolor=figure.get_facecolor(),
+    )
+    plt.close(figure)
+    png_buffer.seek(0)
+    return Response(png_buffer.getvalue(), mimetype='image/png')
+
+
+def build_lightgbm_forecast_payload(forecast_horizon_days=7):
+    cur = mysql.connection.cursor()
+    ship_time_days = PREDICTIVE_SHIP_TIME_DAYS
+
+    try:
+        ensure_predictive_schema_support(cur)
+
+        cur.execute(
+            """
+            SELECT poi.inventory_item_id,
+                   poi.quantity,
+                   po.order_status,
+                   po.order_date,
+                   po.expected_date
+            FROM purchase_order_items poi
+            JOIN purchase_orders po ON po.id = poi.purchase_order_id
+            WHERE po.order_status IN ('Pending', 'Ordered')
+              AND po.received_date IS NULL
+            ORDER BY poi.inventory_item_id, po.order_date, po.expected_date
+            """
+        )
+        purchase_order_rows = cur.fetchall()
+
+        incoming_deliveries_by_ingredient = {}
+        incoming_deliveries_preview = []
+        for row in purchase_order_rows:
+            delivery_date = row['expected_date'] or (
+                row['order_date'] + dt.timedelta(days=ship_time_days)
+                if row['order_date'] else None
+            )
+            if not delivery_date:
+                continue
+
+            ingredient_id = row['inventory_item_id']
+            quantity = float(row['quantity'] or 0.0)
+            if quantity <= 0:
+                continue
+
+            incoming_deliveries_by_ingredient.setdefault(ingredient_id, {})
+            incoming_deliveries_by_ingredient[ingredient_id][delivery_date] = (
+                incoming_deliveries_by_ingredient[ingredient_id].get(delivery_date, 0.0) + quantity
+            )
+            incoming_deliveries_preview.append({
+                'inventory_item_id': ingredient_id,
+                'delivery_date': delivery_date,
+                'quantity': round(quantity, 4),
+                'status': row['order_status'],
+            })
+
+        cur.execute(
+            """
+            SELECT DATE(transaction_date) AS activity_date,
+                   drink_id,
+                   SUM(COALESCE(quantity, 1)) AS sold_qty
+            FROM pos_transactions
+            GROUP BY DATE(transaction_date), drink_id
+            ORDER BY DATE(transaction_date), drink_id
+            """
+        )
+        pos_rows = cur.fetchall()
+        if not pos_rows:
+            raise ValueError('No POS transaction history is available for LightGBM forecasting.')
+
+        sales_lookup = {}
+        drink_ids = set()
+        all_dates = set()
+        for row in pos_rows:
+            activity_date = row['activity_date']
+            drink_id = int(row['drink_id'])
+            sold_qty = float(row['sold_qty'] or 0.0)
+            sales_lookup[(activity_date, drink_id)] = sold_qty
+            drink_ids.add(drink_id)
+            all_dates.add(activity_date)
+
+        if not drink_ids or not all_dates:
+            raise ValueError('POS transaction history is missing usable drink/date observations.')
+
+        cur.execute("SELECT id, drink_name FROM drinks ORDER BY id")
+        drink_names = {row['id']: row['drink_name'] for row in cur.fetchall()}
+
+        start_date = min(all_dates)
+        last_history_date = max(all_dates)
+        ordered_drink_ids = sorted(drink_ids)
+
+        training_dates = []
+        current_date = start_date
+        while current_date <= last_history_date:
+            training_dates.append(current_date)
+            current_date += dt.timedelta(days=1)
+
+        training_features = []
+        training_targets = []
+        for activity_date in training_dates:
+            for drink_id in ordered_drink_ids:
+                training_features.append(
+                    build_lightgbm_feature_row(activity_date, drink_id, start_date)
+                )
+                training_targets.append(
+                    sales_lookup.get((activity_date, drink_id), 0.0)
+                )
+
+        feature_matrix = np.array(training_features, dtype=float)
+        target_vector = np.array(training_targets, dtype=float)
+        if feature_matrix.size == 0 or target_vector.size == 0:
+            raise ValueError('Unable to build LightGBM training data from POS history.')
+
+        train_dataset = lgb.Dataset(
+            feature_matrix,
+            label=target_vector,
+            categorical_feature=[0],
+            free_raw_data=False,
+        )
+        model = lgb.train(
+            {
+                'objective': 'regression',
+                'metric': 'l2',
+                'learning_rate': 0.05,
+                'num_leaves': 31,
+                'min_data_in_leaf': 5,
+                'feature_fraction': 0.9,
+                'bagging_fraction': 0.9,
+                'bagging_freq': 1,
+                'seed': 42,
+                'verbosity': -1,
+            },
+            train_dataset,
+            num_boost_round=200,
+        )
+
+        future_dates = [
+            last_history_date + dt.timedelta(days=offset)
+            for offset in range(1, forecast_horizon_days + 1)
+        ]
+        future_features = []
+        future_keys = []
+        for activity_date in future_dates:
+            for drink_id in ordered_drink_ids:
+                future_features.append(
+                    build_lightgbm_feature_row(activity_date, drink_id, start_date)
+                )
+                future_keys.append((activity_date, drink_id))
+
+        future_matrix = np.array(future_features, dtype=float)
+        predictions = model.predict(future_matrix)
+
+        drink_forecasts = {}
+        drink_forecast_preview = []
+        for (activity_date, drink_id), prediction in zip(future_keys, predictions):
+            predicted_qty = round(max(0.0, float(prediction)), 4)
+            drink_forecasts[(activity_date, drink_id)] = predicted_qty
+            drink_forecast_preview.append({
+                'forecast_date': activity_date.isoformat(),
+                'drink_id': drink_id,
+                'drink_name': drink_names.get(drink_id, f'Drink {drink_id}'),
+                'predicted_qty': predicted_qty,
+            })
+
+        cur.execute(
+            """
+            SELECT dp.drink_id,
+                   dp.inventory_item_id,
+                   dp.quantity,
+                   i.item_name,
+                   i.category,
+                   i.system_qty
+            FROM drink_product dp
+            JOIN inventory_items i ON i.id = dp.inventory_item_id
+            WHERE dp.quantity IS NOT NULL
+              AND dp.quantity > 0
+            ORDER BY dp.inventory_item_id, dp.drink_id
+            """
+        )
+        recipe_rows = cur.fetchall()
+        if not recipe_rows:
+            raise ValueError('No recipe quantities are available for ingredient forecasting.')
+
+        ingredient_forecasts = {}
+        for row in recipe_rows:
+            ingredient_id = row['inventory_item_id']
+            ingredient_entry = ingredient_forecasts.setdefault(
+                ingredient_id,
+                {
+                    'inventory_item_id': ingredient_id,
+                    'item_name': row['item_name'],
+                    'category': row['category'] or 'Uncategorized',
+                    'current_qty': float(row['system_qty'] or 0.0),
+                    'daily_usage': {},
+                    'incoming_deliveries': incoming_deliveries_by_ingredient.get(ingredient_id, {}),
+                }
+            )
+
+            recipe_qty = float(row['quantity'] or 0.0)
+            if recipe_qty <= 0:
+                continue
+
+            for forecast_date in future_dates:
+                drink_forecast_qty = drink_forecasts.get((forecast_date, row['drink_id']), 0.0)
+                if drink_forecast_qty <= 0:
+                    continue
+
+                ingredient_entry['daily_usage'][forecast_date] = (
+                    ingredient_entry['daily_usage'].get(forecast_date, 0.0)
+                    + (drink_forecast_qty * recipe_qty)
+                )
+
+        category_usage_series = {'all': {}}
+        category_current_stock = {'all': 0.0}
+        category_incoming_series = {'all': {}}
+        prediction_rows = []
+        for ingredient_entry in ingredient_forecasts.values():
+            if not ingredient_entry['daily_usage']:
+                continue
+
+            category_key = str(ingredient_entry['category'] or 'Uncategorized').strip()
+            normalized_category_key = category_key.lower()
+            category_usage_series.setdefault(normalized_category_key, {})
+            category_current_stock.setdefault(normalized_category_key, 0.0)
+            category_incoming_series.setdefault(normalized_category_key, {})
+
+            category_current_stock['all'] += ingredient_entry['current_qty']
+            category_current_stock[normalized_category_key] += ingredient_entry['current_qty']
+
+            for forecast_date in future_dates:
+                daily_usage = ingredient_entry['daily_usage'].get(forecast_date, 0.0)
+                incoming_qty = ingredient_entry['incoming_deliveries'].get(forecast_date, 0.0)
+                category_usage_series['all'][forecast_date] = (
+                    category_usage_series['all'].get(forecast_date, 0.0) + daily_usage
+                )
+                category_usage_series[normalized_category_key][forecast_date] = (
+                    category_usage_series[normalized_category_key].get(forecast_date, 0.0) + daily_usage
+                )
+                category_incoming_series['all'][forecast_date] = (
+                    category_incoming_series['all'].get(forecast_date, 0.0) + incoming_qty
+                )
+                category_incoming_series[normalized_category_key][forecast_date] = (
+                    category_incoming_series[normalized_category_key].get(forecast_date, 0.0) + incoming_qty
+                )
+
+            running_stock = ingredient_entry['current_qty']
+            horizon_usage = 0.0
+            stockout_date = None
+            for forecast_date in future_dates:
+                running_stock += ingredient_entry['incoming_deliveries'].get(forecast_date, 0.0)
+                daily_usage = ingredient_entry['daily_usage'].get(forecast_date, 0.0)
+                horizon_usage += daily_usage
+                running_stock -= daily_usage
+                if running_stock <= 0:
+                    stockout_date = forecast_date
+                    break
+
+            total_projected_usage = round(horizon_usage, 4)
+            if total_projected_usage <= 0:
+                continue
+
+            if stockout_date is None:
+                average_daily_usage = horizon_usage / len(future_dates)
+                if average_daily_usage <= 0:
+                    continue
+
+                projected_date = future_dates[-1]
+                projected_stock = running_stock
+                while projected_stock > 0:
+                    projected_date += dt.timedelta(days=1)
+                    projected_stock += ingredient_entry['incoming_deliveries'].get(projected_date, 0.0)
+                    projected_stock -= average_daily_usage
+                    if projected_stock <= 0:
+                        stockout_date = projected_date
+                        break
+
+            order_by_date = stockout_date - dt.timedelta(days=ship_time_days)
+
+            prediction_rows.append({
+                'inventory_item_id': ingredient_entry['inventory_item_id'],
+                'item_name': ingredient_entry['item_name'],
+                'current_qty': round(ingredient_entry['current_qty'], 4),
+                'prediction_quantity': total_projected_usage,
+                'stockout_date': stockout_date,
+                'order_by_date': order_by_date,
+            })
+
+        if not prediction_rows:
+            raise ValueError('LightGBM completed, but no ingredient forecasts could be generated.')
+
+        category_stock_projection_series = {}
+        for category_key, usage_series in category_usage_series.items():
+            running_stock = float(category_current_stock.get(category_key, 0.0))
+            stock_values = []
+            for forecast_date in future_dates:
+                running_stock += category_incoming_series.get(category_key, {}).get(forecast_date, 0.0)
+                running_stock -= usage_series.get(forecast_date, 0.0)
+                stock_values.append(round(running_stock, 4))
+            category_stock_projection_series[category_key] = stock_values
+
+        feature_importance = model.feature_importance(importance_type='gain').tolist()
+        feature_names = [
+            'drink_id',
+            'month',
+            'day_of_week',
+            'day_of_month',
+            'week_of_year',
+            'day_of_year',
+            'is_weekend',
+            'days_since_start',
+        ]
+
+        print("\n=== LightGBM Forecast Results ===")
+        print(
+            f"Training rows: {len(training_targets)} | "
+            f"Drinks: {len(ordered_drink_ids)} | "
+            f"History range: {start_date} to {last_history_date}"
+        )
+        print("Shared model feature importance:")
+        for feature_name, importance_value in zip(feature_names, feature_importance):
+            print(f"  {feature_name}: {round(float(importance_value), 4)}")
+
+        print("\nDrink forecast preview:")
+        for row in drink_forecast_preview[:20]:
+            print(
+                f"  {row['forecast_date']} | {row['drink_name']} | "
+                f"predicted sold qty = {row['predicted_qty']}"
+            )
+
+        print("\nIngredient forecast rows:")
+        for row in prediction_rows[:20]:
+            print(
+                f"  {row['item_name']} | current={row['current_qty']} | "
+                f"projected={row['prediction_quantity']} | stockout {row['stockout_date']} | "
+                f"order by {row['order_by_date']}"
+            )
+        print("\nIncoming deliveries preview:")
+        for row in incoming_deliveries_preview[:20]:
+            print(
+                f"  ingredient_id={row['inventory_item_id']} | delivery={row['delivery_date']} | "
+                f"qty={row['quantity']} | status={row['status']}"
+            )
+        print("\nCategory stock projection preview:")
+        for category_key, stock_values in list(category_stock_projection_series.items())[:10]:
+            print(f"  {category_key}: {stock_values}")
+        print("=== End LightGBM Forecast Results ===\n")
+
+        return {
+            'forecast_horizon_days': forecast_horizon_days,
+            'ship_time_days': ship_time_days,
+            'training_row_count': len(training_targets),
+            'trained_drink_count': len(ordered_drink_ids),
+            'forecast_row_count': len(prediction_rows),
+            'future_dates': future_dates,
+            'category_current_stock': {
+                key: round(value, 4) for key, value in category_current_stock.items()
+            },
+            'category_usage_series': {
+                key: [round(series.get(forecast_date, 0.0), 4) for forecast_date in future_dates]
+                for key, series in category_usage_series.items()
+            },
+            'category_incoming_series': {
+                key: [round(series.get(forecast_date, 0.0), 4) for forecast_date in future_dates]
+                for key, series in category_incoming_series.items()
+            },
+            'category_stock_projection_series': category_stock_projection_series,
+            'feature_names': feature_names,
+            'feature_importance': [round(float(value), 4) for value in feature_importance],
+            'prediction_rows': prediction_rows,
+            'incoming_deliveries_preview': incoming_deliveries_preview[:10],
+            'drink_forecast_preview': drink_forecast_preview[:10],
+            'ingredient_forecast_preview': prediction_rows[:10],
+        }
+    finally:
+        cur.close()
+
+
+def train_lightgbm_and_refresh_predictions(forecast_horizon_days=7):
+    forecast_payload = build_lightgbm_forecast_payload(forecast_horizon_days=forecast_horizon_days)
+    cur = mysql.connection.cursor()
+
+    try:
+        cur.execute("DELETE FROM order_predictions")
+        for prediction_row in forecast_payload['prediction_rows']:
+            cur.execute(
+                """
+                INSERT INTO order_predictions (
+                    inventory_item_id,
+                    prediction_quantity,
+                    prediction_order_by_date,
+                    prediction_date_created
+                )
+                VALUES (%s, %s, %s, NOW())
+                """,
+                (
+                    prediction_row['inventory_item_id'],
+                    prediction_row['prediction_quantity'],
+                    prediction_row['order_by_date'],
+                )
+            )
+
+        mysql.connection.commit()
+    except Exception:
+        mysql.connection.rollback()
+        raise
+    finally:
+        cur.close()
+
+    return {
+        'forecast_horizon_days': forecast_payload['forecast_horizon_days'],
+        'training_row_count': forecast_payload['training_row_count'],
+        'trained_drink_count': forecast_payload['trained_drink_count'],
+        'forecast_row_count': forecast_payload['forecast_row_count'],
+        'drink_forecast_preview': forecast_payload['drink_forecast_preview'],
+        'ingredient_forecast_preview': forecast_payload['ingredient_forecast_preview'],
+    }
+
+
+@app.route("/predictive/chart")
+@login_required
+@role_required('Manager')
+def predictive_forecast_chart():
+    selected_category = (request.args.get('category', 'all') or 'all').strip()
+
+    try:
+        forecast_payload = build_lightgbm_forecast_payload()
+        category_key = 'all' if selected_category.lower() == 'all' else selected_category.lower()
+        forecast_values = forecast_payload['category_stock_projection_series'].get(category_key)
+
+        if not forecast_values:
+            return build_forecast_chart_response(
+                title=f"{selected_category.title()} Stock On Hand Projection",
+                message='No forecast data is available for the selected category.',
+            )
+
+        chart_title = (
+            'All Categories Stock On Hand Projection'
+            if category_key == 'all'
+            else f"{selected_category} Stock On Hand Projection"
+        )
+        return build_forecast_chart_response(
+            title=chart_title,
+            forecast_dates=forecast_payload['future_dates'],
+            forecast_values=forecast_values,
+        )
+    except Exception as exc:
+        return build_forecast_chart_response(
+            title='Ingredient Forecast',
+            message=f"Unable to build forecast chart: {exc}",
+        )
+
+
 @app.route("/predictive")
 @login_required
 @role_required('Manager')
 def predictive_reports():
+    selected_category = request.args.get('category', 'all')
+    ship_time_days = PREDICTIVE_SHIP_TIME_DAYS
+    low_stock_threshold_days = PREDICTIVE_LOW_STOCK_THRESHOLD_DAYS
+
+    try:
+        infer_recipe_quantities_with_regression()
+        train_lightgbm_and_refresh_predictions()
+    except Exception as exc:
+        print(f"Predictive auto-refresh skipped: {exc}")
+
     cur = mysql.connection.cursor()
+
     cur.execute("SELECT id, drink_name FROM drinks ORDER BY drink_name")
     drinks = cur.fetchall()
+
+    cur.execute(
+        """
+        SELECT d.drink_name
+        FROM drinks d
+        LEFT JOIN drink_product dp ON dp.drink_id = d.id
+        WHERE dp.drink_id IS NULL
+        ORDER BY d.drink_name
+        """
+    )
+    blank_recipe_names = [row['drink_name'] for row in cur.fetchall()]
+
     cur.execute("SELECT id, item_name FROM inventory_items ORDER BY item_name")
     inventory_items = cur.fetchall()
+
+    cur.execute(
+        """
+        SELECT DISTINCT category
+        FROM inventory_items
+        WHERE category IS NOT NULL
+        ORDER BY category
+        """
+    )
+    categories = [row['category'] for row in cur.fetchall()]
+
+    predictive_query = """
+        SELECT i.id,
+               i.item_name,
+               i.category,
+               i.system_qty,
+               latest_prediction.prediction_quantity,
+               latest_prediction.prediction_order_by_date,
+               latest_prediction.prediction_date_created
+        FROM inventory_items i
+        LEFT JOIN (
+            SELECT op.inventory_item_id,
+                   op.prediction_quantity,
+                   op.prediction_order_by_date,
+                   op.prediction_date_created
+            FROM order_predictions op
+            JOIN (
+                SELECT inventory_item_id, MAX(prediction_date_created) AS latest_created
+                FROM order_predictions
+                GROUP BY inventory_item_id
+            ) newest_prediction
+                ON newest_prediction.inventory_item_id = op.inventory_item_id
+               AND newest_prediction.latest_created = op.prediction_date_created
+        ) latest_prediction
+            ON latest_prediction.inventory_item_id = i.id
+    """
+
+    predictive_params = []
+    if selected_category != 'all':
+        predictive_query += " WHERE LOWER(i.category) = LOWER(%s)"
+        predictive_params.append(selected_category)
+
+    predictive_query += " ORDER BY i.item_name"
+    cur.execute(predictive_query, tuple(predictive_params))
+    predictive_rows = cur.fetchall()
     cur.close()
+
+    today = dt.date.today()
+    predictive_items = []
+    recommended_orders = []
+
+    for row in predictive_rows:
+        prediction_date = row['prediction_order_by_date']
+        current_qty = round(float(row['system_qty'] or 0.0), 4)
+        prediction_quantity = float(row['prediction_quantity'] or 0.0)
+        projected_stockout_date = (
+            prediction_date + dt.timedelta(days=ship_time_days)
+            if prediction_date else None
+        )
+        days_until_stockout = (
+            (projected_stockout_date - today).days
+            if projected_stockout_date else None
+        )
+
+        if days_until_stockout is not None and days_until_stockout <= ship_time_days:
+            status_label = 'Critical'
+            status_class = 'predictive-status-critical'
+        elif days_until_stockout is not None and days_until_stockout <= low_stock_threshold_days:
+            status_label = 'Low'
+            status_class = 'predictive-status-low'
+        else:
+            status_label = 'In Stock'
+            status_class = 'predictive-status-ok'
+
+        predictive_item = {
+            'id': row['id'],
+            'item_name': row['item_name'],
+            'category': row['category'],
+            'system_qty': current_qty,
+            'prediction_quantity': prediction_quantity,
+            'order_by_date': fmt_date(prediction_date) if prediction_date else 'No prediction',
+            'stockout_date': fmt_date(projected_stockout_date) if projected_stockout_date else 'No prediction',
+            'prediction_created_at': (
+                row['prediction_date_created'].strftime('%m/%d/%Y %I:%M %p')
+                if row['prediction_date_created'] else 'N/A'
+            ),
+            'status_label': status_label,
+            'status_class': status_class,
+            'has_prediction': prediction_date is not None,
+            '_sort_stockout_date': projected_stockout_date,
+        }
+        predictive_items.append(predictive_item)
+
+        if (
+            predictive_item['has_prediction']
+            and prediction_quantity > 0
+            and status_label in ('Critical', 'Low')
+        ):
+            recommended_orders.append({
+                'item_name': row['item_name'],
+                'system_qty': current_qty,
+                'prediction_quantity': prediction_quantity,
+                'rounded_prediction_quantity': int(math.ceil(prediction_quantity)),
+                'order_by_date': predictive_item['order_by_date'],
+                'stockout_date': predictive_item['stockout_date'],
+                'prediction_created_at': predictive_item['prediction_created_at'],
+                '_sort_date': prediction_date,
+            })
+
+    predictive_items.sort(
+        key=lambda item: (
+            item['_sort_stockout_date'] or dt.date.max,
+            item['item_name'].lower(),
+        )
+    )
+    for item in predictive_items:
+        item.pop('_sort_stockout_date', None)
+
+    recommended_orders.sort(
+        key=lambda order: (
+            order['_sort_date'] or dt.date.max,
+            -order['prediction_quantity'],
+            order['item_name'],
+        )
+    )
+    for order in recommended_orders:
+        order.pop('_sort_date', None)
+    recommended_order = recommended_orders[0] if recommended_orders else None
 
     return render_template(
         "man-predictive-7.html",
         drinks=drinks,
-        inventory_items=inventory_items
+        inventory_items=inventory_items,
+        predictive_items=predictive_items,
+        categories=categories,
+        selected_category=selected_category,
+        recommended_order=recommended_order,
+        recommended_orders=recommended_orders,
+        ship_time_days=ship_time_days,
+        blank_recipe_names=blank_recipe_names,
     )
+
+
+@app.route("/predictive/import-pos", methods=['POST'])
+@login_required
+@role_required('Manager')
+def import_predictive_pos_data():
+    upload_file = request.files.get('file')
+    if not upload_file or not upload_file.filename:
+        return jsonify({"error": "Please choose an Excel file to upload."}), 400
+
+    if not upload_file.filename.lower().endswith('.xlsx'):
+        return jsonify({"error": "Only .xlsx POS files are supported."}), 400
+
+    try:
+        import_summary = import_pos_transactions(read_xlsx_rows(upload_file.read()))
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+    except Exception as exc:
+        return jsonify({"error": f"Unable to import POS data: {exc}"}), 500
+
+    created_drinks = import_summary['created_drinks']
+    message = (
+        f"Imported {import_summary['imported_count']} POS transactions and skipped "
+        f"{import_summary['skipped_count']} existing or invalid rows."
+    )
+    if created_drinks:
+        message += f" Added {len(created_drinks)} new drink(s)."
+
+    return jsonify({
+        "message": message,
+        **import_summary,
+    }), 200
+
+
+@app.route("/predictive/recipes/regression", methods=['POST'])
+@login_required
+@role_required('Manager')
+def run_predictive_recipe_regression():
+    try:
+        regression_summary = infer_recipe_quantities_with_regression()
+        forecast_summary = train_lightgbm_and_refresh_predictions()
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+    except Exception as exc:
+        return jsonify({"error": f"Unable to estimate recipe quantities: {exc}"}), 500
+
+    return jsonify({
+        "message": (
+            f"Updated {regression_summary['updated_pair_count']} recipe quantities across "
+            f"{regression_summary['updated_drink_count']} drinks and "
+            f"{regression_summary['updated_ingredient_count']} ingredients, then trained "
+            f"LightGBM on {forecast_summary['training_row_count']} daily POS rows and wrote "
+            f"{forecast_summary['forecast_row_count']} ingredient forecasts."
+        ),
+        "regression": regression_summary,
+        "forecast": forecast_summary,
+    }), 200
 
 
 @app.route("/predictive/recipe", methods=['POST'])
@@ -1403,7 +2648,6 @@ def upsert_predictive_recipe():
         return jsonify({"error": str(e)}), 500
     finally:
         cur.close()
-
 
 
 # =========================
