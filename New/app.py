@@ -6,6 +6,13 @@
 # IMPORTS
 # =========================
 from flask import Flask, request, render_template, redirect, url_for, abort, jsonify, Response
+try:
+    import MySQLdb
+except ImportError:
+    import pymysql
+
+    pymysql.install_as_MySQLdb()
+    import MySQLdb
 from flask_mysqldb import MySQL
 from flask_login import (
     LoginManager,
@@ -17,7 +24,6 @@ from flask_login import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
-import MySQLdb
 import json
 from datetime import datetime, timedelta
 #predictive imports
@@ -509,6 +515,75 @@ def fmt_date(d):
     return f"{d.month}/{d.day}/{d.year}"
 
 
+def get_projected_low_items(limit=None):
+    cur = mysql.connection.cursor()
+    cur.execute(
+        """
+        SELECT i.id,
+               i.item_name,
+               i.category,
+               i.system_qty,
+               latest_prediction.prediction_quantity,
+               latest_prediction.prediction_order_by_date,
+               latest_prediction.prediction_date_created
+        FROM inventory_items i
+        JOIN (
+            SELECT op.inventory_item_id,
+                   op.prediction_quantity,
+                   op.prediction_order_by_date,
+                   op.prediction_date_created
+            FROM order_predictions op
+            JOIN (
+                SELECT inventory_item_id, MAX(prediction_date_created) AS latest_created
+                FROM order_predictions
+                GROUP BY inventory_item_id
+            ) newest_prediction
+                ON newest_prediction.inventory_item_id = op.inventory_item_id
+               AND newest_prediction.latest_created = op.prediction_date_created
+        ) latest_prediction
+            ON latest_prediction.inventory_item_id = i.id
+        WHERE latest_prediction.prediction_order_by_date IS NOT NULL
+        ORDER BY latest_prediction.prediction_order_by_date ASC, i.item_name ASC
+        """
+    )
+    rows = cur.fetchall()
+    cur.close()
+
+    today = dt.date.today()
+    projected_items = []
+    for row in rows:
+        order_by_date = row['prediction_order_by_date']
+        projected_stockout_date = order_by_date + dt.timedelta(days=PREDICTIVE_SHIP_TIME_DAYS)
+        days_until_stockout = (projected_stockout_date - today).days
+
+        if days_until_stockout <= PREDICTIVE_SHIP_TIME_DAYS:
+            status_label = 'Critical'
+            status_class = 'critical'
+            pill_class = 'red'
+        elif days_until_stockout <= PREDICTIVE_LOW_STOCK_THRESHOLD_DAYS:
+            status_label = 'Low'
+            status_class = 'warning'
+            pill_class = 'gold'
+        else:
+            continue
+
+        projected_items.append({
+            'id': row['id'],
+            'item_name': row['item_name'],
+            'category': row['category'],
+            'system_qty': round(float(row['system_qty'] or 0.0), 4),
+            'prediction_quantity': round(float(row['prediction_quantity'] or 0.0), 4),
+            'order_by_date': fmt_date(order_by_date),
+            'stockout_date': fmt_date(projected_stockout_date),
+            'days_until_stockout': days_until_stockout,
+            'status_label': status_label,
+            'status_class': status_class,
+            'pill_class': pill_class,
+        })
+
+    return projected_items[:limit] if limit else projected_items
+
+
 # =========================
 # BASIC ROUTES
 # =========================
@@ -562,22 +637,11 @@ def logout():
 @login_required
 @role_required('Manager')
 def firstdash():
+    projected_low_items = get_projected_low_items()
+    low_count = len(projected_low_items)
+    lowest_items = projected_low_items[:4]
+
     cur = mysql.connection.cursor()
-
-    cur.execute("""
-        SELECT COUNT(*) AS low_count
-        FROM inventory_items
-        WHERE system_qty < 10
-    """)
-    low_count = cur.fetchone()['low_count']
-
-    cur.execute("""
-        SELECT item_name, system_qty
-        FROM inventory_items
-        ORDER BY system_qty ASC
-        LIMIT 4
-    """)
-    lowest_items = cur.fetchall()
 
     cur.execute("""
         SELECT COUNT(*) AS pending_delivery_count
@@ -667,22 +731,11 @@ def firstdash():
 @login_required
 @role_required('Employee')
 def employee_dashboard():
+    projected_low_items = get_projected_low_items()
+    low_count = len(projected_low_items)
+    lowest_items = projected_low_items[:10]
+
     cur = mysql.connection.cursor()
-
-    cur.execute("""
-        SELECT COUNT(*) AS low_count
-        FROM inventory_items
-        WHERE system_qty < 10
-    """)
-    low_count = cur.fetchone()['low_count']
-
-    cur.execute("""
-        SELECT item_name, system_qty
-        FROM inventory_items
-        ORDER BY system_qty ASC
-        LIMIT 10
-    """)
-    lowest_items = cur.fetchall()
 
     cur.execute("""
         SELECT i.item_name, SUM(ABS(iu.qty_change)) AS used_qty
@@ -746,24 +799,11 @@ def employee_dashboard():
 @login_required
 @role_required('ShiftLead')
 def shiftlead_dashboard():
+    projected_low_items = get_projected_low_items()
+    low_count = len(projected_low_items)
+    lowest_items = projected_low_items[:3]
+
     cur = mysql.connection.cursor()
-
-    # Low items count
-    cur.execute("""
-        SELECT COUNT(*) AS low_count
-        FROM inventory_items
-        WHERE system_qty < 10
-    """)
-    low_count = cur.fetchone()['low_count']
-
-    # Lowest items
-    cur.execute("""
-        SELECT item_name, system_qty
-        FROM inventory_items
-        ORDER BY system_qty ASC
-        LIMIT 3
-    """)
-    lowest_items = cur.fetchall()
 
     # Pending delivery audits
     cur.execute("""
@@ -1108,19 +1148,21 @@ def dashboard():
     unique_categories = [row['category'] for row in cur.fetchall()]
 
     inventory_query = "SELECT item_name, system_qty FROM inventory_items"
-    alerts_query = "SELECT item_name, system_qty FROM inventory_items WHERE system_qty < 10"
 
     if category != 'all':
         inventory_query += f" WHERE LOWER(category) = '{category.lower()}'"
-        alerts_query += f" AND LOWER(category) = '{category.lower()}'"
 
     cur.execute(inventory_query)
     all_inventory = cur.fetchall()
 
-    cur.execute(alerts_query)
-    restock_items = cur.fetchall()
-
     cur.close()
+
+    restock_items = get_projected_low_items()
+    if category != 'all':
+        restock_items = [
+            item for item in restock_items
+            if str(item.get('category') or '').lower() == category.lower()
+        ]
 
     return render_template('man-dash.html', 
                            inventory=all_inventory, 
@@ -2292,7 +2334,7 @@ def train_lightgbm_and_refresh_predictions(forecast_horizon_days=7):
 
 @app.route("/predictive/chart")
 @login_required
-@role_required('Manager')
+@role_required('Manager', 'ShiftLead', 'Employee')
 def predictive_forecast_chart():
     selected_category = (request.args.get('category', 'all') or 'all').strip()
 
@@ -2326,7 +2368,7 @@ def predictive_forecast_chart():
 
 @app.route("/predictive")
 @login_required
-@role_required('Manager')
+@role_required('Manager', 'ShiftLead', 'Employee')
 def predictive_reports():
     selected_category = request.args.get('category', 'all')
     ship_time_days = PREDICTIVE_SHIP_TIME_DAYS
