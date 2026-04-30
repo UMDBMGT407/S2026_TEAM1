@@ -112,11 +112,9 @@
             <div class="sl2-col-ingredient">Ingredient</div>
             <div class="sl2-col-center">System Qty</div>
             <div class="sl2-col-center">Physical Count</div>
-            <div class="sl2-col-center">Difference</div>
           </div>
           <div class="table-scroll-container">
           {% for item in inventory_items %}
-          {% set diff = item.physical_count - item.system_qty %}
           <div class="sl2-table-row">
             <div class="sl2-col-ingredient">{{ item.item_name }}</div>
             <div class="sl2-col-center">{{ item.system_qty }}</div>
@@ -125,13 +123,12 @@
                 class="sl2-count-input"
                 type="number"
                 step="1"
+                min="0"
                 name="physical_count_{{ item.inventory_item_id }}"
-                value="{{ item.physical_count }}"
+                value="{{  item.physical_count if item.physical_count is not none else ''  }}"
+                required
                 aria-label="Physical count {{ item.item_name }}"
               >
-            </div>
-            <div class="sl2-col-center {% if diff != 0 %}sl2-text-danger{% endif %}">
-              {{ diff }}
             </div>
           </div>
           {% endfor %}
