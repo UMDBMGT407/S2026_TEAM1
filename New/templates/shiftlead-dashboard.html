@@ -62,7 +62,7 @@
         <article class="shiftlead-card">
           <div class="shiftlead-card-label">Low Items</div>
           <div class="shiftlead-card-value shiftlead-red">{{ low_count }}</div>
-          <div class="shiftlead-card-note">Need attention during this shift</div>
+          <div class="shiftlead-card-note">Projected to run out soon</div>
         </article>
 
         <article class="shiftlead-card">
@@ -98,147 +98,131 @@
 
       <section class="shiftlead-content-grid">
 
-        <article class="shiftlead-panel">
-          <h2 class="shiftlead-panel-title">Needs Attention</h2>
+        <div class="shiftlead-column-stack">
+          <article class="shiftlead-panel">
+            <h2 class="shiftlead-panel-title">Predictive Stock Forecast</h2>
+            <p class="shiftlead-panel-subtitle">
+              Projected stock on hand from the predictive system.
+            </p>
 
-          <div class="shiftlead-alert-list">
+            <div class="shiftlead-chart-box dashboard-predictive-chart">
+              <img
+                class="dashboard-predictive-image"
+                src="{{ url_for('predictive_forecast_chart', category='all') }}"
+                alt="Predictive stock forecast chart"
+              >
+            </div>
+          </article>
 
-            {% if lowest_items %}
-              {% for item in lowest_items %}
-              <div class="shiftlead-alert-item {% if item.system_qty < 5 %}shiftlead-alert-critical{% else %}shiftlead-alert-warning{% endif %}">
-                <div class="shiftlead-item-title">{{ item.item_name }} is low</div>
-                <div class="shiftlead-item-desc">
-                  Current stock is {{ item.system_qty }} units. Check inventory and update counts if needed.
+          <article class="shiftlead-panel">
+            <h2 class="shiftlead-panel-title">Top Used</h2>
+
+            <table class="shiftlead-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Item</th>
+                  <th>Used</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in top_used_items %}
+                <tr>
+                  <td><span class="shiftlead-rank">{{ loop.index }}</span></td>
+                  <td>{{ item.item_name }}</td>
+                  <td>{{ item.used_qty }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="3">No usage data this week.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </article>
+        </div>
+
+        <div class="shiftlead-column-stack">
+          <article class="shiftlead-panel">
+            <h2 class="shiftlead-panel-title">Needs Attention</h2>
+
+            <div class="shiftlead-alert-list">
+
+              {% if lowest_items %}
+                {% for item in lowest_items %}
+                <div class="shiftlead-alert-item shiftlead-alert-{{ item.status_class }}">
+                  <div class="shiftlead-item-title">{{ item.item_name }} may run out soon</div>
+                  <div class="shiftlead-item-desc">
+                    Projected to run out by {{ item.stockout_date }}. Order by {{ item.order_by_date }}.
+                  </div>
+                  <a class="shiftlead-inline-link" href="{{ url_for('predictive_reports') }}">Go to Stock Forecast →</a>
                 </div>
-                <a class="shiftlead-inline-link" href="{{ url_for('inventory') }}">Go to Inventory →</a>
-              </div>
-              {% endfor %}
-            {% endif %}
-
-            {% if pending_delivery %}
-            <div class="shiftlead-alert-item shiftlead-alert-warning">
-              <div class="shiftlead-item-title">Delivery #{{ pending_delivery.id }} needs verification</div>
-              <div class="shiftlead-item-desc">
-                A purchase order was marked received. The next required step is delivery audit.
-              </div>
-              <a class="shiftlead-inline-link" href="{{ url_for('delivery_audit_list') }}">Open Delivery Audit →</a>
-            </div>
-            {% endif %}
-
-            {% if draft_audit %}
-            <div class="shiftlead-alert-item shiftlead-alert-good">
-              <div class="shiftlead-item-title">Draft audit already exists</div>
-              <div class="shiftlead-item-desc">
-                Instead of starting a new audit, continue the one already in progress.
-              </div>
-              <a class="shiftlead-inline-link" href="{{ url_for('sl_audit_1') }}">Continue Audit →</a>
-            </div>
-            {% endif %}
-
-            {% if not lowest_items and not pending_delivery and not draft_audit %}
-            <div class="shiftlead-alert-item shiftlead-alert-good">
-              <div class="shiftlead-item-title">No urgent tasks right now</div>
-              <div class="shiftlead-item-desc">
-                Inventory, delivery audits, and draft audits currently do not need immediate attention.
-              </div>
-            </div>
-            {% endif %}
-
-          </div>
-        </article>
-
-        <article class="shiftlead-panel">
-          <h2 class="shiftlead-panel-title">Usage Trend</h2>
-          <p class="shiftlead-panel-subtitle">
-            A quick weekly trend to help the shift lead see when ingredient use is rising.
-          </p>
-
-          <div class="shiftlead-chart-box">
-            <svg viewBox="0 0 700 250" preserveAspectRatio="none" aria-label="Usage trend chart">
-              <line x1="40" y1="220" x2="680" y2="220" stroke="#c9aba0" stroke-width="2" />
-              <line x1="40" y1="30" x2="40" y2="220" stroke="#c9aba0" stroke-width="2" />
-
-              {% if usage_trend_points %}
-              <polyline
-                fill="none"
-                stroke="#964f4c"
-                stroke-width="4"
-                points="{{ usage_trend_points }}"
-              />
-              {% for point in usage_points %}
-              <circle cx="{{ point.x }}" cy="{{ point.y }}" r="5" fill="#964f4c" />
-              <text x="{{ point.x - 10 }}" y="240" font-size="12" fill="#7b5d59">{{ point.label }}</text>
-              {% endfor %}
-              {% else %}
-              <text x="250" y="130" font-size="18" fill="#7b5d59">No usage data this week</text>
+                {% endfor %}
               {% endif %}
-            </svg>
-          </div>
-        </article>
 
-      </section>
+              {% if pending_delivery %}
+              <div class="shiftlead-alert-item shiftlead-alert-warning">
+                <div class="shiftlead-item-title">Delivery #{{ pending_delivery.id }} needs verification</div>
+                <div class="shiftlead-item-desc">
+                  A purchase order was marked received. The next required step is delivery audit.
+                </div>
+                <a class="shiftlead-inline-link" href="{{ url_for('delivery_audit_list') }}">Open Delivery Audit →</a>
+              </div>
+              {% endif %}
 
-      <section class="shiftlead-bottom-grid">
+              {% if draft_audit %}
+              <div class="shiftlead-alert-item shiftlead-alert-good">
+                <div class="shiftlead-item-title">Draft audit already exists</div>
+                <div class="shiftlead-item-desc">
+                  Instead of starting a new audit, continue the one already in progress.
+                </div>
+                <a class="shiftlead-inline-link" href="{{ url_for('sl_audit_1') }}">Continue Audit →</a>
+              </div>
+              {% endif %}
 
-        <article class="shiftlead-panel">
-          <h2 class="shiftlead-panel-title">Top Used</h2>
+              {% if not lowest_items and not pending_delivery and not draft_audit %}
+              <div class="shiftlead-alert-item shiftlead-alert-good">
+                <div class="shiftlead-item-title">No urgent tasks right now</div>
+                <div class="shiftlead-item-desc">
+                  Inventory, delivery audits, and draft audits currently do not need immediate attention.
+                </div>
+              </div>
+              {% endif %}
 
-          <table class="shiftlead-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Item</th>
-                <th>Used</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in top_used_items %}
-              <tr>
-                <td><span class="shiftlead-rank">{{ loop.index }}</span></td>
-                <td>{{ item.item_name }}</td>
-                <td>{{ item.used_qty }}</td>
-              </tr>
-              {% else %}
-              <tr>
-                <td colspan="3">No usage data this week.</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </article>
+            </div>
+          </article>
 
-        <article class="shiftlead-panel">
-          <h2 class="shiftlead-panel-title">Lowest Items</h2>
+          <article class="shiftlead-panel">
+            <h2 class="shiftlead-panel-title">Lowest Items</h2>
 
-          <table class="shiftlead-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Item</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in lowest_items %}
-              <tr>
-                <td><span class="shiftlead-rank">{{ loop.index }}</span></td>
-                <td>{{ item.item_name }}</td>
-                <td>
-                  {% if item.system_qty < 5 %}
-                    <span class="shiftlead-pill shiftlead-pill-red">Critical</span>
-                  {% else %}
-                    <span class="shiftlead-pill shiftlead-pill-gold">Low</span>
-                  {% endif %}
-                </td>
-              </tr>
-              {% else %}
-              <tr>
-                <td colspan="3">No inventory items found.</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </article>
+            <table class="shiftlead-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Item</th>
+                  <th>Out By</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in lowest_items %}
+                <tr>
+                  <td><span class="shiftlead-rank">{{ loop.index }}</span></td>
+                  <td>{{ item.item_name }}</td>
+                  <td>{{ item.stockout_date }}</td>
+                  <td>
+                    <span class="shiftlead-pill shiftlead-pill-{{ item.pill_class }}">{{ item.status_label }}</span>
+                  </td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="3">No inventory items found.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </article>
+        </div>
 
       </section>
 
