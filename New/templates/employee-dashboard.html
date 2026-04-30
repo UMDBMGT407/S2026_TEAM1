@@ -25,8 +25,8 @@
       </div>
     </div>
 
-    <div class="sidebar-bottom">
-        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    <div>
+      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
     </div>
   </nav>
 
@@ -56,57 +56,32 @@
         </div>
 
         <div class="employee-card">
-          <div class="employee-card-label">Lowest Ingredient Right Now</div>
+          <div class="employee-card-label">Soonest Projected Runout</div>
           <div class="employee-card-value employee-red">{{ lowest_item }}</div>
-          <div class="employee-card-note">Needs close monitoring during the shift</div>
+          <div class="employee-card-note">Forecasted to need attention first</div>
         </div>
 
         <div class="employee-card">
           <div class="employee-card-label">Ingredients to Watch</div>
           <div class="employee-card-value employee-gold">{{ low_count }}</div>
-          <div class="employee-card-note">Items currently below 10 units</div>
+          <div class="employee-card-note">Items projected to run out soon</div>
         </div>
       </section>
 
       <section class="employee-content-grid">
 
         <div class="employee-panel">
-          <h2 class="employee-panel-title">Ingredient Usage This Week</h2>
+          <h2 class="employee-panel-title">Predictive Stock Forecast</h2>
           <p class="employee-panel-subtitle">
-            A simple weekly trend so employees can understand what ingredients move the most.
+            Projected stock on hand from the predictive system.
           </p>
 
-          <div class="employee-chart-box">
-            <svg viewBox="0 0 700 250" preserveAspectRatio="none" aria-label="Weekly ingredient usage chart">
-              <line x1="40" y1="220" x2="680" y2="220" stroke="#c9aba0" stroke-width="2" />
-              <line x1="40" y1="30" x2="40" y2="220" stroke="#c9aba0" stroke-width="2" />
-
-              {% if usage_trend_points %}
-              <polyline
-                fill="none"
-                stroke="#964f4c"
-                stroke-width="4"
-                points="{{ usage_trend_points }}"
-              />
-
-              {% for point in usage_points %}
-              <circle cx="{{ point.x }}" cy="{{ point.y }}" r="5" fill="#964f4c" />
-              <text x="{{ point.x - 10 }}" y="238" font-size="12" fill="#7b5d59">
-                {{ point.label }}
-              </text>
-              {% endfor %}
-
-              {% else %}
-              <text x="250" y="130" font-size="18" fill="#7b5d59">
-                No usage data this week
-              </text>
-              {% endif %}
-            </svg>
-
-            <div class="employee-axis-labels">
-              <span>Lower usage</span>
-              <span>Higher usage</span>
-            </div>
+          <div class="employee-chart-box dashboard-predictive-chart">
+            <img
+              class="dashboard-predictive-image"
+              src="{{ url_for('predictive_forecast_chart', category='all') }}"
+              alt="Predictive stock forecast chart"
+            >
           </div>
         </div>
 
@@ -126,9 +101,9 @@
 
             {% if lowest_item != 'N/A' %}
             <div class="employee-insight-item employee-critical">
-              <div class="employee-insight-title">{{ lowest_item }} is the lowest item</div>
+              <div class="employee-insight-title">{{ lowest_item }} is projected to run out first</div>
               <div class="employee-insight-desc">
-                This ingredient should be checked first on the live inventory page.
+                This ingredient should be checked first because the forecast marks it as the soonest runout.
               </div>
             </div>
             {% endif %}
@@ -137,7 +112,7 @@
             <div class="employee-insight-item employee-warning">
               <div class="employee-insight-title">{{ low_count }} items need attention</div>
               <div class="employee-insight-desc">
-                These items are below 10 units and should be monitored during the shift.
+                These items are forecasted to run out soon and should be monitored during the shift.
               </div>
             </div>
             {% else %}
@@ -184,13 +159,14 @@
         </div>
 
         <div class="employee-panel">
-          <h2 class="employee-panel-title">Top 10 Lowest Ingredients Right Now</h2>
+          <h2 class="employee-panel-title">Top 10 Projected Runout Items</h2>
 
           <table class="employee-table">
             <thead>
               <tr>
                 <th>Rank</th>
                 <th>Ingredient</th>
+                <th>Out By</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -200,14 +176,9 @@
               <tr>
                 <td><span class="employee-rank">{{ loop.index }}</span></td>
                 <td>{{ item.item_name }}</td>
+                <td>{{ item.stockout_date }}</td>
                 <td>
-                  {% if item.system_qty < 5 %}
-                    <span class="employee-pill employee-pill-red">Critical</span>
-                  {% elif item.system_qty < 10 %}
-                    <span class="employee-pill employee-pill-gold">Low</span>
-                  {% else %}
-                    <span class="employee-pill employee-pill-green">Watch</span>
-                  {% endif %}
+                  <span class="employee-pill employee-pill-{{ item.pill_class }}">{{ item.status_label }}</span>
                 </td>
               </tr>
               {% else %}
