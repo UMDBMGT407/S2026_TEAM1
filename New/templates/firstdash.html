@@ -36,9 +36,7 @@
       </div>
     </div>
 
-    <div class="sidebar-bottom">
-        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-    </div>
+    <a class="logout-btn" href="{{ url_for('logout') }}">Logout</a>
   </div>
 
   <div class="main-content-area">
@@ -73,7 +71,7 @@
           <div class="fd-card">
             <div class="fd-label">Low Stock Items</div>
             <div class="fd-value fd-status-critical">{{ low_count }}</div>
-            <div class="fd-note">Items below 10 units need attention</div>
+            <div class="fd-note">Items projected to run out soon</div>
           </div>
 
           <div class="fd-card">
@@ -118,57 +116,64 @@
 
         <section class="fd-content-grid">
 
-          <div class="fd-panel">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h2>Weekly Ingredient Usage</h2>
+          <div class="fd-column-stack">
+            <div class="fd-panel">
+              <h2>Predictive Stock Forecast</h2>
 
-              <a href="{{ url_for('dashboard') }}" class="fd-btn fd-btn-primary py-1 px-3" style="font-size: 16px; text-decoration: none;">
-                View Detailed Analytics →
-              </a>
+              <div class="fd-chart dashboard-predictive-chart">
+                <img
+                  class="dashboard-predictive-image"
+                  src="{{ url_for('predictive_forecast_chart', category='all') }}"
+                  alt="Predictive stock forecast chart"
+                >
+              </div>
             </div>
 
-            <div class="fd-chart">
-              <svg viewBox="0 0 700 250" preserveAspectRatio="none" aria-label="Usage trend chart">
-                <line x1="40" y1="220" x2="680" y2="220" stroke="#c9aba0" stroke-width="2" />
-                <line x1="40" y1="30" x2="40" y2="220" stroke="#c9aba0" stroke-width="2" />
+            <div class="fd-panel">
+              <h2>Top Items to Reorder</h2>
 
-                {% if usage_trend_points %}
-                <polyline
-                  fill="none"
-                  stroke="#964f4c"
-                  stroke-width="4"
-                  points="{{ usage_trend_points }}"
-                />
+              <table class="fd-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Out By</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
 
-                {% for point in usage_points %}
-                <circle cx="{{ point.x }}" cy="{{ point.y }}" r="5" fill="#964f4c" />
-                <text x="{{ point.x - 10 }}" y="240" font-size="12" fill="#7b5d59">
-                  {{ point.label }}
-                </text>
-                {% endfor %}
-
-                {% else %}
-                <text x="250" y="130" font-size="18" fill="#7b5d59">
-                  No usage data this week
-                </text>
-                {% endif %}
-              </svg>
+                <tbody>
+                  {% for item in lowest_items %}
+                  <tr>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.stockout_date }}</td>
+                    <td>
+                      <span class="fd-pill {{ item.pill_class }}">{{ item.status_label }}</span>
+                    </td>
+                  </tr>
+                  {% else %}
+                  <tr>
+                    <td colspan="3">No inventory items found.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
           </div>
 
-          <div class="fd-panel">
-            <h2>Needs Attention</h2>
+          <div class="fd-column-stack">
+            <div class="fd-panel">
+              <h2>Needs Attention</h2>
 
-            <div class="fd-alert-list">
+              <div class="fd-alert-list">
 
               {% if lowest_items %}
                 {% for item in lowest_items %}
-                <div class="fd-alert-item {% if item.system_qty < 5 %}critical{% else %}warning{% endif %}">
-                  <div class="fd-alert-title">{{ item.item_name }} is low</div>
+                <div class="fd-alert-item {{ item.status_class }}">
+                  <div class="fd-alert-title">{{ item.item_name }} may run out soon</div>
                   <div class="fd-alert-desc">
-                    Current stock is {{ item.system_qty }} units.
+                    Projected to run out by {{ item.stockout_date }}. Order by {{ item.order_by_date }}.
                   </div>
-                  <a class="shiftlead-inline-link" href="{{ url_for('inventory') }}">Go to Inventory →</a>
+                  <a class="shiftlead-inline-link" href="{{ url_for('predictive_reports') }}">Go to Stock Forecast →</a>
                 </div>
                 {% endfor %}
               {% endif %}
@@ -212,97 +217,60 @@
               </div>
               {% endif %}
 
+              </div>
             </div>
-          </div>
 
-        </section>
+            <div class="fd-panel">
+              <h2>Recommended Next Steps</h2>
 
-        <section class="fd-bottom-grid">
+              <div class="fd-task-list">
 
-          <div class="fd-panel">
-            <h2>Top Items to Reorder</h2>
-
-            <table class="fd-table">
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>Qty Left</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {% for item in lowest_items %}
-                <tr>
-                  <td>{{ item.item_name }}</td>
-                  <td>{{ item.system_qty }}</td>
-                  <td>
-                    {% if item.system_qty < 5 %}
-                      <span class="fd-pill red">Critical</span>
-                    {% else %}
-                      <span class="fd-pill gold">Low</span>
-                    {% endif %}
-                  </td>
-                </tr>
-                {% else %}
-                <tr>
-                  <td colspan="3">No inventory items found.</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-
-          <div class="fd-panel">
-            <h2>Recommended Next Steps</h2>
-
-            <div class="fd-task-list">
-
-              {% if lowest_items %}
-              <div class="fd-task-item">
-                <div class="fd-task-title">1. Review low stock items</div>
-                <div class="fd-task-desc">
-                  Check the lowest inventory items before the store runs out.
+                {% if lowest_items %}
+                <div class="fd-task-item">
+                  <div class="fd-task-title">1. Review projected runout items</div>
+                  <div class="fd-task-desc">
+                    Check items forecasted to run out soon and start ordering where needed.
+                  </div>
                 </div>
-              </div>
-              {% endif %}
+                {% endif %}
 
-              {% if pending_audit %}
-              <div class="fd-task-item">
-                <div class="fd-task-title">2. Approve submitted audit</div>
-                <div class="fd-task-desc">
-                  Review the pending audit submitted by {{ pending_audit.conducted_by_name }}.
+                {% if pending_audit %}
+                <div class="fd-task-item">
+                  <div class="fd-task-title">2. Approve submitted audit</div>
+                  <div class="fd-task-desc">
+                    Review the pending audit submitted by {{ pending_audit.conducted_by_name }}.
+                  </div>
                 </div>
-              </div>
-              {% endif %}
+                {% endif %}
 
-              {% if pending_delivery %}
-              <div class="fd-task-item">
-                <div class="fd-task-title">3. Verify incoming delivery</div>
-                <div class="fd-task-desc">
-                  Complete the delivery audit for order #{{ pending_delivery.id }}.
+                {% if pending_delivery %}
+                <div class="fd-task-item">
+                  <div class="fd-task-title">3. Verify incoming delivery</div>
+                  <div class="fd-task-desc">
+                    Complete the delivery audit for order #{{ pending_delivery.id }}.
+                  </div>
                 </div>
-              </div>
-              {% endif %}
+                {% endif %}
 
-              {% if manager_draft_audit %}
-              <div class="fd-task-item">
-                <div class="fd-task-title">4. Continue your draft audit</div>
-                <div class="fd-task-desc">
-                  Finish the audit you already started before beginning a new one.
+                {% if manager_draft_audit %}
+                <div class="fd-task-item">
+                  <div class="fd-task-title">4. Continue your draft audit</div>
+                  <div class="fd-task-desc">
+                    Finish the audit you already started before beginning a new one.
+                  </div>
                 </div>
-              </div>
-              {% endif %}
+                {% endif %}
 
-              {% if not lowest_items and not pending_audit and not pending_delivery and not manager_draft_audit %}
-              <div class="fd-task-item">
-                <div class="fd-task-title">Everything looks good</div>
-                <div class="fd-task-desc">
-                  No urgent manager action is required right now.
+                {% if not lowest_items and not pending_audit and not pending_delivery and not manager_draft_audit %}
+                <div class="fd-task-item">
+                  <div class="fd-task-title">Everything looks good</div>
+                  <div class="fd-task-desc">
+                    No urgent manager action is required right now.
+                  </div>
                 </div>
-              </div>
-              {% endif %}
+                {% endif %}
 
+              </div>
             </div>
           </div>
 
