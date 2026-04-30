@@ -40,7 +40,7 @@ CREATE TABLE inventory_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     item_name VARCHAR(100) NOT NULL UNIQUE,
     category VARCHAR(50) NOT NULL,
-    system_qty FLOAT NOT NULL DEFAULT 0,
+    system_qty INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -82,8 +82,8 @@ CREATE TABLE audit_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     audit_id INT NOT NULL,
     inventory_item_id INT NOT NULL,
-    system_qty FLOAT NOT NULL,
-    physical_count FLOAT NOT NULL,
+    system_qty INT NOT NULL,
+    physical_count INT NULL,
     CONSTRAINT fk_audit_items_audit
         FOREIGN KEY (audit_id) REFERENCES audits(id)
         ON UPDATE CASCADE
@@ -130,7 +130,7 @@ CREATE TABLE purchase_order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     purchase_order_id INT NOT NULL,
     inventory_item_id INT NOT NULL,
-    quantity FLOAT NOT NULL,
+    quantity INT NOT NULL,
     CONSTRAINT fk_purchase_order_items_order
         FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders(id)
         ON UPDATE CASCADE
@@ -149,9 +149,9 @@ CREATE TABLE inventory_updates (
     inventory_item_id INT NOT NULL,
     updated_by INT NOT NULL,
     action_type ENUM('Add', 'Sub', 'Correct', 'Audit', 'Restock') NOT NULL,
-    qty_change FLOAT NOT NULL,
-    old_qty FLOAT NOT NULL,
-    new_qty FLOAT NOT NULL,
+    qty_change INT NOT NULL,
+    old_qty INT NOT NULL,
+    new_qty INT NOT NULL,
     audit_id INT NULL,
     purchase_order_id INT NULL,
     reason VARCHAR(255) NULL,
@@ -181,8 +181,8 @@ CREATE TABLE delivery_audits (
     id INT AUTO_INCREMENT PRIMARY KEY,
     purchase_order_id INT NOT NULL,
     inventory_item_id INT NOT NULL,
-    quantity_ordered FLOAT NOT NULL,
-    quantity_received FLOAT NOT NULL,
+    quantity_ordered INT NOT NULL,
+    quantity_received INT NOT NULL,
     received_by INT NOT NULL,
     received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     notes TEXT,
@@ -207,7 +207,7 @@ CREATE TABLE delivery_audits (
 CREATE TABLE order_predictions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     inventory_item_id INT NOT NULL,
-    prediction_quantity FLOAT NOT NULL,
+    prediction_quantity INT NOT NULL,
     prediction_order_by_date DATE NOT NULL,
     prediction_date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_order_predictions_inventory
@@ -225,7 +225,7 @@ CREATE TABLE pos_transactions (
     transaction_date DATETIME NOT NULL,
     transaction_amount DECIMAL(10,2) NOT NULL,
     drink_id INT NOT NULL,
-    quantity FLOAT NOT NULL DEFAULT 1,
+    quantity INT NOT NULL DEFAULT 1,
     CONSTRAINT fk_pos_transactions_drink
         FOREIGN KEY (drink_id) REFERENCES drinks(id)
         ON UPDATE CASCADE
@@ -238,7 +238,7 @@ CREATE TABLE pos_transactions (
 CREATE TABLE drink_product (
     drink_id INT NOT NULL,
     inventory_item_id INT NOT NULL,
-    quantity FLOAT DEFAULT 1,
+    quantity INT DEFAULT 1,
     PRIMARY KEY (drink_id, inventory_item_id),
     CONSTRAINT fk_drink_product_drink
         FOREIGN KEY (drink_id) REFERENCES drinks(id)
