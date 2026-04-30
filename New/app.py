@@ -1232,11 +1232,73 @@ def analytics_data():
     audit_map = {row['audit_date']: float(row['total_diff']) for row in cur.fetchall()}
     audit_values = [audit_map.get(day, 0) for day in days_list]
 
+    # --- 3. DATA TABLE (INVENTORY MOVEMENT) ---
+    if category == 'all':
+        usage_bd_query = """
+            SELECT ii.category as name, 
+                   SUM(CASE WHEN iu.qty_change > 0 THEN iu.qty_change ELSE 0 END) as restocks,
+                   SUM(CASE WHEN iu.qty_change < 0 THEN ABS(iu.qty_change) ELSE 0 END) as uses,
+                   SUM(ABS(iu.qty_change)) as total
+            FROM inventory_updates iu
+            JOIN inventory_items ii ON iu.inventory_item_id = ii.id
+            WHERE iu.created_at BETWEEN %s AND %s
+            GROUP BY ii.category
+            ORDER BY total DESC
+        """
+        cur.execute(usage_bd_query, u_params)
+    else:
+        usage_bd_query = """
+            SELECT ii.item_name as name, 
+                   SUM(CASE WHEN iu.qty_change > 0 THEN iu.qty_change ELSE 0 END) as restocks,
+                   SUM(CASE WHEN iu.qty_change < 0 THEN ABS(iu.qty_change) ELSE 0 END) as uses,
+                   SUM(ABS(iu.qty_change)) as total
+            FROM inventory_updates iu
+            JOIN inventory_items ii ON iu.inventory_item_id = ii.id
+            WHERE iu.created_at BETWEEN %s AND %s AND ii.category = %s
+            GROUP BY ii.id, ii.item_name
+            ORDER BY total DESC
+        """
+        cur.execute(usage_bd_query, u_params)
+    
+    item_breakdown = cur.fetchall()
+
+    # --- 4. DATA TABLE (AUDIT DISCREPANCIES) ---
+    if category == 'all':
+        audit_bd_query = """
+            SELECT ii.category as name, 
+                   COUNT(ai.id) as audit_count,
+                   SUM(ai.physical_count - ai.system_qty) as total
+            FROM audit_items ai
+            JOIN audits a ON ai.audit_id = a.id
+            JOIN inventory_items ii ON ai.inventory_item_id = ii.id
+            WHERE a.status = 'Approved' AND a.approved_at BETWEEN %s AND %s
+            GROUP BY ii.category
+            ORDER BY ABS(total) DESC
+        """
+        cur.execute(audit_bd_query, a_params)
+    else:
+        audit_bd_query = """
+            SELECT ii.item_name as name, 
+                   COUNT(ai.id) as audit_count,
+                   SUM(ai.physical_count - ai.system_qty) as total
+            FROM audit_items ai
+            JOIN audits a ON ai.audit_id = a.id
+            JOIN inventory_items ii ON ai.inventory_item_id = ii.id
+            WHERE a.status = 'Approved' AND a.approved_at BETWEEN %s AND %s AND ii.category = %s
+            GROUP BY ii.id, ii.item_name
+            ORDER BY ABS(total) DESC
+        """
+        cur.execute(audit_bd_query, a_params)
+
+    audit_breakdown = cur.fetchall()
+
     cur.close()
     return jsonify({
         "labels": labels,
         "usage": usage_values,
-        "audit": audit_values
+        "audit": audit_values,
+        "item_breakdown": item_breakdown,
+        "audit_breakdown": audit_breakdown
     })
 
 
