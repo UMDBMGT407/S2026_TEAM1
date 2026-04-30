@@ -238,7 +238,7 @@ CREATE TABLE pos_transactions (
 CREATE TABLE drink_product (
     drink_id INT NOT NULL,
     inventory_item_id INT NOT NULL,
-    quantity INT DEFAULT 1,
+    quantity FLOAT DEFAULT 1,
     PRIMARY KEY (drink_id, inventory_item_id),
     CONSTRAINT fk_drink_product_drink
         FOREIGN KEY (drink_id) REFERENCES drinks(id)
