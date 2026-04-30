@@ -148,7 +148,7 @@ CREATE TABLE inventory_updates (
     id INT AUTO_INCREMENT PRIMARY KEY,
     inventory_item_id INT NOT NULL,
     updated_by INT NOT NULL,
-    action_type ENUM('Add', 'Sub', 'Correct', 'Receive', 'Audit', 'Restock') NOT NULL,
+    action_type ENUM('Add', 'Sub', 'Correct', 'Audit', 'Restock') NOT NULL,
     qty_change FLOAT NOT NULL,
     old_qty FLOAT NOT NULL,
     new_qty FLOAT NOT NULL,
