@@ -287,19 +287,24 @@
         const qtyInput = document.getElementById("popupQuantity");
         const changeAmount = Number(qtyInput.value);
         const action = currentMode;
-
+    
+        // 1. Grab the item name directly from the popup's title bar
+        const itemName = document.getElementById("popupIngredientName").innerText;
+    
         try {
             const response = await fetch(`/inventory/${currentIngredientKey}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: action, qty: changeAmount })
             });
-
+    
             if (response.ok) {
                 closePopup();
-                reloadWithToast("Inventory updated successfully!");
+                // 2. Inject the name into the dynamic toast message
+                reloadWithToast(`${itemName} updated successfully!`);
             } else {
-                showToast("Error updating inventory.");
+                // Optional: Also make the error message dynamic
+                showToast(`Error updating ${itemName}.`);
             }
         } catch (err) {
             showToast("Server connection failed.");
