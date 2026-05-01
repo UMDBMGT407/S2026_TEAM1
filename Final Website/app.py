@@ -54,7 +54,7 @@ app.secret_key = 'seaquillr00tyD:'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'bmgts101t01'
 app.config['MYSQL_PASSWORD'] = 'EG^Mso3248797'
-app.config['MYSQL_DB'] = 'bmgts101t01_'
+app.config['MYSQL_DB'] = 'bmgts101t01_kft_inventory'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
