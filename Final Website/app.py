@@ -45,16 +45,16 @@ import xml.etree.ElementTree as ET
 # CREATE FLASK APP
 # =========================
 app = Flask(__name__)
-app.secret_key = '407TEAM1'
+app.secret_key = 'seaquillr00tyD:'
 
 
 # =========================
 # MYSQL CONFIGURATION
 # =========================
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '407TEAM1'
-app.config['MYSQL_DB'] = 'kft_inventory'
+app.config['MYSQL_USER'] = 'bmgts101t01'
+app.config['MYSQL_PASSWORD'] = 'EG^Mso3248797'
+app.config['MYSQL_DB'] = 'bmgts101t01_'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
