@@ -197,7 +197,8 @@
 
                 <a
                   class="btn-create-order predictive-create-order-btn"
-                  href="{{ url_for('create_purchase_order_page') }}">
+                  id="predictive-create-order-link"
+                  href="{{ url_for('create_purchase_order_page', product_id=recommended_order.inventory_item_id, qty=recommended_order.rounded_prediction_quantity) }}">
                   Create Order
                 </a>
               {% else %}
@@ -336,6 +337,7 @@
     const predictiveOrderDate = document.getElementById('predictive-order-date');
     const predictiveOrderUpdated = document.getElementById('predictive-order-updated');
     const predictiveMainTable = document.getElementById('predictive-main-table');
+    const predictiveCreateOrderLink = document.getElementById('predictive-create-order-link');
     const recipeInventoryItems = JSON.parse(
       document.getElementById('recipe-inventory-items-data')?.textContent || '[]'
     );
@@ -345,6 +347,7 @@
     const predictiveRecipeSaveUrl = "{{ url_for('upsert_predictive_recipe') }}";
     const predictivePosImportUrl = "{{ url_for('import_predictive_pos_data') }}";
     const predictiveBaseUrl = "{{ url_for('predictive_reports') }}";
+    const predictiveCreateOrderBaseUrl = "{{ url_for('create_purchase_order_page') }}";
 
     const getRecipePopupDrinkOptions = () =>
       Array.from(document.querySelectorAll('.recipe-popup-drink-option'));
@@ -486,6 +489,12 @@
       if (predictiveOrderDate) predictiveOrderDate.textContent = selectedOrder.order_by_date;
       if (predictiveOrderUpdated) predictiveOrderUpdated.textContent = selectedOrder.prediction_created_at;
       if (predictiveOrderCount) predictiveOrderCount.textContent = `${normalizedIndex + 1} of ${predictiveRecommendedOrders.length}`;
+      if (predictiveCreateOrderLink) {
+        const createOrderUrl = new URL(predictiveCreateOrderBaseUrl, window.location.origin);
+        createOrderUrl.searchParams.set('product_id', selectedOrder.inventory_item_id);
+        createOrderUrl.searchParams.set('qty', selectedOrder.rounded_prediction_quantity);
+        predictiveCreateOrderLink.href = `${createOrderUrl.pathname}${createOrderUrl.search}`;
+      }
 
       return normalizedIndex;
     };
