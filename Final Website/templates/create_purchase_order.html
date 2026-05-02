@@ -13,29 +13,27 @@
  
     <!-- ══ SIDEBAR (identical structure to man-dash.html) ══ -->
     <div class="sidebar-wrapper">
-      <div>
-        <div class="logo">Kung Fu Tea<br>Manager Portal</div>
+      <div class="logo">Kung Fu Tea<br>Manager Portal</div>
 
-        <div class="sidebar-nav">
-          <div class="nav-section-title">Overview</div>
-          <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
+      <div class="sidebar-nav">
+        <div class="nav-section-title">Overview</div>
+        <a class="nav-btn" href="{{ url_for('firstdash') }}">Dashboard</a>
 
-          <div class="nav-section-title">Inventory</div>
-          <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
-          <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
-          <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
+        <div class="nav-section-title">Inventory</div>
+        <a class="nav-btn" href="{{ url_for('inventory') }}">View Inventory</a>
+        <a class="nav-btn" href="{{ url_for('man_audit_1') }}">Run Inventory Audit</a>
+        <a class="nav-btn" href="{{ url_for('man_audit_4') }}">Inventory History</a>
 
-          <div class="nav-section-title">Orders</div>
-          <a class="nav-btn active" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
-          <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
+        <div class="nav-section-title">Orders</div>
+        <a class="nav-btn active" href="{{ url_for('purchaseOrders') }}">Purchase Orders</a>
+        <a class="nav-btn" href="{{ url_for('delivery_audit_list') }}">Delivery Audit</a>
 
-          <div class="nav-section-title">Insights</div>
-          <a class="nav-btn" href="{{ url_for('dashboard') }}">Analytics</a>
-          <a class="nav-btn" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
+        <div class="nav-section-title">Insights</div>
+        <a class="nav-btn" href="{{ url_for('dashboard') }}">Analytics</a>
+        <a class="nav-btn" href="{{ url_for('predictive_reports') }}">Stock Forecast</a>
 
-          <div class="nav-section-title">Admin</div>
-          <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
-        </div>
+        <div class="nav-section-title">Admin</div>
+        <a class="nav-btn" href="{{ url_for('manage_users') }}">Manage Users</a>
       </div>
 
       <div class="sidebar-bottom">
@@ -242,9 +240,48 @@
      `;
 
     container.appendChild(row);
+    return row;
 }
  
     function removeProductRow(btn) { btn.closest('.product-row')?.remove(); }
+
+    function getLocalDateInputValue(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function prefillPredictiveOrderDetails() {
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get('product_id');
+      const qty = params.get('qty');
+
+      if (!productId || !qty) {
+        return;
+      }
+
+      const supplierSelect = document.getElementById('supplierSelect');
+      if (supplierSelect && !supplierSelect.value && supplierSelect.options.length === 2) {
+        supplierSelect.selectedIndex = 1;
+      }
+
+      const timestampInput = document.getElementById('timestampInput');
+      if (timestampInput && !timestampInput.value) {
+        timestampInput.value = getLocalDateInputValue(new Date());
+      }
+
+      const firstProductRow = document.querySelector('.product-row') || addProductRow();
+      const productSelect = firstProductRow?.querySelector('.product-select');
+      const qtyInput = firstProductRow?.querySelector('.product-qty-input');
+
+      if (productSelect) {
+        productSelect.value = productId;
+      }
+      if (qtyInput) {
+        qtyInput.value = Math.max(1, Number.parseInt(qty, 10) || 1);
+      }
+    }
  
     /* ── Supplier modal ── */
     let modalMode = 'add';
@@ -450,6 +487,9 @@ async function submitOrder() {
   }
 }
  
+  </script>
+  <script>
+    prefillPredictiveOrderDetails();
   </script>
 </body>
 </html>
