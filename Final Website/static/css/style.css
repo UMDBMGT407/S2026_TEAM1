@@ -498,19 +498,19 @@ body {
 .table-header-grid {
   background: #964f4c;
   color: white;
-  padding: 12px 0;
+  padding: 15px 0;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 22px;
   border-radius: 20px 20px 0 0;
   text-align: center;
 }
 
 .inventory-row {
-  padding: 8px 0;
+  padding: 10px 0;
   border-bottom: 1px solid rgba(150, 79, 76, 0.2);
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
-  min-height: 44px;
+  min-height: 50px;
 }
 
 .col-ingredient-name, 
@@ -545,7 +545,7 @@ body {
   border: none;
   margin: 0 10px;
   color: #964f4c;
-  font-size: 18px;
+  font-size: 22px;
   cursor: pointer;
   transition: transform 0.1s ease, color 0.1s ease;
   display: flex;
@@ -1643,14 +1643,17 @@ select:focus {
 }
 
 .man4-page-btn {
-  width: 40px;
+  min-width: 54px;
   height: 42px;
+  padding: 0 10px;
   border: none;
   border-right: 1px solid #c48a86;
   background: #f8efe6;
   color: #000000;
   font-family: "Inria Serif", serif;
-  font-size: 24px;
+  font-size: 20px;
+  text-align: center;
+  line-height: 42px;
   cursor: pointer;
 }
 
@@ -1658,9 +1661,26 @@ select:focus {
   border-right: none;
 }
 
-.man4-page-btn.man5-active {
+.man4-page-btn.active {
   background: #9d5651;
+  color: #f8efe6;
+  cursor: default;
+}
+
+.man4-page-btn:disabled {
+  cursor: default;
+}
+
+.man4-page-ellipsis {
+  min-width: 54px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #c48a86;
   color: #000000;
+  font-family: "Inria Serif", serif;
+  font-size: 22px;
 }
 
 .man4-next-btn {
@@ -3571,7 +3591,8 @@ select:focus {
 
 .predictive-table-wrapper {
   max-height: 420px;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   border: 1px solid rgba(150, 79, 76, 0.22);
   scrollbar-width: thin;
   scrollbar-color: #964f4c #f5ede7;
@@ -3594,7 +3615,9 @@ select:focus {
 
 .predictive-table {
   margin: 0;
-  min-width: 760px;
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
 }
 
 .predictive-table thead th {
@@ -3604,7 +3627,8 @@ select:focus {
   font-weight: 700;
   padding: 18px 20px;
   text-align: center;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -3639,6 +3663,28 @@ select:focus {
   text-align: center;
   border-top: 1px solid rgba(150, 79, 76, 0.2);
   vertical-align: middle;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.predictive-table th:nth-child(1),
+.predictive-table td:nth-child(1) {
+  width: 40%;
+}
+
+.predictive-table th:nth-child(2),
+.predictive-table td:nth-child(2) {
+  width: 18%;
+}
+
+.predictive-table th:nth-child(3),
+.predictive-table td:nth-child(3) {
+  width: 24%;
+}
+
+.predictive-table th:nth-child(4),
+.predictive-table td:nth-child(4) {
+  width: 18%;
 }
 
 .predictive-table tbody tr:first-child td,
@@ -4160,6 +4206,18 @@ select:focus {
   .predictive-table tbody td,
   .predictive-detail-item {
     padding: 12px 14px;
+  }
+
+  .predictive-table thead th {
+    font-size: 18px;
+  }
+
+  .predictive-table tbody td {
+    font-size: 16px;
+  }
+
+  .predictive-item-category {
+    font-size: 12px;
   }
 
   .predictive-order-stats-grid {
