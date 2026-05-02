@@ -95,24 +95,75 @@
         </div>
       </div>
 
-      <div class="man4-pagination-wrap">
-        <div class="man4-pagination-custom">
-          {% for p in range(1, total_pages + 1) %}
-            <button
-              class="man4-page-btn {% if p == current_page %}active{% endif %}"
-              onclick="window.location.href='{{ url_for('man_audit_4', page=p) }}'">
-              {{ p }}
-            </button>
-          {% endfor %}
-        </div>
+      {% if total_pages > 1 %}
+        {% set page_window = 4 %}
+        {% set window_start = current_page - page_window %}
+        {% set window_end = current_page + page_window %}
+        {% if window_start < 1 %}
+          {% set window_start = 1 %}
+        {% endif %}
+        {% if window_end > total_pages %}
+          {% set window_end = total_pages %}
+        {% endif %}
 
-        {% if current_page < total_pages %}
-          <button class="man4-next-btn"
-            onclick="window.location.href='{{ url_for('man_audit_4', page=current_page + 1) }}'">
+        <div class="man4-pagination-wrap">
+          <button
+            class="man4-next-btn {% if current_page <= 1 %}disabled{% endif %}"
+            {% if current_page > 1 %}
+              onclick="window.location.href='{{ url_for('man_audit_4', page=current_page - 1) }}'"
+            {% else %}
+              disabled
+            {% endif %}>
+            &lt; Prev
+          </button>
+
+          <div class="man4-pagination-custom" aria-label="Activity log pagination">
+            {% if window_start > 1 %}
+              <button
+                class="man4-page-btn"
+                onclick="window.location.href='{{ url_for('man_audit_4', page=1) }}'">
+                1
+              </button>
+              {% if window_start > 2 %}
+                <span class="man4-page-ellipsis">...</span>
+              {% endif %}
+            {% endif %}
+
+            {% for p in range(window_start, window_end + 1) %}
+              <button
+                class="man4-page-btn {% if p == current_page %}active{% endif %}"
+                {% if p != current_page %}
+                  onclick="window.location.href='{{ url_for('man_audit_4', page=p) }}'"
+                {% else %}
+                  disabled
+                {% endif %}>
+                {{ p }}
+              </button>
+            {% endfor %}
+
+            {% if window_end < total_pages %}
+              {% if window_end < total_pages - 1 %}
+                <span class="man4-page-ellipsis">...</span>
+              {% endif %}
+              <button
+                class="man4-page-btn"
+                onclick="window.location.href='{{ url_for('man_audit_4', page=total_pages) }}'">
+                {{ total_pages }}
+              </button>
+            {% endif %}
+          </div>
+
+          <button
+            class="man4-next-btn {% if current_page >= total_pages %}disabled{% endif %}"
+            {% if current_page < total_pages %}
+              onclick="window.location.href='{{ url_for('man_audit_4', page=current_page + 1) }}'"
+            {% else %}
+              disabled
+            {% endif %}>
             Next &gt;
           </button>
-        {% endif %}
-      </div>
+        </div>
+      {% endif %}
 
     </div>
   </main>
