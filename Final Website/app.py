@@ -45,16 +45,16 @@ import xml.etree.ElementTree as ET
 # CREATE FLASK APP
 # =========================
 app = Flask(__name__)
-app.secret_key = 'seaquillr00tyD:'
+app.secret_key = '407TEAM1'
 
 
 # =========================
 # MYSQL CONFIGURATION
 # =========================
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'bmgts101t01'
-app.config['MYSQL_PASSWORD'] = 'EG^Mso3248797'
-app.config['MYSQL_DB'] = 'bmgts101t01_kft_inventory'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '407TEAM1'
+app.config['MYSQL_DB'] = 'kft_inventory'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
@@ -1085,15 +1085,13 @@ def inventory():
     selected_category = request.args.get('category', 'all')
     cur = mysql.connection.cursor()
     
-    # Only fetch active categories
-    cur.execute("SELECT DISTINCT category FROM inventory_items WHERE category IS NOT NULL AND status = 'Active' ORDER BY category")
+    cur.execute("SELECT DISTINCT category FROM inventory_items WHERE category IS NOT NULL ORDER BY category")
     unique_categories = [row['category'] for row in cur.fetchall()]
     
-    # Only fetch active items
     if selected_category != 'all':
-        cur.execute("SELECT id, item_name, system_qty, created_at, category FROM inventory_items WHERE LOWER(category) = %s AND status = 'Active'", (selected_category.lower(),))
+        cur.execute("SELECT id, item_name, system_qty, created_at, category FROM inventory_items WHERE LOWER(category) = %s", (selected_category.lower(),))
     else:
-        cur.execute("SELECT id, item_name, system_qty, created_at, category FROM inventory_items WHERE status = 'Active'")
+        cur.execute("SELECT id, item_name, system_qty, created_at, category FROM inventory_items")
         
     inventory_data = cur.fetchall()
     cur.close()
@@ -1117,47 +1115,22 @@ def add_inventory_item_direct():
 
     cur = mysql.connection.cursor()
     
-    # Check if the item exists (active OR retired)
-    cur.execute("SELECT id, status FROM inventory_items WHERE LOWER(item_name) = LOWER(%s)", (name,))
-    existing_item = cur.fetchone()
-    
+    cur.execute("SELECT id FROM inventory_items WHERE LOWER(item_name) = LOWER(%s)", (name,))
+    if cur.fetchone():
+        cur.close()
+        return jsonify(error=f"'{name}' already exists in the inventory."), 409
+
     try:
-        if existing_item:
-            if existing_item['status'] == 'Active':
-                cur.close()
-                return jsonify(error=f"'{name}' already exists in the active inventory."), 409
-            else:
-                # Reactivate a previously retired item instead of duplicating it
-                cur.execute(
-                    "UPDATE inventory_items SET status = 'Active', system_qty = %s, category = %s WHERE id = %s",
-                    (qty, category, existing_item['id'])
-                )
-                mysql.connection.commit()
-                new_id = existing_item['id']
-        else:
-            # Create a brand new item
-            cur.execute(
-                "INSERT INTO inventory_items (item_name, system_qty, category, status, created_at) VALUES (%s, %s, %s, 'Active', NOW())",
-                (name, qty, category)
-            )
-            mysql.connection.commit()
-            new_id = cur.lastrowid
-            
+        cur.execute(
+            "INSERT INTO inventory_items (item_name, system_qty, category, created_at) VALUES (%s, %s, %s, NOW())",
+            (name, qty, category)
+        )
+        mysql.connection.commit()
+        new_id = cur.lastrowid
         cur.close()
         return jsonify(message='Added', id=new_id)
     except Exception as e:
         return jsonify(error="A database error occurred."), 500
-
-@app.route('/inventory/<int:item_id>', methods=['DELETE'])
-@login_required
-@role_required('Manager', 'ShiftLead')
-def retire_inventory_item(item_id): 
-    cur = mysql.connection.cursor()
-    cur.execute("UPDATE inventory_items SET status = 'Retired' WHERE id = %s", (item_id,))
-    mysql.connection.commit()
-    cur.close()
-
-    return jsonify(message='Retired')
 
 
 # =========================
@@ -1779,6 +1752,8 @@ def import_pos_transactions(rows):
 
 
 def infer_recipe_quantities_with_regression():
+    from bisect import bisect_right
+
     cur = mysql.connection.cursor()
 
     try:
@@ -1809,51 +1784,70 @@ def infer_recipe_quantities_with_regression():
 
         cur.execute(
             """
-            SELECT DATE(transaction_date) AS activity_date,
+            SELECT transaction_date,
                    drink_id,
                    SUM(COALESCE(quantity, 1)) AS sold_qty
             FROM pos_transactions
-            GROUP BY DATE(transaction_date), drink_id
-            ORDER BY DATE(transaction_date), drink_id
+            GROUP BY transaction_date, drink_id
+            ORDER BY transaction_date, drink_id
             """
         )
         pos_rows = cur.fetchall()
         if not pos_rows:
             raise ValueError('No POS transaction history is available for regression.')
 
-        sales_by_date = {}
+        pos_history_start = min(row['transaction_date'] for row in pos_rows)
+        cumulative_sales_by_drink = {}
         for row in pos_rows:
-            activity_date = row['activity_date']
-            sales_by_date.setdefault(activity_date, {})[row['drink_id']] = float(row['sold_qty'] or 0.0)
+            drink_entry = cumulative_sales_by_drink.setdefault(
+                row['drink_id'],
+                {'times': [], 'totals': []}
+            )
+            running_total = drink_entry['totals'][-1] if drink_entry['totals'] else 0.0
+            drink_entry['times'].append(row['transaction_date'])
+            drink_entry['totals'].append(running_total + float(row['sold_qty'] or 0.0))
+
+        def get_interval_sales(drink_id, interval_start, interval_end):
+            drink_entry = cumulative_sales_by_drink.get(drink_id)
+            if not drink_entry:
+                return 0.0
+
+            times = drink_entry['times']
+            totals = drink_entry['totals']
+            end_index = bisect_right(times, interval_end) - 1
+            if end_index < 0:
+                return 0.0
+
+            start_index = bisect_right(times, interval_start) - 1
+            end_total = totals[end_index]
+            start_total = totals[start_index] if start_index >= 0 else 0.0
+            return max(0.0, end_total - start_total)
 
         cur.execute(
             """
-            SELECT DATE(created_at) AS activity_date,
+            SELECT created_at,
                    inventory_item_id,
-                   SUM(ABS(qty_change)) AS used_qty
+                   action_type,
+                   qty_change
             FROM inventory_updates
-            WHERE action_type = 'Sub'
-              AND qty_change < 0
-            GROUP BY DATE(created_at), inventory_item_id
-            ORDER BY DATE(created_at), inventory_item_id
+            WHERE action_type IN ('Sub', 'Add', 'Correct', 'Audit', 'Restock')
+            ORDER BY inventory_item_id, created_at, id
             """
         )
-        usage_rows = cur.fetchall()
-        if not usage_rows:
+        inventory_event_rows = cur.fetchall()
+        if not inventory_event_rows:
             raise ValueError('No negative inventory update history is available for regression.')
 
-        usage_by_ingredient = {}
-        for row in usage_rows:
-            usage_by_ingredient.setdefault(row['inventory_item_id'], {})[row['activity_date']] = float(
-                row['used_qty'] or 0.0
-            )
+        inventory_events_by_ingredient = {}
+        for row in inventory_event_rows:
+            inventory_events_by_ingredient.setdefault(row['inventory_item_id'], []).append(row)
 
         updated_pairs = []
         skipped_ingredients = []
 
         for ingredient_id, ingredient_drink_ids in drinks_by_ingredient.items():
-            usage_by_date = usage_by_ingredient.get(ingredient_id, {})
-            if not usage_by_date:
+            ingredient_events = inventory_events_by_ingredient.get(ingredient_id, [])
+            if not ingredient_events:
                 skipped_ingredients.append({
                     'ingredient_id': ingredient_id,
                     'ingredient_name': ingredient_names.get(ingredient_id, f'Ingredient {ingredient_id}'),
@@ -1861,31 +1855,100 @@ def infer_recipe_quantities_with_regression():
                 })
                 continue
 
-            observed_dates = sorted(usage_by_date.keys())
             design_matrix = []
             targets = []
-            for activity_date in observed_dates:
-                row_sales = [
-                    sales_by_date.get(activity_date, {}).get(drink_id, 0.0)
-                    for drink_id in ingredient_drink_ids
-                ]
-                if not any(value > 0 for value in row_sales):
+            interval_start = pos_history_start
+
+            for event in ingredient_events:
+                event_time = event['created_at']
+                action_type = event['action_type']
+                qty_change = float(event['qty_change'] or 0.0)
+
+                if event_time < interval_start:
+                    interval_start = event_time
                     continue
 
-                design_matrix.append(row_sales)
-                targets.append(usage_by_date.get(activity_date, 0.0))
+                if action_type == 'Sub' and qty_change < 0:
+                    target_used_qty = abs(qty_change)
+                    if target_used_qty <= 0:
+                        interval_start = event_time
+                        continue
+
+                    row_sales = [
+                        get_interval_sales(drink_id, interval_start, event_time)
+                        for drink_id in ingredient_drink_ids
+                    ]
+                    if any(value > 0 for value in row_sales):
+                        design_matrix.append(row_sales)
+                        targets.append(target_used_qty)
+
+                    # The next observed drop starts a new accumulation window.
+                    interval_start = event_time
+                    continue
+
+                # Non-consumption updates reset the stock state. Sales before this
+                # boundary should not be used to explain future integer drops.
+                if action_type in ('Add', 'Correct', 'Audit', 'Restock'):
+                    interval_start = event_time
 
             if not design_matrix or not targets:
                 skipped_ingredients.append({
                     'ingredient_id': ingredient_id,
                     'ingredient_name': ingredient_names.get(ingredient_id, f'Ingredient {ingredient_id}'),
-                    'reason': 'No overlapping POS and inventory history',
+                    'reason': 'No overlapping POS sales inside inventory-drop intervals',
                 })
                 continue
 
-            coefficients, _ = nnls(design_matrix, targets)
-            ingredient_updated = False
+            matrix = np.array(design_matrix, dtype=float)
+            target_vector = np.array(targets, dtype=float)
+            usable_columns = [
+                column_index
+                for column_index in range(matrix.shape[1])
+                if np.count_nonzero(matrix[:, column_index]) > 0
+            ]
 
+            if not usable_columns:
+                skipped_ingredients.append({
+                    'ingredient_id': ingredient_id,
+                    'ingredient_name': ingredient_names.get(ingredient_id, f'Ingredient {ingredient_id}'),
+                    'reason': 'No drink sales available inside inventory-drop intervals',
+                })
+                continue
+
+            if len(ingredient_drink_ids) > 1:
+                matrix_rank = np.linalg.matrix_rank(matrix[:, usable_columns]) if usable_columns else 0
+                if len(targets) < len(usable_columns) or matrix_rank < len(usable_columns):
+                    skipped_ingredients.append({
+                        'ingredient_id': ingredient_id,
+                        'ingredient_name': ingredient_names.get(ingredient_id, f'Ingredient {ingredient_id}'),
+                        'reason': 'Not enough varied intervals to separate multiple drink coefficients',
+                    })
+                    continue
+
+            if len(usable_columns) == 1:
+                # With one possible drink, interval-level residuals mostly reflect
+                # whole-unit inventory rounding. The aggregate ratio is the stable
+                # fractional recipe estimate.
+                column_index = usable_columns[0]
+                total_sales = float(np.sum(matrix[:, column_index]))
+                coefficients = np.zeros(matrix.shape[1])
+                if total_sales > 0:
+                    coefficients[column_index] = float(np.sum(target_vector) / total_sales)
+            else:
+                coefficients, _ = nnls(matrix, target_vector)
+
+            fitted_targets = matrix.dot(coefficients)
+            target_mean = float(np.mean(target_vector)) if target_vector.size else 0.0
+            residual_rmse = float(np.sqrt(np.mean((fitted_targets - target_vector) ** 2)))
+            if len(usable_columns) > 1 and target_mean > 0 and residual_rmse > target_mean:
+                skipped_ingredients.append({
+                    'ingredient_id': ingredient_id,
+                    'ingredient_name': ingredient_names.get(ingredient_id, f'Ingredient {ingredient_id}'),
+                    'reason': 'Interval regression fit was too noisy',
+                })
+                continue
+
+            ingredient_updated = False
             for drink_id, coefficient in zip(ingredient_drink_ids, coefficients):
                 if coefficient <= 0:
                     continue
@@ -1905,6 +1968,8 @@ def infer_recipe_quantities_with_regression():
                     'ingredient_id': ingredient_id,
                     'ingredient_name': ingredient_names.get(ingredient_id, f'Ingredient {ingredient_id}'),
                     'quantity': estimated_quantity,
+                    'interval_count': len(targets),
+                    'rmse': round(residual_rmse, 4),
                 })
                 ingredient_updated = True
 
@@ -1914,6 +1979,7 @@ def infer_recipe_quantities_with_regression():
                     'ingredient_name': ingredient_names.get(ingredient_id, f'Ingredient {ingredient_id}'),
                     'reason': 'Regression returned only zero coefficients',
                 })
+                continue
 
         if not updated_pairs:
             raise ValueError(
@@ -2140,9 +2206,10 @@ def build_lightgbm_forecast_payload(forecast_horizon_days=7):
             num_boost_round=200,
         )
 
+        forecast_start_date = dt.date.today()
         future_dates = [
-            last_history_date + dt.timedelta(days=offset)
-            for offset in range(1, forecast_horizon_days + 1)
+            forecast_start_date + dt.timedelta(days=offset)
+            for offset in range(forecast_horizon_days)
         ]
         future_features = []
         future_keys = []
@@ -2320,7 +2387,8 @@ def build_lightgbm_forecast_payload(forecast_horizon_days=7):
         print(
             f"Training rows: {len(training_targets)} | "
             f"Drinks: {len(ordered_drink_ids)} | "
-            f"History range: {start_date} to {last_history_date}"
+            f"History range: {start_date} to {last_history_date} | "
+            f"Forecast starts: {forecast_start_date}"
         )
         print("Shared model feature importance:")
         for feature_name, importance_value in zip(feature_names, feature_importance):
@@ -2357,6 +2425,7 @@ def build_lightgbm_forecast_payload(forecast_horizon_days=7):
             'training_row_count': len(training_targets),
             'trained_drink_count': len(ordered_drink_ids),
             'forecast_row_count': len(prediction_rows),
+            'forecast_start_date': forecast_start_date,
             'future_dates': future_dates,
             'category_current_stock': {
                 key: round(value, 4) for key, value in category_current_stock.items()
@@ -2400,7 +2469,7 @@ def train_lightgbm_and_refresh_predictions(forecast_horizon_days=7):
                 """,
                 (
                     prediction_row['inventory_item_id'],
-                    prediction_row['prediction_quantity'],
+                    int(math.ceil(prediction_row['prediction_quantity'])),
                     prediction_row['order_by_date'],
                 )
             )
@@ -2587,6 +2656,7 @@ def predictive_reports():
             and status_label in ('Critical', 'Low')
         ):
             recommended_orders.append({
+                'inventory_item_id': row['id'],
                 'item_name': row['item_name'],
                 'system_qty': current_qty,
                 'prediction_quantity': prediction_quantity,
@@ -3661,6 +3731,8 @@ def delete_inventory_item(item_id):
 MANAGER_AI_GEMINI_MODEL = 'gemini-2.5-flash'
 MANAGER_AI_LOW_STOCK_THRESHOLD = 5
 MANAGER_AI_HIGH_STOCK_THRESHOLD = 50
+MANAGER_AI_HISTORY_LIMIT = 5
+MANAGER_AI_MAX_OUTPUT_TOKENS = 4096
 
 
 def manager_ai_get_api_key():
@@ -3920,14 +3992,14 @@ def manager_ai_build_system_prompt(snapshot):
         "RULES:\n"
         "- Base answers strictly on the snapshot above. Never invent numbers.\n"
         "- If data is missing or unclear, say so.\n"
-        "- Keep responses under 200 words unless a full report is requested.\n"
+        "- Give complete answers. Be concise for simple questions, but do not cut off useful details.\n"
         "- Use short bullet lists when helpful."
     )
 
 
 def manager_ai_build_gemini_contents(raw_history, user_message):
     contents = []
-    for turn in raw_history[-20:]:
+    for turn in raw_history[-MANAGER_AI_HISTORY_LIMIT:]:
         role = turn.get('role')
         content = (turn.get('content') or '').strip()
         if not content:
@@ -3971,7 +4043,7 @@ def manager_ai_call_gemini(system_prompt, contents):
         'contents': contents,
         'generationConfig': {
             'temperature': 0.4,
-            'maxOutputTokens': 512
+            'maxOutputTokens': MANAGER_AI_MAX_OUTPUT_TOKENS
         }
     }
     encoded_payload = json.dumps(payload).encode('utf-8')
@@ -3998,10 +4070,16 @@ def manager_ai_call_gemini(system_prompt, contents):
     if not candidates:
         raise RuntimeError('Gemini returned no response.')
 
-    parts = candidates[0].get('content', {}).get('parts') or []
+    candidate = candidates[0]
+    parts = candidate.get('content', {}).get('parts') or []
     reply = ''.join(part.get('text', '') for part in parts).strip()
     if not reply:
         raise RuntimeError('Gemini returned an empty response.')
+
+    finish_reason = candidate.get('finishReason')
+    if finish_reason and finish_reason not in ('STOP', 'MAX_TOKENS'):
+        raise RuntimeError(f'Gemini did not complete the response. Finish reason: {finish_reason}.')
+
     return reply
 
 
