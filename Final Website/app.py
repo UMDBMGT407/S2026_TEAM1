@@ -42,10 +42,10 @@ import zipfile
 import xml.etree.ElementTree as ET
 
 # =========================
-# CREATE FLASK APP
+# CREATE FLASK APP (SERVER)
 # =========================
 app = Flask(__name__)
-app.secret_key = '407TEAM1'
+app.secret_key = 'seaquillr00tyD:'
 
 
 # =========================
@@ -56,6 +56,22 @@ app.config['MYSQL_USER'] = 'bmgts101t01'
 app.config['MYSQL_PASSWORD'] = 'EG^Mso3248797'
 app.config['MYSQL_DB'] = 'bmgts101t01_kft_inventory'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+
+# =========================
+# CREATE FLASK APP (LOCAL)
+# =========================
+#app = Flask(__name__)
+#app.secret_key = '407TEAM1'
+
+
+# =========================
+# MYSQL CONFIGURATION
+# =========================
+#app.config['MYSQL_HOST'] = 'localhost'
+#app.config['MYSQL_USER'] = 'root'
+#app.config['MYSQL_PASSWORD'] = 'mysqlrootpassword'
+#app.config['MYSQL_DB'] = 'kft_inventory'
+#app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
@@ -1107,11 +1123,21 @@ def inventory():
 def add_inventory_item_direct():
     data = request.get_json()
     name = data.get('name', '').strip()
-    qty = data.get('qty', 0)
+    raw_qty = data.get('qty')
+    if raw_qty in [None, '']:
+        return jsonify(error="Starting quantity is required."), 400
+
+    try:
+        qty = int(raw_qty)
+    except (TypeError, ValueError):
+        return jsonify(error="Starting quantity must be a number."), 400
     category = data.get('category', 'Uncategorized').strip()
 
     if not name:
         return jsonify(error="Ingredient name is required."), 400
+
+    if qty < 0:
+        return jsonify(error="Starting quantity cannot be negative."), 400
 
     cur = mysql.connection.cursor()
     
@@ -1324,28 +1350,29 @@ def add_user():
     try:
         data = request.get_json()
 
-        name = data.get('name')
-        role = data.get('role')
-        phone = data.get('phone')
+        name = (data.get('name') or '').strip()
+        email = (data.get('email') or '').strip()
+        password = (data.get('password') or '').strip()
+        role = (data.get('role') or '').strip()
+        phone = (data.get('phone') or '').strip()
 
-        if not name or not role:
-            return jsonify({"error": "Name and role are required"}), 400
+        if not name or not email or not password or not role or not phone:
+            return jsonify({"error": "All user fields are required."}), 400
 
-        base_email = name.lower().replace(" ", "") + "@kft.com"
+        if not phone.isdigit():
+            return jsonify({"error": "Phone number must contain numbers only."}), 400
+
+        if role not in ['Employee', 'ShiftLead', 'Manager']:
+            return jsonify({"error": "Please select a valid role."}), 400
 
         cur = mysql.connection.cursor()
 
-        email = base_email
-        counter = 1
-        while True:
-            cur.execute("SELECT id FROM users WHERE email = %s", (email,))
-            existing = cur.fetchone()
-            if not existing:
-                break
-            email = name.lower().replace(" ", "") + str(counter) + "@kft.com"
-            counter += 1
+        cur.execute("SELECT id FROM users WHERE email = %s", (email,))
+        if cur.fetchone():
+            cur.close()
+            return jsonify({"error": "A user with that email already exists."}), 409
 
-        password_hash = generate_password_hash("default123")
+        password_hash = generate_password_hash(password)
 
         cur.execute(
             """
@@ -1359,8 +1386,7 @@ def add_user():
 
         return jsonify({
             "message": "User added successfully",
-            "email": email,
-            "default_password": "default123"
+            "email": email
         })
 
     except Exception as e:
@@ -1391,6 +1417,9 @@ def update_user(id):
         name = data.get('name')
         role = data.get('role')
         phone = data.get('phone')
+
+        if phone is None or not str(phone).isdigit():
+            return jsonify({"error": "Phone number must contain numbers only."}), 400
 
         cur = mysql.connection.cursor()
         cur.execute("""
@@ -1600,17 +1629,39 @@ def ensure_predictive_schema_support(cur):
             raise ValueError(error_message)
 
 
-def build_lightgbm_feature_row(activity_date, drink_id, start_date):
+def get_lightgbm_sales_value(sales_lookup, activity_date, drink_id):
+    return float(sales_lookup.get((activity_date, drink_id), 0.0) or 0.0)
+
+
+def build_lightgbm_feature_row(activity_date, drink_id, sales_lookup):
     iso_calendar = activity_date.isocalendar()
+    lag_1_day = get_lightgbm_sales_value(
+        sales_lookup,
+        activity_date - dt.timedelta(days=1),
+        drink_id
+    )
+    lag_7_day = get_lightgbm_sales_value(
+        sales_lookup,
+        activity_date - dt.timedelta(days=7),
+        drink_id
+    )
+    rolling_7_day_avg = sum(
+        get_lightgbm_sales_value(
+            sales_lookup,
+            activity_date - dt.timedelta(days=days_back),
+            drink_id
+        )
+        for days_back in range(1, 8)
+    ) / 7
+
     return [
-        int(drink_id),                             # shared product column
+        int(drink_id),
         int(activity_date.month),
         int(activity_date.weekday()),
-        int(activity_date.day),
         int(iso_calendar.week),
-        int(activity_date.timetuple().tm_yday),
-        int(activity_date.weekday() >= 5),
-        int((activity_date - start_date).days),
+        lag_1_day,
+        lag_7_day,
+        rolling_7_day_avg,
     ]
 
 
@@ -2172,7 +2223,7 @@ def build_lightgbm_forecast_payload(forecast_horizon_days=7):
         for activity_date in training_dates:
             for drink_id in ordered_drink_ids:
                 training_features.append(
-                    build_lightgbm_feature_row(activity_date, drink_id, start_date)
+                    build_lightgbm_feature_row(activity_date, drink_id, sales_lookup)
                 )
                 training_targets.append(
                     sales_lookup.get((activity_date, drink_id), 0.0)
@@ -2211,29 +2262,31 @@ def build_lightgbm_forecast_payload(forecast_horizon_days=7):
             forecast_start_date + dt.timedelta(days=offset)
             for offset in range(forecast_horizon_days)
         ]
-        future_features = []
-        future_keys = []
+        forecast_sales_lookup = dict(sales_lookup)
+        drink_forecasts = {}
+        drink_forecast_preview = []
         for activity_date in future_dates:
+            future_features = []
+            future_keys = []
             for drink_id in ordered_drink_ids:
                 future_features.append(
-                    build_lightgbm_feature_row(activity_date, drink_id, start_date)
+                    build_lightgbm_feature_row(activity_date, drink_id, forecast_sales_lookup)
                 )
                 future_keys.append((activity_date, drink_id))
 
-        future_matrix = np.array(future_features, dtype=float)
-        predictions = model.predict(future_matrix)
+            future_matrix = np.array(future_features, dtype=float)
+            predictions = model.predict(future_matrix)
 
-        drink_forecasts = {}
-        drink_forecast_preview = []
-        for (activity_date, drink_id), prediction in zip(future_keys, predictions):
-            predicted_qty = round(max(0.0, float(prediction)), 4)
-            drink_forecasts[(activity_date, drink_id)] = predicted_qty
-            drink_forecast_preview.append({
-                'forecast_date': activity_date.isoformat(),
-                'drink_id': drink_id,
-                'drink_name': drink_names.get(drink_id, f'Drink {drink_id}'),
-                'predicted_qty': predicted_qty,
-            })
+            for (forecast_date, drink_id), prediction in zip(future_keys, predictions):
+                predicted_qty = round(max(0.0, float(prediction)), 4)
+                drink_forecasts[(forecast_date, drink_id)] = predicted_qty
+                forecast_sales_lookup[(forecast_date, drink_id)] = predicted_qty
+                drink_forecast_preview.append({
+                    'forecast_date': forecast_date.isoformat(),
+                    'drink_id': drink_id,
+                    'drink_name': drink_names.get(drink_id, f'Drink {drink_id}'),
+                    'predicted_qty': predicted_qty,
+                })
 
         cur.execute(
             """
@@ -2376,11 +2429,10 @@ def build_lightgbm_forecast_payload(forecast_horizon_days=7):
             'drink_id',
             'month',
             'day_of_week',
-            'day_of_month',
             'week_of_year',
-            'day_of_year',
-            'is_weekend',
-            'days_since_start',
+            'sales_lag_1_day',
+            'sales_lag_7_day',
+            'rolling_7_day_avg',
         ]
 
         print("\n=== LightGBM Forecast Results ===")
@@ -2527,7 +2579,7 @@ def predictive_forecast_chart():
 
 @app.route("/predictive")
 @login_required
-@role_required('Manager', 'ShiftLead', 'Employee')
+@role_required('Manager')
 def predictive_reports():
     selected_category = request.args.get('category', 'all')
     ship_time_days = PREDICTIVE_SHIP_TIME_DAYS
@@ -3659,7 +3711,10 @@ def update_inventory_item(item_id):
     data = request.get_json()
 
     action = data.get('action')
-    qty = int(data.get('qty', 0))
+    try:
+        qty = int(data.get('qty', 0))
+    except (TypeError, ValueError):
+        return jsonify(error='Quantity must be a number'), 400
 
     if action not in ['add', 'subtract']:
         return jsonify(error='Invalid action'), 400
