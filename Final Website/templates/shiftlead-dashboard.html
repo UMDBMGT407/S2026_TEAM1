@@ -51,7 +51,7 @@
           <a href="{{ url_for('sl_audit_1') }}" class="shiftlead-btn shiftlead-btn-primary">
             {% if draft_audit %}Continue Audit{% else %}Start Audit{% endif %}
           </a>
-          <a href="{{ url_for('delivery_audit_list') }}" class="shiftlead-btn shiftlead-btn-secondary">Check Delivery</a>
+          <a href="{{ url_for('sl_delivery_audit_list') }}" class="shiftlead-btn shiftlead-btn-secondary">Check Delivery</a>
           <a href="{{ url_for('inventory') }}" class="shiftlead-btn shiftlead-btn-secondary">Open Inventory</a>
         </div>
       </section>
@@ -163,7 +163,7 @@
                 <div class="shiftlead-item-desc">
                   A purchase order was marked received. The next required step is delivery audit.
                 </div>
-                <a class="shiftlead-inline-link" href="{{ url_for('delivery_audit_list') }}">Open Delivery Audit →</a>
+                <a class="shiftlead-inline-link" href="{{ url_for('sl_delivery_audit_list') }}">Open Delivery Audit →</a>
               </div>
               {% endif %}
 
