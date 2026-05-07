@@ -163,7 +163,7 @@
       <div class="popup-entry-box">
         <div class="popup-entry-row">
           <span class="popup-label">Quantity:</span>
-          <input type="number" id="popupQuantity" value="1">
+          <input type="text" id="popupQuantity" value="1" inputmode="numeric" pattern="[0-9]*">
         </div>
         <div class="popup-time-row">
           <span id="popupDate"></span> | <span id="popupTime"></span>
@@ -192,7 +192,7 @@
         <input type="text" id="newCategoryName" placeholder="Enter new category name" style="display:none; margin-top: 10px;">
           
         <label>Starting Qty:</label>
-        <input type="number" id="newIngredientQty" placeholder="Enter quantity">
+        <input type="text" id="newIngredientQty" placeholder="Enter quantity" inputmode="numeric" pattern="[0-9]*">
       </div>
       <button class="page-action-btn solid-btn small-submit-btn" type="button" onclick="submitAddIngredient()">Add</button>
     </div>
@@ -282,11 +282,32 @@
         window.location.reload();
     }
 
+    function keepNumericInput(input) {
+      input.value = input.value.replace(/\D/g, "");
+    }
+
+    ["popupQuantity", "newIngredientQty"].forEach((inputId) => {
+      const input = document.getElementById(inputId);
+      if (input) {
+        input.addEventListener("beforeinput", (event) => {
+          if (event.data && /\D/.test(event.data)) {
+            event.preventDefault();
+          }
+        });
+        input.addEventListener("input", () => keepNumericInput(input));
+      }
+    });
 
     async function submitInventoryUpdate() {
         const qtyInput = document.getElementById("popupQuantity");
+        keepNumericInput(qtyInput);
         const changeAmount = Number(qtyInput.value);
         const action = currentMode;
+
+        if (!Number.isInteger(changeAmount) || changeAmount <= 0) {
+            showToast("Quantity must be a positive number.");
+            return;
+        }
     
         // 1. Grab the item name directly from the popup's title bar
         const itemName = document.getElementById("popupIngredientName").innerText;
@@ -313,7 +334,13 @@
 
     async function submitAddIngredient() {
         const name = document.getElementById("newIngredientName").value.trim();
-        const qty = document.getElementById("newIngredientQty").value;
+        const qtyInput = document.getElementById("newIngredientQty");
+        keepNumericInput(qtyInput);
+        if (qtyInput.value.trim() === "") {
+            alert("Please add a starting quantity.");
+            return;
+        }
+        const qty = Number(qtyInput.value);
         const select = document.getElementById("categorySelect");
         let category = (select.value === "NEW") 
             ? document.getElementById("newCategoryName").value.trim() 
@@ -321,6 +348,11 @@
 
         if (!name || !category) {
             showToast("Name and Category are required.");
+            return;
+        }
+
+        if (!Number.isInteger(qty) || qty < 0) {
+            showToast("Starting quantity must be a number.");
             return;
         }
 
