@@ -148,12 +148,12 @@
 <div class="man5-popup-box">
   <h4>Add User</h4>
 
-  <input id="nameInput" placeholder="Name">
-  <input id="emailInput" placeholder="Email">
-  <input id="passwordInput" type="password" placeholder="Password">
-  <input id="phoneInput" placeholder="Phone">
+  <input id="nameInput" placeholder="Name" required>
+  <input id="emailInput" type="email" placeholder="Email" required>
+  <input id="passwordInput" type="password" placeholder="Password" required>
+  <input id="phoneInput" placeholder="Phone" inputmode="numeric" pattern="[0-9]*" required>
 
-  <select id="roleInput">
+  <select id="roleInput" required>
     <option value="Employee">Employee</option>
     <option value="ShiftLead">Shift Lead</option>
     <option value="Manager">Manager</option>
@@ -170,7 +170,7 @@
   <h4>Edit User</h4>
 
   <input id="editName">
-  <input id="editPhone">
+  <input id="editPhone" inputmode="numeric" pattern="[0-9]*">
 
   <select id="editRole">
     <option value="Employee">Employee</option>
@@ -187,6 +187,22 @@
 
 let currentEditId = null;
 
+function keepDigitsOnly(input) {
+  input.value = input.value.replace(/\D/g, "");
+}
+
+["phoneInput", "editPhone"].forEach((inputId) => {
+  const input = document.getElementById(inputId);
+  if (input) {
+    input.addEventListener("beforeinput", (event) => {
+      if (event.data && /\D/.test(event.data)) {
+        event.preventDefault();
+      }
+    });
+    input.addEventListener("input", () => keepDigitsOnly(input));
+  }
+});
+
 /* POPUPS */
 function openPopup(){ document.getElementById("popup").style.display="flex"; }
 function closePopup(){ document.getElementById("popup").style.display="none"; }
@@ -194,17 +210,37 @@ function closeEdit(){ document.getElementById("editPopup").style.display="none";
 
 /* ADD USER */
 function addUser(){
+  const name = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  keepDigitsOnly(phoneInput);
+  const phone = phoneInput.value.trim();
+  const role = roleInput.value.trim();
+
+  if (!name || !email || !password || !phone || !role) {
+    alert("Please fill out all user fields before adding a user.");
+    return;
+  }
+
   fetch('/user',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
-      name: nameInput.value,
-      email: emailInput.value,
-      password: passwordInput.value,
-      role: roleInput.value,
-      phone: phoneInput.value
+      name: name,
+      email: email,
+      password: password,
+      role: role,
+      phone: phone
     })
-  }).then(()=>location.reload());
+  }).then(async (response) => {
+    if (response.ok) {
+      location.reload();
+      return;
+    }
+
+    const result = await response.json();
+    alert(result.error || "Unable to add user.");
+  });
 }
 
 /* EDIT */
@@ -217,6 +253,7 @@ function editUser(id,name,role,phone){
 }
 
 function updateUser(){
+  keepDigitsOnly(editPhone);
   fetch(`/user/${currentEditId}`,{
     method:'PUT',
     headers:{'Content-Type':'application/json'},
